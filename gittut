@@ -1,0 +1,7 @@
+- fetches stuff other people have done
+git pull
+
+- publishes stuff you've done
+git add .
+git commit -m "<I did some stuff>"
+git push
