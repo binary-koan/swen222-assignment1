@@ -1,0 +1,95 @@
+# This is an example config file for Cluedo, with the standard objects and board layout.
+# It also contains some info about the expected syntax of this file.
+# As you might have guessed, any line starting with '#' is a comment. Blank lines anywhere
+# in the file are also ignored.
+
+# The file must begin with a definition of the game's objects, in a simplified YAML layout.
+# The first line (by convention) is simple a sequence of three dashes.
+---
+# After that come four groups: suspects, rooms, passages and weapons.
+# A group is denoted using the group name followed by a colon. The items are on indented
+# lines underneath it. Generally speaking, items in a hash/map consist of colon-separated
+# key-value pairs and items in an array/list consist of a dash followed by a value.
+suspects:
+  # Suspects consist of a single letter ID, a name and a colour. The ID is used to set the
+  # start location on the board definition below, and to show the location of the player
+  # with that token in the (default) text interface.
+  s: Miss Scarlett [red]
+  p: Professor Plum [purple]
+  e: Mrs. Peacock [blue]
+  g: The Reverend Green [green]
+  m: Colonel Mustard [yellow]
+  w: Mrs. White [white]
+rooms:
+  # Rooms are similar to suspects, but only need an ID and a name. This ID is also for
+  # setting which spaces the room occupies in the board definition.
+  S: Study
+  H: Hall
+  O: Lounge
+  L: Library
+  D: Dining Room
+  B: Billiard Room
+  C: Conservatory
+  A: Ballroom
+  K: Kitchen
+passages:
+  # Passages are slightly different: the key and value are both room names, and define the
+  # start and end of the passage respectively. Note that passage definitions are one-way,
+  # so for a two-way passage (like in the standard layout) you must have two entries!
+  Study: Kitchen
+  Lounge: Conservatory
+  Conservatory: Lounge
+  Kitchen: Study
+weapons:
+  # Weapons are defined as a simple array of names
+  - Dagger
+  - Lead piping
+  - Revolver
+  - Rope
+  - Candlestick
+  - Spanner
+
+# Now for the board definition. It starts with a long line of dashes, which must be equal
+# to the width of the board. The board height is assumed to be the same as the width, so
+# a sequence of 25 dashes means that program will assume a 25x25 board follows.
+------------------------
+# After the dashes comes the body of the board. Each line defines one row, and each character
+# defines one cell. The row must end with a '|' (vertical bar) - this is considered to be
+# outside the board, so it will be (for example) the 26th character of a 25x25 board row.
+#
+# - A blank space means that the cell is considered to be outside the board and is therefore unreachable.
+# - A '.' (period) means that the cell is part of a corridor.
+# - A character defined as the ID of a suspect token (above) defines that token's start location.
+# - A character defined as the ID of a room (above) means that the cell is part of that room.
+# - A '_' (underscore) defines a vertical door (can be accessed from above/below).
+# - A '/' (forward slash) defines a horizontal door (can be accessed from left/right).
+#
+# Note that when processing a door, the program will look left and right (NOT above and below)
+# to find out which room the door is part of.
+         w    g         |
+KKKKKK ...AAAA... CCCCCC|
+KKKKKK..AAAAAAAA..CCCCCC|
+KKKKKK..AAAAAAAA..CCCCCC|
+KKKKKK..AAAAAAAA.._CCCCC|
+KKKKKK../AAAAAA/.. CCCC |
+ KKK_K..AAAAAAAA.......e|
+........A_AAAA_A....... |
+ .................BBBBBB|
+DDDDD............./BBBBB|
+DDDDDDDD..     ...BBBBBB|
+DDDDDDDD..     ...BBBBBB|
+DDDDDDD/..     ...BBBB_B|
+DDDDDDDD..     ........ |
+DDDDDDDD..     ...LL_LL |
+DDDDDD_D..     ..LLLLLLL|
+ .........     ../LLLLLL|
+m................LLLLLLL|
+ ........HH__HH...LLLLL |
+OOOOOO_..HHHHHH........p|
+OOOOOOO..HHHHH/........ |
+OOOOOOO..HHHHHH.._SSSSSS|
+OOOOOOO..HHHHHH..SSSSSSS|
+OOOOOOO..HHHHHH..SSSSSSS|
+OOOOOO s HHHHHH . SSSSSS|
+------------------------
+# The board must end with a sequence of dashes identical to the one at the start.
