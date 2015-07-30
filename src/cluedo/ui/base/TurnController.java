@@ -1,4 +1,4 @@
-package ui.base;
+package cluedo.ui.base;
 
 public interface TurnController {
 

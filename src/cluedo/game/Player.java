@@ -1,9 +1,9 @@
-package game;
-
-import game.objects.Card;
-import game.objects.Suspect;
+package cluedo.game;
 
 import java.util.List;
+
+import cluedo.game.objects.Card;
+import cluedo.game.objects.Suspect;
 
 public class Player {
 	private List<Card> hand;

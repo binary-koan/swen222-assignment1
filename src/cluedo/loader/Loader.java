@@ -1,4 +1,4 @@
-package loader;
+package cluedo.loader;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -13,12 +13,12 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import game.Door;
-import game.GameData;
-import game.objects.Room;
-import game.objects.Suspect;
-import game.objects.Weapon;
-import loader.Loader.SyntaxException;
+import cluedo.game.Door;
+import cluedo.game.GameData;
+import cluedo.game.objects.Room;
+import cluedo.game.objects.Suspect;
+import cluedo.game.objects.Weapon;
+import cluedo.loader.Loader.SyntaxException;
 
 /**
  * Loads information about suspects, rooms, weapons and board layout from a file.
@@ -50,8 +50,6 @@ public class Loader {
 	// Matches comments, ie. any line starting with a "#", optionally with whitespace before it
 	private static final Pattern COMMENT = Pattern.compile("^\\s*#");
 
-	private String filename;
-
 	private Map<String, Room> rooms;
 	private Map<Character, Room> roomsById;
 	private Map<String, Suspect> suspects;
@@ -70,8 +68,7 @@ public class Loader {
 	 * @throws SyntaxException if unknown syntax is encountered while loading
 	 */
 	public Loader(String filename) throws IOException, SyntaxException {
-		this.filename = filename;
-		loadData();
+		loadData(filename);
 	}
 	
 	/**
@@ -134,7 +131,7 @@ public class Loader {
 	/**
 	 * Loads data from the file(name) passed to the constructor into the fields of this object
 	 */
-	private void loadData() throws IOException, SyntaxException {
+	private void loadData(String filename) throws IOException, SyntaxException {
 		BufferedReader br = new BufferedReader(new FileReader(filename));
 
 		try {

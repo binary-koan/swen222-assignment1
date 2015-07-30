@@ -1,7 +1,7 @@
-package game;
+package cluedo.game;
 
-import loader.Loader;
-import ui.base.Renderer;
+import cluedo.loader.Loader;
+import cluedo.ui.base.Renderer;
 
 public class Game {
 	private GameData data;
@@ -12,5 +12,6 @@ public class Game {
 		this.data = new GameData(loader);
 		this.board = new Board(loader);
 		this.renderer = renderer;
+		renderer.setup(data, board);
 	}
 }

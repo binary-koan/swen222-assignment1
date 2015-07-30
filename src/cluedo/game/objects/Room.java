@@ -1,4 +1,4 @@
-package game.objects;
+package cluedo.game.objects;
 
 public class Room implements Card {
 

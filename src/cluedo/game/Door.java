@@ -1,4 +1,4 @@
-package game;
+package cluedo.game;
 
 public class Door {
 

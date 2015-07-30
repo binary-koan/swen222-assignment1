@@ -1,12 +1,12 @@
-package game;
+package cluedo.game;
 
 import java.util.List;
 import java.util.Map;
 
-import game.objects.Room;
-import game.objects.Suspect;
-import game.objects.Weapon;
-import loader.Loader;
+import cluedo.game.objects.Room;
+import cluedo.game.objects.Suspect;
+import cluedo.game.objects.Weapon;
+import cluedo.loader.Loader;
 
 public class GameData {
 	private Map<String, Room> rooms;

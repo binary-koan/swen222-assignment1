@@ -1,4 +1,4 @@
-package game;
+package cluedo.game;
 
 import java.awt.Point;
 import java.util.BitSet;
@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import game.objects.Suspect;
-import loader.Loader;
+import cluedo.game.objects.Suspect;
+import cluedo.loader.Loader;
 
 public class Board {
 	/**
@@ -49,6 +49,14 @@ public class Board {
 		this.corridors = loader.getCorridors();
 		this.startLocations = loader.getStartLocations();
 		this.doorLocations = loader.getDoorLocations();
+	}
+	
+	public int getSize() {
+		return size;
+	}
+	
+	public boolean isCorridor(int x, int y) {
+		return corridors.get(x + size * y);
 	}
 	
 	/**

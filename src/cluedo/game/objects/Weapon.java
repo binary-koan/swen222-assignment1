@@ -1,6 +1,6 @@
-package game.objects;
+package cluedo.game.objects;
 
-public class Suspect implements Card {
+public class Weapon implements Card {
 
 	@Override
 	public String getName() {
