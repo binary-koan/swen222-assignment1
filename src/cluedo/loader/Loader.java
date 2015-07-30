@@ -34,19 +34,21 @@ public class Loader {
 		}
 	}
 	
+	private static final int MAX_LINE_LENGTH = 1000;
+	
 	// Matches group headers like "suspects:" or "rooms:"
-	private static final Pattern GROUP_HEADER = Pattern.compile("[a-z]+:$");
+	private static final Pattern GROUP_HEADER = Pattern.compile("([a-z]+):$");
 	// Matches suspect definitions of the form "  b: Mr. Black [black]"
 	private static final Pattern SUSPECT_ENTRY =
-			Pattern.compile("^\\s+(.)\\s*:\\s*([\\w\\.\\-\\s]+)\\[([a-z]+)\\]$");
+			Pattern.compile("^\\s+(.)\\s*:\\s*([a-zA-Z\\.\\-\\s]+)\\[([a-z]+)\\]$");
 	// Matches room definitions of the form "  S: Sitting Room"
 	private static final Pattern ROOM_ENTRY =
-			Pattern.compile("^\\s+(.)\\s*:\\s*([\\w\\.\\-\\s]+)$");
+			Pattern.compile("^\\s+(.)\\s*:\\s*([a-zA-Z\\.\\-\\s]+)$");
 	// Matches passage definitions of the form "Sitting Room: Bathroom"
 	private static final Pattern PASSAGE_ENTRY =
-			Pattern.compile("^\\s+([\\w\\.\\-\\s]+):\\s*([\\w\\.\\-\\s]+)$");
+			Pattern.compile("^\\s+([a-zA-Z\\.\\-\\s]+):\\s*([a-zA-Z\\.\\-\\s]+)$");
 	private static final Pattern WEAPON_ENTRY =
-			Pattern.compile("^\\s+-\\s+([\\w\\.\\-\\s]+)$");
+			Pattern.compile("^\\s+-\\s+([a-zA-Z\\.\\-\\s]+)$");
 	// Matches comments, ie. any line starting with a "#", optionally with whitespace before it
 	private static final Pattern COMMENT = Pattern.compile("^\\s*#");
 
@@ -139,10 +141,27 @@ public class Loader {
 			if (line == null || !line.equals("---")) {
 				fail("YAML header not found");
 			}
-			loadGroup(br);
+			loadGroups(br);
 		}
 		finally {
 			br.close();
+		}
+	}
+	
+	private void loadGroups(BufferedReader br) throws IOException, SyntaxException {
+		while (loadGroup(br)) { continue; }
+		
+		if (rooms == null) {
+			fail("No rooms definition found");
+		}
+		else if (suspects == null) {
+			fail("No suspects definition found");
+		}
+		else if (weapons == null) {
+			fail("No weapons definition found");
+		}
+		else if (corridors == null) {
+			fail("No board definition found");
 		}
 	}
 
@@ -150,33 +169,40 @@ public class Loader {
 	 * Tries to load a group (title + entries) from the given reader. If it fails to find
 	 * a group title, it will load the board instead.
 	 */
-	private void loadGroup(BufferedReader br) throws IOException, SyntaxException {
+	private boolean loadGroup(BufferedReader br) throws IOException, SyntaxException {
 		String line = readDataLine(br);
-		Matcher matcher = GROUP_HEADER.matcher(line);
-		if (matcher.find()) {
+		Matcher matcher;
+		
+		if (line == null) {
+			return false;
+		}
+		else if ((matcher = GROUP_HEADER.matcher(line)).find()) {
 			String title = matcher.group(1);
 			switch(title) {
 			case "suspects":
 				loadSuspects(br);
-				break;
+				return true;
 			case "rooms":
 				loadRooms(br);
-				break;
+				return true;
 			case "passages":
 				loadPassages(br);
-				break;
+				return true;
 			case "weapons":
 				loadWeapons(br);
-				break;
+				return true;
 			default:
 				fail("Unrecognized group: " + title);
+				return false;
 			}
 		}
 		else if (Pattern.matches("^---+$", line)) {
 			loadBoard(br, line.length());
+			return true;
 		}
 		else {
 			fail("Expected group header or start of board");
+			return false;
 		}
 	}
 
@@ -253,11 +279,11 @@ public class Loader {
 			if (line == null) {
 				fail("Board definition must be at least " + size + " lines long");
 			}
-			else if (line.charAt(line.length() - 1) == '|') {
+			else if (line.charAt(line.length() - 1) != '|') {
 				fail("Each row of the board must end with a '|'");
 			}
-			line = line.substring(1, line.length() - 1);
-			if (line.length() < size) {
+			line = line.substring(0, line.length() - 1);
+			if (line.length() != size) {
 				fail("Each row of the board must be exactly " + size + " characters long (excluding the final '|')");
 			}
 			for (int x = 0; x < size; x++) {
@@ -333,7 +359,15 @@ public class Loader {
 	private List<Matcher> loadEntries(BufferedReader br, Pattern pattern, String lookingFor) throws IOException, SyntaxException {
 		List<Matcher> result = new ArrayList<Matcher>();
 		String line;
+		
+		br.mark(MAX_LINE_LENGTH);
 		while ((line = readDataLine(br)) != null) {
+			if (!(line.startsWith(" ") || line.startsWith("\t"))) {
+				br.reset();
+				return result;
+			}
+			br.mark(MAX_LINE_LENGTH);
+			
 			Matcher matcher = pattern.matcher(line);
 			if (!matcher.find()) {
 				fail("Couldn't parse " + lookingFor + " entry");
