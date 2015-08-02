@@ -14,4 +14,10 @@ public class Game {
 		this.renderer = renderer;
 		renderer.setup(data, board);
 	}
+
+	public void run() {
+		for (Player player : renderer.queryPlayers(data)) {
+			board.addPlayer(player);
+		}
+	}
 }

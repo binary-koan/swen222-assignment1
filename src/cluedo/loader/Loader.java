@@ -28,6 +28,7 @@ public class Loader {
 	/**
 	 * Exception thrown if the syntax of the game file is not understood by the parser
 	 */
+	@SuppressWarnings("serial")
 	public class SyntaxException extends Exception {
 		public SyntaxException(String message) {
 			super(message);

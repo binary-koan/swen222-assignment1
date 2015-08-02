@@ -1,5 +1,6 @@
 package cluedo.game;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -17,5 +18,11 @@ public class GameData {
 		this.rooms = loader.getRooms();
 		this.suspects = loader.getSuspects();
 		this.weapons = loader.getWeapons();
+	}
+
+	public List<Suspect> getSuspects() {
+		List<Suspect> result = new ArrayList<Suspect>();
+		result.addAll(suspects.values());
+		return result;
 	}
 }
