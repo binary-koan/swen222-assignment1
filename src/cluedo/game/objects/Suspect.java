@@ -32,11 +32,13 @@ public class Suspect implements Card {
 		return this.startLocation;
 	}
 
-	public void setLocation(){
+	public void setLocation(Point point){
+		this.location = point;
 
 	}
 
-	public void getLocation(){
+	public Point getLocation(){
+		return this.location;
 
 	}
 

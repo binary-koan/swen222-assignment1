@@ -1,11 +1,85 @@
 package cluedo.game.objects;
 
+import java.awt.Color;
+import java.awt.Point;
+import java.util.ArrayList;
+
 public class Room implements Card {
 
+	public String id;
+	private final String name;
+	public Weapon weapon;
+	public Room passageExit;
+	
+	private ArrayList<Point> points = new ArrayList<Point>();
+	private ArrayList<Suspect> occupants = new ArrayList<Suspect>();
+
+	public Room(String id, String name){
+		this.name = name;
+		this.id = id;
+
+
+	}
+
+	/**
+	 * Returns the name of the room.
+	 */
 	@Override
 	public String getName() {
 		// TODO Auto-generated method stub
-		return null;
+		return name;
+	}
+
+	/**
+	 * Adds an occupant to the list of tokens in a room.
+	 * @param character
+	 */
+	public void addOccupent(Suspect character){
+		occupants.add(character);
+	}
+
+	/**
+	 * Returns the occupants/tokens in the room.
+	 * @return
+	 */
+	public ArrayList<Suspect> getOccupants(){
+		return occupants;
+	}
+
+	/**
+	 * Removes an occupant from the list of tokens in a room.
+	 * @param character
+	 */
+	public void removeOccupant(Suspect character){
+		occupants.remove(character);
+	}
+
+	public void setWeapon(Weapon weapon){
+		this.weapon = weapon;
+	}
+
+	/**
+	 * Returns the weapon in this room, null if none.
+	 */
+	public Weapon getWeapon(){
+		return this.weapon;
+
+	}
+
+	public void addPoint(int x, int y){
+		points.add(new Point(x, y));
+	}
+	
+	public ArrayList<Point> getPoints(){
+		return this.points;
+	}
+
+	public void setPassageExit(Room room){
+		this.passageExit = room;
+	}
+
+	public void getCenterPoint(){
+
 	}
 
 }
