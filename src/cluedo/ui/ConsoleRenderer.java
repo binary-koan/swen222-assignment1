@@ -375,6 +375,8 @@ public class ConsoleRenderer implements Renderer {
 		int width = maxX - minX;
 		int height = maxY - minY;
 
+		//BoundingBox boundingBox = new BoundingBox(0, 0, width, height);
+
 		char roomChars[][] = new char[height][width];
 
 		//=========alternate
