@@ -17,9 +17,4 @@ public class Solution {
 	public void addCard(Card card) {
 		this.hand.add(card);
 	}
-
-
-
-
-
 }

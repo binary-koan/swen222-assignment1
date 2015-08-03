@@ -1,64 +1,66 @@
 package cluedo.game;
 
-import java.awt.List;
-import java.util.ArrayList;
+import game.Solution;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import cluedo.game.objects.Room;
+import cluedo.game.objects.Suspect;
+import cluedo.game.objects.Weapon;
 import cluedo.loader.Loader;
-import cluedo.ui.base.Renderer;
-import cluedo.ui.ConsoleRenderer;
 
 public class Game {
 	private GameData data;
 	private Board board;
-	private Renderer renderer;
+	private Solution solution;
+	private List<Player> players;
 
 
-	public Game(Loader loader, Renderer renderer) {
+	public Game(Loader loader) {
 		this.data = new GameData(loader);
 		this.board = new Board(loader);
-		this.renderer = renderer;
-		renderer.setup(data, board);
 	}
 
-	public void run() {
-		ArrayList<Player> players = new ArrayList<Player>();
-		for (Player player : renderer.queryPlayers(data)) {
-			board.addPlayer(player);
-			players.add(player);
-		}
 
-		((ConsoleRenderer) renderer).assignHands(players); // remove cast?
+	public void addPlayer(Player player) {
+		players.add(player);
+		board.addPlayer(player);
+	}
 
-		int turn = 1;
-		int i = 0;
 
-		while(true){
-			System.out.println("======== Turn "+ turn +" ========");
+	public void assignHands() {
+		List<Weapon> weapons = data.getWeapons();
+		List<Suspect> suspects = data.getSuspects();
+		List<Room> rooms = data.getRooms();
 
-			for(Player p: players){
-				if(p.getInGame() == true){
-					System.out.println("Currently "+ p.getName() +"'s turn");
-					System.out.println("What would you like to do?");
-					int diceRoll = (int) Math.random() * 6;
-					p.setMovesLeft(diceRoll);
-					((ConsoleRenderer) renderer).gameOptions(p, diceRoll); //remove cast?
+
+		//method doing two things - bad design?
+		//Will the following revert changes back to the arraylists?
+		//also empty checks needed?
+
+		solution = new Solution();
+		solution.addCard(suspects.remove((int)(Math.random() * suspects.size())));
+		solution.addCard(rooms.remove((int)(Math.random() * rooms.size())));
+		solution.addCard(weapons.remove((int)(Math.random() * weapons.size())));
+
+		while(!weapons.isEmpty() || !suspects.isEmpty() || !rooms.isEmpty()){
+			for(Player p : players){
+				if(!weapons.isEmpty()){
+					p.addCardToHand(weapons.remove((int)(Math.random() * weapons.size())));
 				}
-				//If all players have made an incorrect guess and are knocked out.
-				//If a player has won
-				//Should these methods be here? Seems kind of messy
-				if(((ConsoleRenderer) renderer).getWinningPlayer()!=null){
-					System.out.println("Player "+((ConsoleRenderer) renderer).getWinningPlayer().getName()+"wins!");
-					return;
+				if(!suspects.isEmpty()){
+					p.addCardToHand(suspects.remove((int)(Math.random() * suspects.size())));
 				}
-
-				if(((ConsoleRenderer) renderer).getNullPlayers().size() == players.size()){
-					System.out.println("All players have been knocked out! Game over.");
-					return;
+				if(rooms.isEmpty()){
+					p.addCardToHand(rooms.remove((int)(Math.random() * rooms.size())));
 				}
-
-
 			}
-			turn++;
 		}
+	}
+
+
+	public GameData getData() {
+		return data;
 	}
 }

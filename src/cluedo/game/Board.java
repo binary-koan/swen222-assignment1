@@ -22,7 +22,7 @@ public class Board {
 	}
 
 	/** Possible movement directions - passed to movePlayer() */
-	enum Direction {
+	public enum Direction {
 		NORTH,
 		EAST,
 		SOUTH,
@@ -92,13 +92,17 @@ public class Board {
 	 * Move a player out of a room through a door, then along the specified path
 	 * @param player player to move
 	 * @param steps path to move the player along
-	 * @param door door the player should start moving from
+	 * @param door door the player should start moving from TODO update comment with null
 	 * @throws UnableToMoveException if the player tries to move to an invalid location,
 	 * 								 or is trying to exit from a room they're not in
 	 */
 	public void movePlayer(Player player, List<Direction> steps, Door door) throws UnableToMoveException {
 		if (!playerLocations.containsKey(player)) {
 			throw new RuntimeException("Player " + player + " isn't on the board");
+		}
+
+		if (door == null) {
+			movePlayerAlongPath(player, steps);
 		}
 
 		if (player.getRoom() != door.getRoom()) {
@@ -108,7 +112,7 @@ public class Board {
 		for (Map.Entry<Point, Door> entry : doorLocations.entrySet()) {
 			if (entry.getValue() == door) {
 				playerLocations.put(player, door.getLocation());
-				movePlayer(player, steps);
+				movePlayerAlongPath(player, steps);
 				return;
 			}
 		}
@@ -121,7 +125,7 @@ public class Board {
 	 * @param steps path to move the player along
 	 * @throws UnableToMoveException if the player tries to move to an invalid location
 	 */
-	public void movePlayer(Player player, List<Direction> steps) throws UnableToMoveException {
+	private void movePlayerAlongPath(Player player, List<Direction> steps) throws UnableToMoveException {
 		Point currentLocation = playerLocations.get(player);
 		if (currentLocation == null) {
 			throw new RuntimeException("Player " + player + " isn't on the board");
@@ -132,14 +136,14 @@ public class Board {
 		for (Direction step : steps) {
 			newLocation = moveFrom(newLocation, step);
 			checkInCorridor(newLocation);
-			player.setMovesLeft(player.getMovesLeft()-1);			//Getter/setter overkill?
+//			player.setMovesLeft(player.getMovesLeft()-1);			//Getter/setter overkill?
 		}
 
 		newLocation = moveFrom(newLocation, finalStep);
-		player.setLocation(newLocation);							//Neccessary?
+//		player.setLocation(newLocation);							//Scott change// Neccessary?
 		Door door = doorLocations.get(newLocation);
 		if (door != null) {
-//			DO A CHECK IF IT'S HORIZONTAL OR VERTICAL
+//			TODO A CHECK IF IT'S HORIZONTAL OR VERTICAL
 			player.setRoom(door.getRoom());
 		}
 		else {

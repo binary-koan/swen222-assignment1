@@ -14,7 +14,8 @@ public class Main {
 	public static void main(String[] args) {
 		String filename = ConsoleRenderer.getFilename("data/standard.txt");
 		try {
-			new Game(new Loader(filename), new ConsoleRenderer()).run();
+			Loader loader = new Loader(filename);
+			new ConsoleRenderer().run(new Game(loader));
 		} catch (IOException e) {
 			System.out.println("\nFailed to read game file! Please ensure that it exists and is accessible.");
 			e.printStackTrace();

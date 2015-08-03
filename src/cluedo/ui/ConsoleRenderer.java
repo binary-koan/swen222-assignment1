@@ -11,7 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cluedo.game.Board;
+import cluedo.game.Board.Direction;
+import cluedo.game.Board.UnableToMoveException;
 import cluedo.game.Door;
+import cluedo.game.Game;
 import cluedo.game.GameData;
 import cluedo.game.Player;
 import cluedo.game.objects.Card;
@@ -19,12 +22,8 @@ import cluedo.game.objects.Room;
 import cluedo.game.objects.Suspect;
 import cluedo.game.objects.Weapon;
 import cluedo.ui.base.Renderer;
-import cluedo.ui.base.TurnController;
 
 public class ConsoleRenderer implements Renderer {
-	public class ConsoleTurnController implements TurnController {
-	}
-
 	private static BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in));
 
 	public static String getFilename(String defaultName) {
@@ -46,43 +45,59 @@ public class ConsoleRenderer implements Renderer {
 
 	}
 
+	public void run(Game game) {
+		this.game = game;
+		calculateBoardBase();
 
+		for (Player player : queryPlayers(game.getData().getSuspects())) {
+			game.addPlayer(player);
+		}
 
+		game.assignHands(); // remove cast?
 
-	//Bad design to repeat enum?
-	enum Direction {
-		NORTH,
-		EAST,
-		SOUTH,
-		WEST
+		int turn = 1;
+//		int i = 0;
+
+		while(true){
+			System.out.println("======== Turn "+ turn +" ========");
+
+			for(Player p: players){
+				if(p.getInGame() == true){
+					int diceRoll = (int) (Math.random() * 6);
+					p.startTurn(diceRoll);
+					System.out.println("Currently "+ p.getName() +"'s turn");
+					System.out.println("What would you like to do?");
+//					p.setCanSuggest(true);	// not needed if suggesting is the last thing in a turn
+//					p.setMovesLeft(diceRoll); // player now knows about dice roll from startTurn()
+					doTurn(p); //remove cast?
+					p.endTurn();
+				}
+				//If all players have made an incorrect guess and are knocked out.
+				//If a player has won
+				//Should these methods be here? Seems kind of messy
+				// Probably fine :)
+				if(getWinningPlayer()!=null){
+					System.out.println("Player " + getWinningPlayer().getName() + "wins!");
+					return;
+				}
+
+				if(getNullPlayers().size() == players.size()){
+					System.out.println("All players have been knocked out! Game over.");
+					return;
+				}
+			}
+			turn++;
+		}
 	}
 
-
-
-
-
-
-
-
-	private GameData data;
-	private Board board;
 	private StringBuilder[] boardBase;
+	private Game game;
 	private static List<Player> players;				//should these be here?
 	private static ArrayList<Player> nullPlayers;		//should these be here?
 	private static Player winningPlayer;
 
-	public ConsoleRenderer() { }
-
-	@Override
-	public void setup(GameData data, Board board) {
-		this.data = data;
-		this.board = board;
-		calculateBoardBase();
-	}
-
-	@Override
-	public List<Player> queryPlayers(GameData data) {
-		List<Suspect> suspects = data.getSuspects();
+	public List<Player> queryPlayers(List<Suspect> list) {
+		List<Suspect> suspects = new ArrayList<Suspect>(list);
 
 		int players = 0;
 
@@ -103,7 +118,7 @@ public class ConsoleRenderer implements Renderer {
 		for (int i = 0; i < players; i++) {
 			System.out.println("Player "+ i +" name?");
 			String pname;
-			pname = readLine("> ");
+			pname = readLine("> ");							//player name funct, check needed?
 			Suspect token = suspects.remove((int)(Math.random() * suspects.size()));
 			result.add(new Player(pname, token));
 		}
@@ -114,44 +129,7 @@ public class ConsoleRenderer implements Renderer {
 
 
 
-
-	public Solution assignHands(ArrayList<Player> players){
-
-		List<Weapon> weapons = data.getWeapons();
-		List<Suspect> suspects = data.getSuspects();
-		List<Room> rooms = data.getRooms();
-
-
-		//method doing two things - bad design?
-		//Will the following revert changes back to the arraylists?
-		//also empty checks needed?
-
-		Solution solution = new Solution();
-		solution.addCard(suspects.remove((int)Math.random() * suspects.size()));
-		solution.addCard(rooms.remove((int)Math.random() * rooms.size()));
-		solution.addCard(weapons.remove((int)Math.random() * weapons.size()));
-
-		while(!weapons.isEmpty() || !suspects.isEmpty() || !rooms.isEmpty()){
-			for(Player p : players){
-				if(!weapons.isEmpty()){
-					p.addCardToHand(weapons.remove((int)Math.random() * weapons.size()));
-				}
-				if(!suspects.isEmpty()){
-					p.addCardToHand(suspects.remove((int)Math.random() * suspects.size()));
-				}
-				if(rooms.isEmpty()){
-					p.addCardToHand(rooms.remove((int)Math.random() * rooms.size()));
-				}
-			}
-		}
-		return solution;
-	}
-
-
-
-
-
-	public static void gameOptions(Player player, int diceRoll){
+	public void doTurn(Player player){
 
 		if(player.getRoom()!=null){
 			System.out.println("You are located in "+ player.getRoom().getName());
@@ -161,7 +139,7 @@ public class ConsoleRenderer implements Renderer {
 		}
 
 		System.out.println("What would you like to do?");
-		System.out.println("Your roll is "+ diceRoll);
+		System.out.println("Your roll is " + player.getDiceRoll());
 
 		while(true){
 			String input = readLine("Move (m), make a suggestion (s), make an accusation (a), review the board (r), "
@@ -171,9 +149,11 @@ public class ConsoleRenderer implements Renderer {
 			}
 			else if(input == "s"){
 				makeSuggestion(player);
+				return;
 			}
 			else if(input == "a"){
 				makeAccusation(player);
+				return;
 			}
 			else if(input == "r"){
 				displayBoard();
@@ -190,28 +170,33 @@ public class ConsoleRenderer implements Renderer {
 		}
 	}
 
-	private static void takePassage(Player player) {
+	private void takePassage(Player player) {
+		// Should probably be a special case which doesn't use up a move ...
+		// I don't think that's in the spec so let's just do the easiest thing
 
-		if(player.getRoom() != null && player.getRoom().getPassageExit() != null && player.getMovesLeft() >= 1){
-			player.setRoom(player.getRoom().getPassageExit());
-			//TO DO: Change player location
-			//TO DO: Draw player token in different room
-			player.setMovesLeft(player.getMovesLeft() - 1);
-		}
-		else{
-			System.out.println("Not in room/room has no secret passage exit/you have no move points left");
-		}
+//		if(player.getRoom() != null && player.getRoom().getPassageExit() != null && player.getMovesLeft() >= 1){
+//			player.setRoom(player.getRoom().getPassageExit());
+//			//TO DO: Change player location
+//			//TO DO: Draw player token in different room
+//			player.setMovesLeft(player.getMovesLeft() - 1);
+//		}
+//		else {
+//			// Maybe try and get a more informative error message?
+//			// Like: if (not in room) { print that } else if (no secret passage) { print that } else { do stuff }
+//			System.out.println("Not in room/room has no secret passage exit/you have no move points left");
+//		}
 	}
 
-	private static void displayBoard() {
+	private void displayBoard() {
 		// TODO Auto-generated method stub
 
 	}
 
-	private static void makeAccusation(Player player) {
+	private void makeAccusation(Player player) {
 		System.out.println("Make your accusation in the following order: suspect (eg ***properformat***), room, weapon");
 		String suspect;
 		String room;
+
 		String weapon;
 
 		suspect = System.console().readLine("> ");
@@ -240,14 +225,15 @@ public class ConsoleRenderer implements Renderer {
 	}
 
 	private static void makeSuggestion(Player player) {
-		if(player.inRoom() == false){
+		if(player.getRoom() == null){
 			System.out.println("You must be in a room to make a suggestion");
 			return;
 		}
-		if(player.getCanSuggest() == false){
-			System.out.println("You have already made a suggestion");
-			return;
-		}
+		// Shouldn't be needed if it's the last thing in a turn
+//		if(player.getCanSuggest() == false){
+//			System.out.println("You have already made a suggestion");
+//			return;
+//		}
 		System.out.println("Make your suggestion in the following order: suspect (eg ***properformat***), weapon");
 		String suspect;
 		String room = player.getRoom().getName();
@@ -261,45 +247,53 @@ public class ConsoleRenderer implements Renderer {
 			for(Card c: p.getHand()){
 				if(c.getName() == suspect || c.getName() == room || c.getName() == weapon){
 					System.out.println("Your suggestion was proved incorrect by "+ p.getName());
-					System.out.println("The incorrect card was "+ c.getName() +"- note this down.");
-					player.setCanSuggest(false);
+					System.out.println("They are holding card "+ c.getName() +"- note this down.");
+//					player.setCanSuggest(false);
 					return;
 				}
 			}
 		}
-		System.out.println("No one was able to disprove your suggestion");
+		System.out.println("No one was able to disprove your suggestion.");
+//		player.setCanSuggest(false);
 	}
 
-	private static void move(Player player) {
-		if(player.getMovesLeft() <= 0){
-			System.out.println("You have already used up all your moves.");
-			return;
-		}
+	private void move(Player player) {
+		// Would it make sense to only be able to move once? Like, once you type "m" you're not allowed to move again?
+//		if(player.getMovesLeft() <= 0){
+//			System.out.println("You have already used up all your moves.");
+//			return;
+//		}
 		List<Direction> directions = new ArrayList<Direction>();
 		System.out.println("Enter the directions you wish to take: NORTH(1), EAST(2), SOUTH(3), WEST(4)");
 
-		for(int i = player.getMovesLeft(); i > 0; i--){
-			int dir = Integer.parseInt(System.console().readLine("> "));
-
-			switch(dir){ //TO DO: figure out directions/error handling
-			case 1:
-				directions.add(null);
-			case 2:
-				directions.add(null);
-			case 3:
-				directions.add(null);
-			case 4:
-				directions.add(null);
-			default :
-				System.out.println("Please enter a direction");
-			}
-		}
+//		for(int i = player.getMovesLeft(); i > 0; i--){
+//			int dir = Integer.parseInt(System.console().readLine("> "));
+//
+//			switch(dir){ //TO DO: figure out directions/error handling
+//			case 1:
+//				directions.add(null);
+//			case 2:
+//				directions.add(null);
+//			case 3:
+//				directions.add(null);
+//			case 4:
+//				directions.add(Direction.NORTH);
+//			default :
+//				System.out.println("Please enter a direction");
+//			}
+//		}
 		if(player.getRoom() != null){
 			System.out.println("Enter the door you wish to leave from");
-			Door door = new Door(System.console().readLine("> "));         //Not sure how weare doing the doors
-			//board.movePlayer(player, directions, door);				   //Also need safety checks, static or not?
-		}
-		else{
+//			Door door = new Door(null, null);         //Not sure how weare doing the doors
+//			Door door = player.getRoom().getDoor(...);
+//			try {
+//				board.movePlayer(player, directions, door);
+//			} catch (UnableToMoveException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}				   //Also need safety checks, static or not?
+		}																	//Also are we redrawing the board?
+		else{																//What if player collides in wall?
 			//board.movePlayer(player, directions); 						//static or not?
 		}
 	}
@@ -327,7 +321,7 @@ public class ConsoleRenderer implements Renderer {
 
 
 	public void drawBoard() {
-		drawBoard(0, board.getSize());
+//		drawBoard(0, game.getBoard().getSize());
 	}
 
 	public void drawBoard(int startY, int endY) {
@@ -338,18 +332,18 @@ public class ConsoleRenderer implements Renderer {
 	}
 
 	private void calculateBoardBase() {
-		boardBase = new StringBuilder[board.getSize()];
-		for (int y = 0; y < board.getSize(); y++) {
-			boardBase[y] = new StringBuilder(board.getSize());
-			for (int x = 0; x < board.getSize(); x++) {
-				if (board.isCorridor(x, y)) {
-					boardBase[y].setCharAt(x, '\u2592'); // Medium shade
-				}
-				else {
-					boardBase[y].setCharAt(x, '\u2588'); // Solid block
-				}
-			}
-		}
+//		boardBase = new StringBuilder[board.getSize()];
+//		for (int y = 0; y < board.getSize(); y++) {
+//			boardBase[y] = new StringBuilder(board.getSize());
+//			for (int x = 0; x < board.getSize(); x++) {
+//				if (board.isCorridor(x, y)) {
+//					boardBase[y].setCharAt(x, '\u2592'); // Medium shade
+//				}
+//				else {
+//					boardBase[y].setCharAt(x, '\u2588'); // Solid block
+//				}
+//			}
+//		}
 //		for (Room room : board.getRooms()) {
 //			for (Point point : room.getPoints()) {
 //				chars[point.y][point.x] = " ";
@@ -370,7 +364,7 @@ public class ConsoleRenderer implements Renderer {
 	}
 
 	private String[] buildCurrentBoard() {
-		StringBuilder[] copies = new StringBuilder[board.getSize()];
+//		StringBuilder[] copies = new StringBuilder[board.getSize()];
 //		for (Player player : board.getPlayers()) {
 //			Point location = board.getPlayerLocation(player);
 //			//TODO: Handle players in rooms
@@ -380,10 +374,11 @@ public class ConsoleRenderer implements Renderer {
 //			copies[location.y].setCharAt(location.x, player.getToken().getIdentifier());
 //		}
 		//TODO: Add weapons too
-		String[] result = new String[board.getSize()];
-		for (int i = 0; i < board.getSize(); i++) {
-			result[i] = (copies[i] == null) ? boardBase[i].toString() : copies[i].toString();
-		}
-		return result;
+//		String[] result = new String[board.getSize()];
+//		for (int i = 0; i < board.getSize(); i++) {
+//			result[i] = (copies[i] == null) ? boardBase[i].toString() : copies[i].toString();
+//		}
+//		return result;
+		return null;
 	}
 }
