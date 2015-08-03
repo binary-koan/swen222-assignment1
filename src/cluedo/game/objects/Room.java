@@ -6,10 +6,10 @@ import java.util.ArrayList;
 
 public class Room implements Card {
 
-	public String id;
+	private String id;
 	private final String name;
-	public Weapon weapon;
-	public Room passageExit;
+	private Weapon weapon;
+	private Room passageExit;
 
 	private ArrayList<Point> points = new ArrayList<Point>();
 	private ArrayList<Suspect> occupants = new ArrayList<Suspect>();

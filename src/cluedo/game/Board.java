@@ -136,6 +136,7 @@ public class Board {
 		}
 
 		newLocation = moveFrom(newLocation, finalStep);
+		player.setLocation(newLocation);							//Neccessary?
 		Door door = doorLocations.get(newLocation);
 		if (door != null) {
 //			DO A CHECK IF IT'S HORIZONTAL OR VERTICAL

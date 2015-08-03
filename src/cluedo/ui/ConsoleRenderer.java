@@ -46,19 +46,6 @@ public class ConsoleRenderer implements Renderer {
 
 	}
 
-	private static int readNumber(String prompt) {
-		System.out.print(prompt + " ");
-		while (true) {
-			try {
-				String typed = consoleReader.readLine();
-				if(typed != null){
-					return Integer.parseInt(typed);
-				}
-			} catch (IOException e) {
-				System.out.println("Please enter a valid number");
-			}
-		}
-	}
 
 
 
@@ -157,7 +144,6 @@ public class ConsoleRenderer implements Renderer {
 				}
 			}
 		}
-
 		return solution;
 	}
 
@@ -206,8 +192,7 @@ public class ConsoleRenderer implements Renderer {
 
 	private static void takePassage(Player player) {
 
-		if(player.getRoom() != null && player.getRoom().getPassageExit() != null && player.canMove == true
-				 && player.getMovesLeft() >= 1){
+		if(player.getRoom() != null && player.getRoom().getPassageExit() != null && player.getMovesLeft() >= 1){
 			player.setRoom(player.getRoom().getPassageExit());
 			//TO DO: Change player location
 			//TO DO: Draw player token in different room
@@ -286,13 +271,17 @@ public class ConsoleRenderer implements Renderer {
 	}
 
 	private static void move(Player player) {
+		if(player.getMovesLeft() <= 0){
+			System.out.println("You have already used up all your moves.");
+			return;
+		}
 		List<Direction> directions = new ArrayList<Direction>();
 		System.out.println("Enter the directions you wish to take: NORTH(1), EAST(2), SOUTH(3), WEST(4)");
 
 		for(int i = player.getMovesLeft(); i > 0; i--){
 			int dir = Integer.parseInt(System.console().readLine("> "));
 
-			switch(dir){ //TO DO: figure out directions
+			switch(dir){ //TO DO: figure out directions/error handling
 			case 1:
 				directions.add(null);
 			case 2:
@@ -305,7 +294,6 @@ public class ConsoleRenderer implements Renderer {
 				System.out.println("Please enter a direction");
 			}
 		}
-
 		if(player.getRoom() != null){
 			System.out.println("Enter the door you wish to leave from");
 			Door door = new Door(System.console().readLine("> "));         //Not sure how weare doing the doors
@@ -316,6 +304,7 @@ public class ConsoleRenderer implements Renderer {
 		}
 	}
 
+	//bad way of doing this (next 3 methods?)
 	public ArrayList<Player> getNullPlayers(){
 		return nullPlayers;
 	}

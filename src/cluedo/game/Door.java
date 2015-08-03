@@ -6,16 +6,16 @@ import cluedo.game.objects.Room;
 
 public class Door {
 
-	public Room room;
-	public boolean isVertical;
-	public Point location;
+	private Room room;
+	private boolean isVertical;
+	private Point location;
 
 
 	public Door(Room room, Boolean isVertical){
 		this.room = room;
 		this.isVertical = isVertical;
 	}
-
+	//??
 	public Door(String name) {
 		// TODO Auto-generated constructor stub
 	}

@@ -2,18 +2,15 @@ package cluedo.game.objects;
 
 public class Weapon implements Card {
 
-	String name;
-	Room room;
+	private String name;
+	private Room room;
 
 	public Weapon(String name){
 		this.name = name;
 
 	}
 
-	@Override
 	public String getName() {
-
-		// TODO Auto-generated method stub
 		return name;
 	}
 

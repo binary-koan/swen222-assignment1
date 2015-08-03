@@ -9,18 +9,15 @@ public class Suspect implements Card {
 	private final String name;
 	private final Color color;
 	private Point startLocation;
-	public Point location;
+	private Point location;
 
 	public Suspect(String id, String name, Color color){
 		this.id = id;
 		this.name = name;
 		this.color = color;
-
 	}
 
-	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
 		return name;
 	}
 
@@ -34,12 +31,10 @@ public class Suspect implements Card {
 
 	public void setLocation(Point point){
 		this.location = point;
-
 	}
 
 	public Point getLocation(){
 		return this.location;
-
 	}
 
 }

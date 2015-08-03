@@ -9,15 +9,15 @@ import cluedo.game.objects.Suspect;
 
 public class Player {
 
-	public String name;
+	private String name;
 	private List<Card> hand;
-	public Suspect token;
-	public Boolean canMove;
+	private Suspect token;
+	private Boolean canMove;
 	private Boolean inGame = true;
 	private Boolean inRoom = false;
 	private boolean canSuggest = true;
-	public Room room = null;
-	public Point location;
+	private Room room = null;
+	private Point location;
 	private int movesLeft = 0;
 
 
@@ -78,5 +78,9 @@ public class Player {
 
 	public void setInGame(Boolean inGame) {
 		this.inGame = inGame;
+	}
+
+	public void setLocation(Point location) {
+		this.location = location;
 	}
 }
