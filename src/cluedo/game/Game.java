@@ -19,13 +19,13 @@ public class Game {
 
 	public Game(Loader loader) {
 		this.data = new GameData(loader);
-		this.board = new Board(loader);
+		this.setBoard(new Board(loader));
 	}
 
 
 	public void addPlayer(Player player) {
 		players.add(player);
-		board.addPlayer(player);
+		getBoard().addPlayer(player);
 	}
 
 
@@ -59,8 +59,16 @@ public class Game {
 		}
 	}
 
-
 	public GameData getData() {
 		return data;
 	}
+
+	public Board getBoard() {
+		return board;
+	}
+
+	public void setBoard(Board board){
+		this.board = board;
+	}
+
 }

@@ -3,12 +3,15 @@ package cluedo.ui;
 import game.Solution;
 
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.io.BufferedReader;
 import java.io.Console;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import cluedo.game.Board;
 import cluedo.game.Board.Direction;
@@ -42,7 +45,6 @@ public class ConsoleRenderer implements Renderer {
 				throw new RuntimeException("Could not read from console");
 			}
 		}
-
 	}
 
 	public void run(Game game) {
@@ -74,14 +76,14 @@ public class ConsoleRenderer implements Renderer {
 				}
 				//If all players have made an incorrect guess and are knocked out.
 				//If a player has won
-				//Should these methods be here? Seems kind of messy
+				//Should these be here? Seems kind of messy
 				// Probably fine :)
-				if(getWinningPlayer()!=null){
+				if(getWinningPlayer() != null){
 					System.out.println("Player " + getWinningPlayer().getName() + "wins!");
 					return;
 				}
 
-				if(getNullPlayers().size() == players.size()){
+				if(nullPlayers.size() == players.size()){
 					System.out.println("All players have been knocked out! Game over.");
 					return;
 				}
@@ -142,10 +144,11 @@ public class ConsoleRenderer implements Renderer {
 		System.out.println("Your roll is " + player.getDiceRoll());
 
 		while(true){
-			String input = readLine("Move (m), make a suggestion (s), make an accusation (a), review the board (r), "
-					+ "take secret passageway (t) or end your turn (e)?");
+			String input = readLine("Move (m), make a suggestion (s), make an accusation (a), review your room (r)"
+					+ "review the board (d), take secret passageway (t) or end your turn (e)?");
 			if(input == "m"){
 				move(player);
+				return;								// /S/ ?? moving ends a players turn
 			}
 			else if(input == "s"){
 				makeSuggestion(player);
@@ -156,6 +159,9 @@ public class ConsoleRenderer implements Renderer {
 				return;
 			}
 			else if(input == "r"){
+				displayRoom(player.getRoom());
+			}
+			else if(input == "d"){
 				displayBoard();
 			}
 			else if(input == "t"){
@@ -170,21 +176,27 @@ public class ConsoleRenderer implements Renderer {
 		}
 	}
 
+
 	private void takePassage(Player player) {
 		// Should probably be a special case which doesn't use up a move ...
 		// I don't think that's in the spec so let's just do the easiest thing
+		// /S/ Soo I just made it so that it doesnt use up a move
 
-//		if(player.getRoom() != null && player.getRoom().getPassageExit() != null && player.getMovesLeft() >= 1){
-//			player.setRoom(player.getRoom().getPassageExit());
-//			//TO DO: Change player location
-//			//TO DO: Draw player token in different room
-//			player.setMovesLeft(player.getMovesLeft() - 1);
-//		}
-//		else {
-//			// Maybe try and get a more informative error message?
-//			// Like: if (not in room) { print that } else if (no secret passage) { print that } else { do stuff }
-//			System.out.println("Not in room/room has no secret passage exit/you have no move points left");
-//		}
+		if(player.getRoom() != null && player.getRoom().getPassageExit() != null){
+			player.setRoom(player.getRoom().getPassageExit());
+			//TO DO: Change player location
+			//TO DO: Draw player token in different room
+		}
+		else {
+			// Maybe try and get a more informative error message?
+			// Like: if (not in room) { print that } else if (no secret passage) { print that } else { do stuff }
+			if(player.getRoom() == null){
+				System.out.println("You are not in a room!");
+			}
+			else if (player.getRoom().getPassageExit() == null){
+				System.out.println("This room does not have a secret exit");
+			}
+		}
 	}
 
 	private void displayBoard() {
@@ -192,11 +204,12 @@ public class ConsoleRenderer implements Renderer {
 
 	}
 
+
+
 	private void makeAccusation(Player player) {
 		System.out.println("Make your accusation in the following order: suspect (eg ***properformat***), room, weapon");
 		String suspect;
 		String room;
-
 		String weapon;
 
 		suspect = System.console().readLine("> ");
@@ -214,7 +227,8 @@ public class ConsoleRenderer implements Renderer {
 					return;
 				}
 			}
-			//actual check with solution needed here
+			//actual check with solution needed here, how to do without many ifs()?
+
 			System.out.println("Your accussation was correct! You have won.");
 			setWinningPlayer(player);
 
@@ -224,7 +238,7 @@ public class ConsoleRenderer implements Renderer {
 
 	}
 
-	private static void makeSuggestion(Player player) {
+	private void makeSuggestion(Player player) {
 		if(player.getRoom() == null){
 			System.out.println("You must be in a room to make a suggestion");
 			return;
@@ -259,29 +273,39 @@ public class ConsoleRenderer implements Renderer {
 
 	private void move(Player player) {
 		// Would it make sense to only be able to move once? Like, once you type "m" you're not allowed to move again?
+
+		// /S/ Ok so apparently if you move into a room it ends your turn, and I dont see why if you would move anywhere
+		// if youre about to make an accusation, so I just made move end the player's turn in doTurn.
+
 //		if(player.getMovesLeft() <= 0){
 //			System.out.println("You have already used up all your moves.");
 //			return;
 //		}
 		List<Direction> directions = new ArrayList<Direction>();
-		System.out.println("Enter the directions you wish to take: NORTH(1), EAST(2), SOUTH(3), WEST(4)");
+		System.out.println("Enter the directions you wish to take (no spaces): NORTH(N), EAST(E), SOUTH(S), WEST(W)");
+		String dir = System.console().readLine(">");
 
-//		for(int i = player.getMovesLeft(); i > 0; i--){
-//			int dir = Integer.parseInt(System.console().readLine("> "));
-//
-//			switch(dir){ //TO DO: figure out directions/error handling
-//			case 1:
-//				directions.add(null);
-//			case 2:
-//				directions.add(null);
-//			case 3:
-//				directions.add(null);
-//			case 4:
-//				directions.add(Direction.NORTH);
-//			default :
-//				System.out.println("Please enter a direction");
-//			}
-//		}
+		// /S/ Player only has to enter one string, if they enter more than their turn amount the rest are ignored
+		// Also if they enter invalid character that is ignored essentially apart from error message
+
+		for(int i = player.getDiceRoll(); i > 0; i--){
+			int j = 0;
+			char singleDir = dir.charAt(j);
+
+			switch(singleDir){ //TO DO: figure out directions/error handling
+			case 'N':
+				directions.add(Direction.NORTH);
+			case 'E':
+				directions.add(Direction.EAST);
+			case 'S':
+				directions.add(Direction.SOUTH);
+			case 'W':
+				directions.add(Direction.WEST);
+			default :
+				System.out.println("Please enter a valid direction (N, S, E or W)");
+			}
+			j ++;
+		}
 		if(player.getRoom() != null){
 			System.out.println("Enter the door you wish to leave from");
 //			Door door = new Door(null, null);         //Not sure how weare doing the doors
@@ -298,10 +322,7 @@ public class ConsoleRenderer implements Renderer {
 		}
 	}
 
-	//bad way of doing this (next 3 methods?)
-	public ArrayList<Player> getNullPlayers(){
-		return nullPlayers;
-	}
+
 
 	public Player getWinningPlayer(){
 		return winningPlayer;
@@ -313,6 +334,82 @@ public class ConsoleRenderer implements Renderer {
 
 
 
+
+
+
+
+
+
+
+
+	private void displayRoom(Room room) {
+		if(room == null){
+			System.out.println("You are not in a room");
+			return;
+		}
+		int minX = 99999999;
+		int maxX = 0;
+		int minY = 99999999;
+		int maxY = 0;
+
+
+		//compute smallest area that contains all room points
+		//forgot to use a bounding box...
+		//way ive done it seems kind of verbose...
+		for(Point p : room.getPoints()){
+			if(p.getX() < minX){
+				minX = (int) p.getX();
+			}
+			if(p.getX() > maxX){
+				maxX = (int) p.getX();
+			}
+			if(p.getY() < minY){
+				minY = (int) p.getY();
+			}
+			if(p.getY() > minY){
+				maxY = (int) p.getY();
+			}
+		}
+
+		//bounding box lengths
+		int width = maxX - minX;
+		int height = maxY - minY;
+
+		char roomChars[][] = new char[height][width];
+
+		//=========alternate
+
+
+
+		//=========alternate
+
+		//adding characters
+		for(int i = 0; i < maxY; i++){
+			for(int j = 0; j<maxX; i++){							// /S/
+				if(room.getPoints().contains(new Point(i, j))){		//Ok will this actually compare it properly
+					roomChars[i][j] = room.getName().charAt(0);		//and return it, as i am making a new point?
+				}
+				else{
+					roomChars[i][j] = ' ';							//space outside room
+				}
+			}
+		}
+		for(Door door : room.getDoors()){
+			if(door.isVertical() == true){
+				roomChars[door.getLocation().y][door.getLocation().x] = '/';
+			}
+			else{
+				roomChars[door.getLocation().y][door.getLocation().x] = '_';
+			}
+		}
+
+		//printing room
+		for(int i = 0; i < height; i++){
+			for(int j = 0; j < height; j++){
+				System.out.println(roomChars[i][j]);
+			}
+		}
+	}
 
 
 

@@ -347,6 +347,7 @@ public class Loader {
 		}
 		boolean isVertical = (chr == '/');
 		doorLocations.put(new Point(x, y), new Door(room, isVertical));
+
 	}
 
 	/**

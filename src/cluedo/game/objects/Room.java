@@ -4,12 +4,15 @@ import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
 
+import cluedo.game.Door;
+
 public class Room implements Card {
 
 	private String id;
 	private final String name;
 	private Weapon weapon;
 	private Room passageExit;
+	private ArrayList<Door> doors;
 
 	private ArrayList<Point> points = new ArrayList<Point>();
 	private ArrayList<Suspect> occupants = new ArrayList<Suspect>();
@@ -72,6 +75,14 @@ public class Room implements Card {
 
 	public ArrayList<Point> getPoints(){
 		return this.points;
+	}
+
+	public ArrayList<Door> getDoors(){
+		return this.doors;
+	}
+
+	public void addDoor(Door door) {
+		this.doors.add(door);
 	}
 
 	public void setPassageExit(Room room){
