@@ -20,7 +20,7 @@ public class Board {
 			super(message);
 		}
 	}
-	
+
 	/** Possible movement directions - passed to movePlayer() */
 	enum Direction {
 		NORTH,
@@ -28,15 +28,15 @@ public class Board {
 		SOUTH,
 		WEST
 	}
-	
+
 	private int size;
-	
+
 	// Contains (size * size) bits in 'blocks' of (size).
 	// The bit at (x + size * y) is true if the point (x,y) is a corridor
 	private BitSet corridors;
 	private Map<Suspect, Point> startLocations;
 	private Map<Point, Door> doorLocations;
-	
+
 	private Map<Player, Point> playerLocations = new HashMap<Player, Point>();
 
 	/**
@@ -50,15 +50,15 @@ public class Board {
 		this.startLocations = loader.getStartLocations();
 		this.doorLocations = loader.getDoorLocations();
 	}
-	
+
 	public int getSize() {
 		return size;
 	}
-	
+
 	public boolean isCorridor(int x, int y) {
 		return corridors.get(x + size * y);
 	}
-	
+
 	/**
 	 * Get the current location of a particular player
 	 * @param player
@@ -67,27 +67,27 @@ public class Board {
 	public Point getPlayerLocation(Player player) {
 		return playerLocations.get(player);
 	}
-	
+
 	/**
 	 * Add a player to the game, placing them at the start point of their
 	 * suspect token
 	 * @param player
 	 */
 	public void addPlayer(Player player) {
-//		Point startLocation = startLocations.get(player.getToken());
-//		if (startLocation == null) {
-//			throw new RuntimeException("Player " + player + "'s token doesn't have a start position");
-//		}
-//		this.playerLocations.put(player, startLocation);
+		Point startLocation = startLocations.get(player.getToken());
+		if (startLocation == null) {
+			throw new RuntimeException("Player " + player + "'s token doesn't have a start position");
+		}
+		this.playerLocations.put(player, startLocation);
 	}
-	
+
 	/**
 	 * Removes all players from the game
 	 */
 	public void clearPlayers() {
 		playerLocations.clear();
 	}
-	
+
 	/**
 	 * Move a player out of a room through a door, then along the specified path
 	 * @param player player to move
@@ -100,14 +100,14 @@ public class Board {
 		if (!playerLocations.containsKey(player)) {
 			throw new RuntimeException("Player " + player + " isn't on the board");
 		}
-		
-//		if (player.getRoom() != door.getRoom()) {
-//			throw new UnableToMoveException("You're not in that room");
-//		}
+
+		if (player.getRoom() != door.getRoom()) {
+			throw new UnableToMoveException("You're not in that room");
+		}
 
 		for (Map.Entry<Point, Door> entry : doorLocations.entrySet()) {
 			if (entry.getValue() == door) {
-//				playerLocations.put(player, door.getLocation());
+				playerLocations.put(player, door.getLocation());
 				movePlayer(player, steps);
 				return;
 			}
@@ -126,25 +126,27 @@ public class Board {
 		if (currentLocation == null) {
 			throw new RuntimeException("Player " + player + " isn't on the board");
 		}
-		
+
 		Direction finalStep = steps.remove(steps.size() - 1);
 		Point newLocation = currentLocation;
 		for (Direction step : steps) {
 			newLocation = moveFrom(newLocation, step);
 			checkInCorridor(newLocation);
+			player.setMovesLeft(player.getMovesLeft()-1);			//Getter/setter overkill?
 		}
-		
+
 		newLocation = moveFrom(newLocation, finalStep);
 		Door door = doorLocations.get(newLocation);
 		if (door != null) {
 //			DO A CHECK IF IT'S HORIZONTAL OR VERTICAL
-//			player.setRoom(door.getRoom());
+			player.setRoom(door.getRoom());
 		}
 		else {
 			checkInCorridor(newLocation);
-//			player.setRoom(null);
+			player.setRoom(null);
 		}
 		playerLocations.put(player, newLocation);
+
 	}
 
 	private Point moveFrom(Point location, Direction step) {
@@ -160,7 +162,7 @@ public class Board {
 			return new Point(location.x - 1, location.y);
 		}
 	}
-	
+
 	private void checkInCorridor(Point location) throws UnableToMoveException {
 		if (location.x < 0 || location.y < 0 ||
 				location.x > size || location.y > size) {

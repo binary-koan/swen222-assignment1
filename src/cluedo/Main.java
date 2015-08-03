@@ -1,8 +1,10 @@
 package cluedo;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import cluedo.game.Game;
+import cluedo.game.Player;
 import cluedo.loader.Loader;
 import cluedo.loader.Loader.SyntaxException;
 import cluedo.ui.ConsoleRenderer;
@@ -21,5 +23,4 @@ public class Main {
 			e.printStackTrace();
 		}
 	}
-
 }

@@ -16,6 +16,10 @@ public class Door {
 		this.isVertical = isVertical;
 	}
 
+	public Door(String name) {
+		// TODO Auto-generated constructor stub
+	}
+
 	public Room getRoom(){
 		return this.room;
 	}

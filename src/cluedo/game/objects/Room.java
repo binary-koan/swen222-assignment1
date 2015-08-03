@@ -10,7 +10,7 @@ public class Room implements Card {
 	private final String name;
 	public Weapon weapon;
 	public Room passageExit;
-	
+
 	private ArrayList<Point> points = new ArrayList<Point>();
 	private ArrayList<Suspect> occupants = new ArrayList<Suspect>();
 
@@ -69,13 +69,17 @@ public class Room implements Card {
 	public void addPoint(int x, int y){
 		points.add(new Point(x, y));
 	}
-	
+
 	public ArrayList<Point> getPoints(){
 		return this.points;
 	}
 
 	public void setPassageExit(Room room){
 		this.passageExit = room;
+	}
+
+	public Room getPassageExit(){
+		return this.passageExit;
 	}
 
 	public void getCenterPoint(){

@@ -12,8 +12,8 @@ import cluedo.loader.Loader;
 public class GameData {
 	private Map<String, Room> rooms;
 	private Map<String, Suspect> suspects;
-	private List<Weapon> weapons;
-	
+	private Map<String, Weapon> weapons;
+
 	public GameData(Loader loader) {
 		this.rooms = loader.getRooms();
 		this.suspects = loader.getSuspects();
@@ -23,6 +23,18 @@ public class GameData {
 	public List<Suspect> getSuspects() {
 		List<Suspect> result = new ArrayList<Suspect>();
 		result.addAll(suspects.values());
+		return result;
+	}
+
+	public List<Weapon> getWeapons(){
+		List<Weapon> result = new ArrayList<Weapon>();
+		result.addAll(weapons.values());
+		return result;
+	}
+
+	public List<Room> getRooms(){
+		List<Room> result = new ArrayList<Room>();
+		result.addAll(rooms.values());
 		return result;
 	}
 }

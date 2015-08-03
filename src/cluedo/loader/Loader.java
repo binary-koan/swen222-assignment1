@@ -34,9 +34,9 @@ public class Loader {
 			super(message);
 		}
 	}
-	
+
 	private static final int MAX_LINE_LENGTH = 1000;
-	
+
 	// Matches group headers like "suspects:" or "rooms:"
 	private static final Pattern GROUP_HEADER = Pattern.compile("([a-z]+):$");
 	// Matches suspect definitions of the form "  b: Mr. Black [black]"
@@ -54,10 +54,10 @@ public class Loader {
 	private static final Pattern COMMENT = Pattern.compile("^\\s*#");
 
 	private Map<String, Room> rooms;
-	private Map<Character, Room> roomsById;
+	private Map<String, Room> roomsById;
 	private Map<String, Suspect> suspects;
-	private Map<Character, Suspect> suspectsById;
-	private List<Weapon> weapons;
+	private Map<String, Suspect> suspectsById;
+	private Map<String, Weapon> weapons;
 
 	private int boardSize;
 	private BitSet corridors;
@@ -73,7 +73,7 @@ public class Loader {
 	public Loader(String filename) throws IOException, SyntaxException {
 		loadData(filename);
 	}
-	
+
 	/**
 	 * Returns all room names in the file, mapped to the corresponding Room
 	 * @return
@@ -81,7 +81,7 @@ public class Loader {
 	public Map<String, Room> getRooms() {
 		return rooms;
 	}
-	
+
 	/**
 	 * Returns all suspect names in the file, mapped to the corresponding Suspect
 	 * @return
@@ -89,15 +89,15 @@ public class Loader {
 	public Map<String, Suspect> getSuspects() {
 		return suspects;
 	}
-	
+
 	/**
 	 * Returns all weapons loaded from the file
 	 * @return
 	 */
-	public List<Weapon> getWeapons() {
+	public Map<String, Weapon> getWeapons() {
 		return weapons;
 	}
-	
+
 	/**
 	 * Returns the board size used in the file
 	 * @return
@@ -105,7 +105,7 @@ public class Loader {
 	public int getBoardSize() {
 		return boardSize;
 	}
-	
+
 	/**
 	 * Returns a representation of the corridors on the file's board
 	 * @return A bit set containing (boardSize * boardSize) bits in 'blocks' of (size),
@@ -114,7 +114,7 @@ public class Loader {
 	public BitSet getCorridors() {
 		return corridors;
 	}
-	
+
 	/**
 	 * Returns all the suspect tokens in the game, mapped to the starting location of that token
 	 * @return
@@ -122,7 +122,7 @@ public class Loader {
 	public Map<Suspect, Point> getStartLocations() {
 		return startLocations;
 	}
-	
+
 	/**
 	 * Returns the locations of all doors in the game, mapped to the Door at that location
 	 * @return
@@ -148,10 +148,10 @@ public class Loader {
 			br.close();
 		}
 	}
-	
+
 	private void loadGroups(BufferedReader br) throws IOException, SyntaxException {
 		while (loadGroup(br)) { continue; }
-		
+
 		if (rooms == null) {
 			fail("No rooms definition found");
 		}
@@ -173,7 +173,7 @@ public class Loader {
 	private boolean loadGroup(BufferedReader br) throws IOException, SyntaxException {
 		String line = readDataLine(br);
 		Matcher matcher;
-		
+
 		if (line == null) {
 			return false;
 		}
@@ -213,14 +213,14 @@ public class Loader {
 	 */
 	private void loadSuspects(BufferedReader br) throws IOException, SyntaxException {
 		suspects = new HashMap<String, Suspect>();
-		suspectsById = new HashMap<Character, Suspect>();
+		suspectsById = new HashMap<String, Suspect>();
 		for (Matcher match : loadEntries(br, SUSPECT_ENTRY, "suspect")) {
 			String id = match.group(1);
 			String name = match.group(2);
 			Color color = Color.getColor(match.group(3));
-//			Suspect suspect = new Suspect(id, name, color);
-//			suspects.put(name, suspect);
-//			suspectsById.put(id, suspect);
+			Suspect suspect = new Suspect(id, name, color);
+			suspects.put(name, suspect);
+			suspectsById.put(id, suspect);
 		}
 	}
 
@@ -230,13 +230,13 @@ public class Loader {
 	 */
 	private void loadRooms(BufferedReader br) throws IOException, SyntaxException {
 		rooms = new HashMap<String, Room>();
-		roomsById = new HashMap<Character, Room>();
+		roomsById = new HashMap<String, Room>();
 		for (Matcher match : loadEntries(br, ROOM_ENTRY, "room")) {
 			String id = match.group(1);
 			String name = match.group(2);
-//			Room room = new Room(id, name, color);
-//			rooms.put(name, room);
-//			roomsById.put(id, room);
+			Room room = new Room(id, name);
+			rooms.put(name, room);
+			roomsById.put(id, room);
 		}
 	}
 
@@ -251,7 +251,7 @@ public class Loader {
 			if (!rooms.containsKey(from) || !rooms.containsKey(to)) {
 				fail("Cannot find room(s) for passage '" + from + "' -> '" + to + "'");
 			}
-//			rooms.get(from).setPassageExit(rooms.get(to));
+			rooms.get(from).setPassageExit(rooms.get(to));
 		}
 	}
 
@@ -260,10 +260,10 @@ public class Loader {
 	 * Assumes the group title has already been read.
 	 */
 	private void loadWeapons(BufferedReader br) throws IOException, SyntaxException {
-		weapons = new ArrayList<Weapon>();
+		weapons = new HashMap<String, Weapon>();
 		for (Matcher match : loadEntries(br, WEAPON_ENTRY, "weapon")) {
 			String name = match.group(1);
-//			weapons.put(name, new Weapon(name));
+			weapons.put(name, new Weapon(name));
 		}
 	}
 
@@ -317,10 +317,10 @@ public class Loader {
 			addDoor(chr, x, y, line);
 		}
 		else if (roomsById.containsKey(chr)) {
-//			roomsById.get(chr).addPoint(x, y);
+			roomsById.get(chr).addPoint(x, y);
 		}
 		else if (suspectsById.containsKey(chr)) {
-//			suspectsById.get(chr).setStartLocation(x, y);
+			suspectsById.get(chr).setStartLocation(x, y);
 		}
 		else {
 			fail("Unknown character on board at (" + x + "," + y + ")");
@@ -346,7 +346,7 @@ public class Loader {
 			fail("Couldn't find room connected to door at (" + x + "," + y + ")");
 		}
 		boolean isVertical = (chr == '/');
-//		doorLocations.put(new Point(x, y), new Door(room, isVertical));
+		doorLocations.put(new Point(x, y), new Door(room, isVertical));
 	}
 
 	/**
@@ -360,7 +360,7 @@ public class Loader {
 	private List<Matcher> loadEntries(BufferedReader br, Pattern pattern, String lookingFor) throws IOException, SyntaxException {
 		List<Matcher> result = new ArrayList<Matcher>();
 		String line;
-		
+
 		br.mark(MAX_LINE_LENGTH);
 		while ((line = readDataLine(br)) != null) {
 			if (!(line.startsWith(" ") || line.startsWith("\t"))) {
@@ -368,7 +368,7 @@ public class Loader {
 				return result;
 			}
 			br.mark(MAX_LINE_LENGTH);
-			
+
 			Matcher matcher = pattern.matcher(line);
 			if (!matcher.find()) {
 				fail("Couldn't parse " + lookingFor + " entry");
@@ -377,7 +377,7 @@ public class Loader {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Returns the next relevant line from the reader (skips comments and empty lines)
 	 * @param br reader to read lines from
