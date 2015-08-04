@@ -13,7 +13,7 @@ import cluedo.loader.Loader;
 public class GameData {
 	private Map<String, Room> rooms;
 	private Map<String, Suspect> suspects;
-	private Map<String, Suspect> suspectsById;
+	private Map<Character, Suspect> suspectsById;
 	private Map<String, Weapon> weapons;
 
 
@@ -30,7 +30,7 @@ public class GameData {
 		return result;
 	}
 
-	public Map<String, Suspect> getSuspectsById(){
+	public Map<Character, Suspect> getSuspectsById(){
 		return suspectsById;
 	}
 

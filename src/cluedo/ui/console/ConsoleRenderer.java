@@ -424,7 +424,7 @@ public class ConsoleRenderer implements Renderer {
 	//Convenience method for printing out collections
 	private void displayElements(){
 		System.out.println("Suspect --- Id");
-		for(Map.Entry<String, Suspect> id : game.getData().getSuspectsById().entrySet()){
+		for(Map.Entry<Character, Suspect> id : game.getData().getSuspectsById().entrySet()){
 			//line formating?
 			System.out.print(game.getData().getSuspectsById().get(id).getName()+ "--- ");
 			System.out.print(id);
