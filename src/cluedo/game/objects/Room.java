@@ -81,7 +81,11 @@ public class Room implements Card {
 		return this.doors;
 	}
 
-	public void addDoor(Door door) {
+	public Door getDoor(int number){									//For when doors are displayed as numbers
+		return doors.get(number);
+	}
+
+	public void addDoor(Door door) {									//Are rooms adding doors?
 		this.doors.add(door);
 	}
 

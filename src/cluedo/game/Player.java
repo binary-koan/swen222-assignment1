@@ -50,6 +50,8 @@ public class Player {
 		this.room = room;
 	}
 
+
+
 //	public void setMovesLeft(int roll) {
 //		this.movesLeft = roll;
 //	}

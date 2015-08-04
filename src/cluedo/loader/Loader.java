@@ -237,6 +237,7 @@ public class Loader {
 			Room room = new Room(id, name);
 			rooms.put(name, room);
 			roomsById.put(id, room);
+			//if room name = "room" add passage exit?
 		}
 	}
 
@@ -347,6 +348,7 @@ public class Loader {
 		}
 		boolean isVertical = (chr == '/');
 		doorLocations.put(new Point(x, y), new Door(room, isVertical));
+		//room.addDoor???
 
 	}
 
