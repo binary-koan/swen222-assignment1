@@ -16,7 +16,6 @@ public class GameData {
 	private Map<Character, Suspect> suspectsById;
 	private Map<String, Weapon> weapons;
 
-
 	public GameData(Loader loader) {
 		this.rooms = loader.getRooms();
 		this.suspects = loader.getSuspects();

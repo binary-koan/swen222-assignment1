@@ -11,11 +11,10 @@ public class Door {
 	private Point location;
 	private int displayNumber;
 
-
-	public Door(Room room, Boolean isVertical){
+	public Door(Room room, Point location, Boolean isVertical){
 		this.room = room;
+		this.location = location;
 		this.isVertical = isVertical;
-		room.addDoor(this);						// /S/Just to make it easier to get doors for drawing individual rooms
 	}
 
 	public Room getRoom(){

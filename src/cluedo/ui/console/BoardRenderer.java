@@ -3,6 +3,7 @@ package cluedo.ui.console;
 import java.awt.Point;
 
 import cluedo.game.Board;
+import cluedo.game.Door;
 import cluedo.game.Game;
 import cluedo.game.GameData;
 import cluedo.game.Player;
@@ -37,19 +38,41 @@ public class BoardRenderer {
 			boardBase[y] = new StringBuilder(board.getWidth());
 			for (int x = 0; x < width; x++) {
 				if (board.isCorridor(x, y)) {
-					boardBase[y].append('\u2592'); // Medium shade
+					appendTile(boardBase[y], ' ', '\u25A9', ' ');
 				}
 				else {
-					boardBase[y].append(' '); // Solid block
+					appendTile(boardBase[y], ' ', ' ', ' ');
 				}
 			}
 		}
 		for (Room room : data.getRooms()) {
 			for (Point point : room.getPoints()) {
-				boardBase[point.y].setCharAt(point.x, '\u2588');
+				setTile(boardBase[point.y], point.x, '\u2588', '\u2588', '\u2588');
 			}
 //			drawRoomName(room, chars);
+			for (Door door : room.getDoors()) {
+				drawDoor(door, boardBase);
+			}
 			//TODO: Draw doors
+		}
+	}
+
+	private void drawDoor(Door door, StringBuilder[] boardBase) {
+		if (door.isVertical()) {
+			if (door.getLocation().y == door.getRoom().getBoundingBox().y) {
+				// Top of room
+			}
+			else {
+				// Bottom of room
+			}
+		}
+		else {
+			if (door.getLocation().x == door.getRoom().getBoundingBox().x) {
+				// Left of room
+			}
+			else {
+				// Right of room
+			}
 		}
 	}
 
@@ -84,5 +107,17 @@ public class BoardRenderer {
 			result[i] = (copies[i] == null) ? boardBase[i].toString() : copies[i].toString();
 		}
 		return result;
+	}
+
+	private void appendTile(StringBuilder row, char first, char second, char third) {
+		row.append(first);
+		row.append(second);
+		row.append(third);
+	}
+
+	private void setTile(StringBuilder row, int x, char first, char second, char third) {
+		row.setCharAt((x * 3), first);
+		row.setCharAt((x * 3) + 1, second);
+		row.setCharAt((x * 3) + 2, third);
 	}
 }

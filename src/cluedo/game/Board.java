@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cluedo.game.objects.Room;
 import cluedo.game.objects.Suspect;
 import cluedo.loader.Loader;
 
@@ -50,7 +51,13 @@ public class Board {
 		this.height = loader.getBoardHeight();
 		this.corridors = loader.getCorridors();
 		this.startLocations = loader.getStartLocations();
-		this.doorLocations = loader.getDoorLocations();
+
+		this.doorLocations = new HashMap<Point, Door>();
+		for (Room room : loader.getRooms().values()) {
+			for (Door door : room.getDoors()) {
+				this.doorLocations.put(door.getLocation(), door);
+			}
+		}
 	}
 
 	public int getWidth() {

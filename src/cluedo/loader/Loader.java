@@ -63,7 +63,6 @@ public class Loader {
 	private int boardHeight;
 	private BitSet corridors;
 	private Map<Suspect, Point> startLocations;
-	private Map<Point, Door> doorLocations;
 
 	/**
 	 * Constructs a new object by loading data from the specified file
@@ -137,14 +136,6 @@ public class Loader {
 	 */
 	public Map<Suspect, Point> getStartLocations() {
 		return startLocations;
-	}
-
-	/**
-	 * Returns the locations of all doors in the game, mapped to the Door at that location
-	 * @return
-	 */
-	public Map<Point, Door> getDoorLocations() {
-		return doorLocations;
 	}
 
 	/**
@@ -253,7 +244,6 @@ public class Loader {
 			Room room = new Room(id, name);
 			rooms.put(name, room);
 			roomsById.put(id, room);
-			//if room name = "room" add passage exit?
 		}
 		for (Map.Entry<Character, Room> entry : roomsById.entrySet()) {
 			System.out.println("Room " + entry.getKey() + " = " + entry.getValue());
@@ -295,7 +285,6 @@ public class Loader {
 	private void loadBoard(BufferedReader br, int width) throws IOException, SyntaxException {
 		boardWidth = width;
 		corridors = new BitSet();
-		doorLocations = new HashMap<Point, Door>();
 		Pattern endRow = Pattern.compile("^-{" + width + "}$");
 
 		int y;
@@ -373,8 +362,7 @@ public class Loader {
 			fail("Couldn't find room connected to door at (" + x + "," + y + ")");
 		}
 		boolean isVertical = (chr == '/');
-		doorLocations.put(new Point(x, y), new Door(room, isVertical));
-		//room.addDoor???
+		room.addDoor(new Point(x, y), isVertical);
 	}
 
 	/**

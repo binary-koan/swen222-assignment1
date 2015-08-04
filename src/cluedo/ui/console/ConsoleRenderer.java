@@ -57,10 +57,9 @@ public class ConsoleRenderer implements Renderer {
 			game.addPlayer(player);
 		}
 
-		game.assignHands(); // remove cast?
+		game.assignHands();
 
 		int turn = 1;
-//		int i = 0;
 
 		while(true){
 			System.out.println("======== Turn "+ turn +" ========");
@@ -71,20 +70,17 @@ public class ConsoleRenderer implements Renderer {
 					p.startTurn(diceRoll);
 					System.out.println("Currently "+ p.getName() +"'s turn");
 					System.out.println("What would you like to do?");
-//					p.setCanSuggest(true);	// not needed if suggesting is the last thing in a turn
-//					p.setMovesLeft(diceRoll); // player now knows about dice roll from startTurn()
-					doTurn(p); //remove cast?
+					doTurn(p);
 					p.endTurn();
 				}
-				//If all players have made an incorrect guess and are knocked out.
-				//If a player has won
-				//Should these be here? Seems kind of messy
-				// Probably fine :)
+
+				// Check if a player has won
 				if(getWinningPlayer() != null){
 					System.out.println("Player " + getWinningPlayer().getName() + "wins!");
 					return;
 				}
 
+				// Check if all players have lost
 				if(nullPlayers.size() == players.size()){
 					System.out.println("All players have been knocked out! Game over.");
 					return;
@@ -121,25 +117,23 @@ public class ConsoleRenderer implements Renderer {
 		List<Player> result = new ArrayList<Player>();
 		for (int i = 0; i < players; i++) {
 			System.out.println("Player "+ i +" name?");
-			String pname;
-			pname = readLine("> ");							//player name funct, check needed?
+			String name = readLine("> ");							//player name funct, check needed?
 			Suspect token = suspects.remove((int)(Math.random() * suspects.size()));
-			result.add(new Player(pname, token));
+			result.add(new Player(name, token));
 		}
 		return result;
 	}
 
-
-
-
-
 	public void doTurn(Player player){
-
 		if(player.getRoom()!=null){
 			System.out.println("You are located in "+ player.getRoom().getName());
+			Point center = player.getRoom().getCenterPoint();
+			boardRenderer.drawBoard(center.y - 2, center.y + 2, game);
 		}
 		else{
-			System.out.println("You are located in the corridor");
+			System.out.println("You are located in a corridor.");
+			Point position = game.getBoard().getPlayerLocation(player);
+			boardRenderer.drawBoard(position.y - 2, position.y + 2, game);
 		}
 
 		System.out.println("What would you like to do?");
@@ -348,12 +342,6 @@ public class ConsoleRenderer implements Renderer {
 				e.printStackTrace();
 			}
 	}										//Also are we redrawing the board every step?
-
-
-
-
-
-
 
 	public Player getWinningPlayer(){
 		return winningPlayer;

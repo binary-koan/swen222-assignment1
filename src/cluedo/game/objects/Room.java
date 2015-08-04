@@ -1,7 +1,7 @@
 package cluedo.game.objects;
 
-import java.awt.Color;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +16,8 @@ public class Room implements Card {
 	private List<Door> doors = new ArrayList<Door>();
 
 	private List<Point> points = new ArrayList<Point>();
+	private Rectangle boundingBox;
+
 	private List<Suspect> occupants = new ArrayList<Suspect>();
 
 	public Room(char id, String name){
@@ -70,6 +72,13 @@ public class Room implements Card {
 
 	public void addPoint(int x, int y){
 		points.add(new Point(x, y));
+		if (x < boundingBox.x) {
+			boundingBox.width += (boundingBox.x - x);
+			boundingBox.x = x;
+		}
+		else if (x > (boundingBox.x + boundingBox.width)) {
+			boundingBox.width = (x - boundingBox.x);
+		}
 	}
 
 	public List<Point> getPoints(){
@@ -84,10 +93,6 @@ public class Room implements Card {
 		return doors.get(number);
 	}
 
-	public void addDoor(Door door) {									//Are rooms adding doors?
-		this.doors.add(door);
-	}
-
 	public void setPassageExit(Room room){
 		this.passageExit = room;
 	}
@@ -96,8 +101,16 @@ public class Room implements Card {
 		return this.passageExit;
 	}
 
-	public void getCenterPoint(){
+	public Point getCenterPoint(){
+		return null;
+	}
 
+	public void addDoor(Point point, boolean isVertical) {
+		doors.add(new Door(this, point, isVertical));
+	}
+
+	public Rectangle getBoundingBox() {
+		return boundingBox;
 	}
 
 }
