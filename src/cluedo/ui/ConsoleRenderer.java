@@ -212,40 +212,40 @@ public class ConsoleRenderer implements Renderer {
 	private void makeAccusation(Player player) {
 		System.out.println("Make your accusation in the following format: <suspectId room weapon>, "
 				+ "eg <g hall candlestick>");
-		String suspect;
-		String room;
-		String weapon;
+		displayElements();
 
-		for(Map.Entry<String, Suspect> id : game.getData().getSuspectsById().entrySet()){
-			//line formating?
-			System.out.print(game.getData().getSuspectsById().get(id).getName()+ "--- ");
-			System.out.print(id);
+		String suspect = "";
+		String room = "";
+		String weapon = "";
+
+		String accusation = readLine("> ");
+		String[] elements = accusation.split("[\\s\\xA0]+"); //splits it by whitespace (i think/hope)
+
+		if(elements.length > 0){
+			suspect = elements[0];
+			room = elements[1];
+			weapon = elements[2];
 		}
 
-		for()
-
-		suspect = readLine("> ");
-		room = readLine("> ");
-		weapon = readLine("> ");
-		//To Do: check for proper format
-
-		for(Player p : players){
-			for(Card c: p.getHand()){
-				if(c.getName() == suspect || c.getName() == room || c.getName() == weapon){
-					System.out.println("Your accusation was incorrect! You have lost.");
-
-					player.setInGame(false);//TO DO: player state set null
-					nullPlayers.add(player);
-					return;
+		try{
+			for(Player p : players){
+				for(Card c: p.getHand()){
+					if(c.getName() == suspect || c.getName() == room || c.getName() == weapon){
+						System.out.println("Your accusation was incorrect! You have lost.");
+						player.setInGame(false);
+						nullPlayers.add(player);
+						return;
+					}
 				}
+				//actual check with solution needed here, how to do without many ifs()?
+				System.out.println("Your accussation was correct! You have won.");
+				setWinningPlayer(player);
 			}
-			//actual check with solution needed here, how to do without many ifs()?
-
-			System.out.println("Your accussation was correct! You have won.");
-			setWinningPlayer(player);
-
-			//TO DO:set game state to ended
+		}catch(NullPointerException e){// /s/ is it actually nullpointer? what kind of exception?
+			System.out.println("No such card(s). Please use the valid format");
 		}
+
+
 
 
 	}
@@ -255,32 +255,38 @@ public class ConsoleRenderer implements Renderer {
 			System.out.println("You must be in a room to make a suggestion");
 			return;
 		}
-		// Shouldn't be needed if it's the last thing in a turn
-//		if(player.getCanSuggest() == false){
-//			System.out.println("You have already made a suggestion");
-//			return;
-//		}
-		System.out.println("Make your suggestion in the following order: suspect (eg ***properformat***), weapon");
-		String suspect;
+		System.out.println("Make your suggestion in the following format: <suspectId weapon>, "
+				+ "eg <g candlestick>");
+		displayElements();
+
+		String suspect = "";
 		String room = player.getRoom().getName();
-		String weapon;
+		String weapon = "";
 
-		suspect = System.console().readLine("> ");
-		weapon = System.console().readLine("> ");
-		//To Do: check for proper format
+		String suggestion = readLine("> ");
+		String[] elements = suggestion.split("[\\s\\xA0]+"); //splits it by whitespace (i think/hope)
 
-		for(Player p : players){
-			for(Card c: p.getHand()){
-				if(c.getName() == suspect || c.getName() == room || c.getName() == weapon){
-					System.out.println("Your suggestion was proved incorrect by "+ p.getName());
-					System.out.println("They are holding card "+ c.getName() +"- note this down.");
-//					player.setCanSuggest(false);
-					return;
+		if(elements.length > 0){
+			suspect = game.getData().getSuspectsById().get(elements[0]).getName();
+			weapon = elements[1];
+		}
+
+		try{
+			for(Player p : players){
+				for(Card c: p.getHand()){
+					if(c.getName() == suspect || c.getName() == room || c.getName() == weapon){
+						System.out.println("Your suggestion was proved incorrect by "+ p.getName());
+						System.out.println("They are holding card "+ c.getName() +"- note this down.");
+//						player.setCanSuggest(false);
+						return;
+					}
 				}
 			}
+			System.out.println("No one was able to disprove your suggestion.");
+		}catch(NullPointerException e){ // /s/ is it actually nullpointer? what kind of exception?
+			System.out.println("No such card(s). Please use the valid format");
 		}
-		System.out.println("No one was able to disprove your suggestion.");
-//		player.setCanSuggest(false);
+
 	}
 
 	private void move(Player player) {
@@ -423,6 +429,28 @@ public class ConsoleRenderer implements Renderer {
 			}
 		}
 	}
+
+	//Convenience method for printing out collections
+	private void displayElements(){
+		System.out.println("Suspect --- Id");
+		for(Map.Entry<String, Suspect> id : game.getData().getSuspectsById().entrySet()){
+			//line formating?
+			System.out.print(game.getData().getSuspectsById().get(id).getName()+ "--- ");
+			System.out.print(id);
+		}
+		System.out.println("");
+		System.out.println("Rooms");
+		for(Room room : game.getData().getRooms()){
+			System.out.println(room.getName());
+		}
+		System.out.println("");
+		System.out.println("Weapons");
+		for(Weapon weapon: game.getData().getWeapons()){
+			System.out.println(weapon.getName());
+		}
+		System.out.println("");
+	}
+
 
 
 
