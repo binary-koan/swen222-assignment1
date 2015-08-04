@@ -407,9 +407,7 @@ public class ConsoleRenderer implements Renderer {
 			}
 		}
 		for(Door door : room.getDoors()){
-			int i = 1;
 			roomChars[door.getLocation().y][door.getLocation().x] = (char) door.getDisplayNumber();
-			i++;
 		}
 
 		//printing room
