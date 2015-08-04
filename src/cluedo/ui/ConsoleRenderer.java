@@ -390,13 +390,14 @@ public class ConsoleRenderer implements Renderer {
 		//=========alternate
 
 		Rectangle boundingBox = new Rectangle(minX, minY, width, height);
+		//not sure if its easier this way?
 
 
 		//=========alternate
 
 		//adding characters
-		for(int i = 0; i < maxY; i++){
-			for(int j = 0; j<maxX; i++){							// /S/
+		for(int i = minY; i < maxY; i++){
+			for(int j = minX; j<maxX; i++){							// /S/
 				if(room.getPoints().contains(new Point(i, j))){		//Ok will this actually compare it properly
 					roomChars[i][j] = room.getName().charAt(0);		//and return it, as i am making a new point?
 				}
