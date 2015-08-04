@@ -3,25 +3,24 @@ package cluedo.game.objects;
 import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.List;
 
 import cluedo.game.Door;
 
 public class Room implements Card {
 
-	private String id;
+	private char id;
 	private final String name;
 	private Weapon weapon;
 	private Room passageExit;
-	private ArrayList<Door> doors;
+	private List<Door> doors = new ArrayList<Door>();
 
-	private ArrayList<Point> points = new ArrayList<Point>();
-	private ArrayList<Suspect> occupants = new ArrayList<Suspect>();
+	private List<Point> points = new ArrayList<Point>();
+	private List<Suspect> occupants = new ArrayList<Suspect>();
 
-	public Room(String id, String name){
+	public Room(char id, String name){
 		this.name = name;
 		this.id = id;
-
-
 	}
 
 	/**
@@ -45,7 +44,7 @@ public class Room implements Card {
 	 * Returns the occupants/tokens in the room.
 	 * @return
 	 */
-	public ArrayList<Suspect> getOccupants(){
+	public List<Suspect> getOccupants(){
 		return occupants;
 	}
 
@@ -73,11 +72,11 @@ public class Room implements Card {
 		points.add(new Point(x, y));
 	}
 
-	public ArrayList<Point> getPoints(){
+	public List<Point> getPoints(){
 		return this.points;
 	}
 
-	public ArrayList<Door> getDoors(){
+	public List<Door> getDoors(){
 		return this.doors;
 	}
 

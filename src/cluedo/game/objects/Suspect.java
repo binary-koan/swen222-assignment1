@@ -5,13 +5,13 @@ import java.awt.Point;
 
 public class Suspect implements Card {
 
-	private final String id;
+	private final char id;
 	private final String name;
 	private final Color color;
 	private Point startLocation;
 	private Point location;
 
-	public Suspect(String id, String name, Color color){
+	public Suspect(char id, String name, Color color){
 		this.id = id;
 		this.name = name;
 		this.color = color;
@@ -35,6 +35,10 @@ public class Suspect implements Card {
 
 	public Point getLocation(){
 		return this.location;
+	}
+
+	public char getIdentifier() {
+		return id;
 	}
 
 }

@@ -50,12 +50,12 @@ weapons:
   - Spanner
 
 # Now for the board definition. It starts with a long line of dashes, which must be equal
-# to the width of the board. The board height is assumed to be the same as the width, so
-# a sequence of 25 dashes means that program will assume a 25x25 board follows.
+# to the width of the board, so a sequence of 24 dashes means that program will assume a
+# 24-square wide board follows
 ------------------------
 # After the dashes comes the body of the board. Each line defines one row, and each character
 # defines one cell. The row must end with a '|' (vertical bar) - this is considered to be
-# outside the board, so it will be (for example) the 26th character of a 25x25 board row.
+# outside the board, so it will be (for example) the 25th character of a 24-wide board row.
 #
 # - A blank space means that the cell is considered to be outside the board and is therefore unreachable.
 # - A '.' (period) means that the cell is part of a corridor.

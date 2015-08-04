@@ -54,12 +54,13 @@ public class Loader {
 	private static final Pattern COMMENT = Pattern.compile("^\\s*#");
 
 	private Map<String, Room> rooms;
-	private Map<String, Room> roomsById;
+	private Map<Character, Room> roomsById;
 	private Map<String, Suspect> suspects;
-	private Map<String, Suspect> suspectsById;
+	private Map<Character, Suspect> suspectsById;
 	private Map<String, Weapon> weapons;
 
-	private int boardSize;
+	private int boardWidth;
+	private int boardHeight;
 	private BitSet corridors;
 	private Map<Suspect, Point> startLocations;
 	private Map<Point, Door> doorLocations;
@@ -99,11 +100,18 @@ public class Loader {
 	}
 
 	/**
-	 * Returns the board size used in the file
+	 * Returns the board width used in the file
 	 * @return
 	 */
-	public int getBoardSize() {
-		return boardSize;
+	public int getBoardWidth() {
+		return boardWidth;
+	}
+
+	/**
+	 * Returns the board height used in the file
+	 */
+	public int getBoardHeight() {
+		return boardHeight;
 	}
 
 	/**
@@ -213,9 +221,9 @@ public class Loader {
 	 */
 	private void loadSuspects(BufferedReader br) throws IOException, SyntaxException {
 		suspects = new HashMap<String, Suspect>();
-		suspectsById = new HashMap<String, Suspect>();
+		suspectsById = new HashMap<Character, Suspect>();
 		for (Matcher match : loadEntries(br, SUSPECT_ENTRY, "suspect")) {
-			String id = match.group(1);
+			char id = match.group(1).charAt(0);
 			String name = match.group(2);
 			Color color = Color.getColor(match.group(3));
 			Suspect suspect = new Suspect(id, name, color);
@@ -230,13 +238,16 @@ public class Loader {
 	 */
 	private void loadRooms(BufferedReader br) throws IOException, SyntaxException {
 		rooms = new HashMap<String, Room>();
-		roomsById = new HashMap<String, Room>();
+		roomsById = new HashMap<Character, Room>();
 		for (Matcher match : loadEntries(br, ROOM_ENTRY, "room")) {
-			String id = match.group(1);
+			char id = match.group(1).charAt(0);
 			String name = match.group(2);
 			Room room = new Room(id, name);
 			rooms.put(name, room);
 			roomsById.put(id, room);
+		}
+		for (Map.Entry<Character, Room> entry : roomsById.entrySet()) {
+			System.out.println("Room " + entry.getKey() + " = " + entry.getValue());
 		}
 	}
 
@@ -272,29 +283,36 @@ public class Loader {
 	 * adding information to other fields as necessary. Assumes the opening line of dashes
 	 * has been read, but reads the closing line.
 	 */
-	private void loadBoard(BufferedReader br, int size) throws IOException, SyntaxException {
-		boardSize = size;
-		corridors = new BitSet(size * size);
-		for (int y = 0; y < size; y++) {
+	private void loadBoard(BufferedReader br, int width) throws IOException, SyntaxException {
+		boardWidth = width;
+		corridors = new BitSet();
+		doorLocations = new HashMap<Point, Door>();
+		Pattern endRow = Pattern.compile("^-{" + width + "}$");
+
+		int y;
+
+		for (y = 0 ;; y++) {
 			String line = readDataLine(br);
 			if (line == null) {
-				fail("Board definition must be at least " + size + " lines long");
+				fail("Board definition must end with a sequence of " + width + " dashes");
+			}
+			else if (endRow.matcher(line).find()) {
+				break;
 			}
 			else if (line.charAt(line.length() - 1) != '|') {
 				fail("Each row of the board must end with a '|'");
 			}
+
 			line = line.substring(0, line.length() - 1);
-			if (line.length() != size) {
-				fail("Each row of the board must be exactly " + size + " characters long (excluding the final '|')");
+			if (line.length() != width) {
+				fail("Each row of the board must be exactly " + width + " characters long (excluding the final '|')");
 			}
-			for (int x = 0; x < size; x++) {
-				parseBoardCharacter(line.charAt(x), x, y, size, line);
+			for (int x = 0; x < width; x++) {
+				parseBoardCharacter(line.charAt(x), x, y, width, line);
 			}
 		}
-		String line = readDataLine(br);
-		if (line == null || !Pattern.matches("^-{" + size + "}$", line)) {
-			fail("This board should end with a line containing exactly " + size + " dashes");
-		}
+
+		boardHeight = y + 1;
 	}
 
 	/**
@@ -313,7 +331,7 @@ public class Loader {
 		else if (chr == '.') {
 			corridors.set(x + (y * size));
 		}
-		else if (chr == '_') {
+		else if (chr == '_' || chr == '/') {
 			addDoor(chr, x, y, line);
 		}
 		else if (roomsById.containsKey(chr)) {
@@ -323,7 +341,7 @@ public class Loader {
 			suspectsById.get(chr).setStartLocation(x, y);
 		}
 		else {
-			fail("Unknown character on board at (" + x + "," + y + ")");
+			fail("Unknown character on board at (" + x + "," + y + "): " + chr);
 		}
 	}
 
@@ -347,7 +365,6 @@ public class Loader {
 		}
 		boolean isVertical = (chr == '/');
 		doorLocations.put(new Point(x, y), new Door(room, isVertical));
-
 	}
 
 	/**

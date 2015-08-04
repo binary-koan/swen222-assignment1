@@ -29,10 +29,11 @@ public class Board {
 		WEST
 	}
 
-	private int size;
+	private int width;
+	private int height;
 
-	// Contains (size * size) bits in 'blocks' of (size).
-	// The bit at (x + size * y) is true if the point (x,y) is a corridor
+	// Contains (width * height) bits in 'blocks' of (size).
+	// The bit at (x + width * y) is true if the point (x,y) is a corridor
 	private BitSet corridors;
 	private Map<Suspect, Point> startLocations;
 	private Map<Point, Door> doorLocations;
@@ -45,18 +46,23 @@ public class Board {
 	 * 				 door locations, etc.
 	 */
 	public Board(Loader loader) {
-		this.size = loader.getBoardSize();
+		this.width = loader.getBoardWidth();
+		this.height = loader.getBoardHeight();
 		this.corridors = loader.getCorridors();
 		this.startLocations = loader.getStartLocations();
 		this.doorLocations = loader.getDoorLocations();
 	}
 
-	public int getSize() {
-		return size;
+	public int getWidth() {
+		return width;
+	}
+
+	public int getHeight() {
+		return height;
 	}
 
 	public boolean isCorridor(int x, int y) {
-		return corridors.get(x + size * y);
+		return corridors.get(x + width * y);
 	}
 
 	/**
@@ -102,6 +108,9 @@ public class Board {
 		}
 
 		if (door == null) {
+			if (player.getRoom() != null) {
+				throw new UnableToMoveException("You must go out through a door");
+			}
 			movePlayerAlongPath(player, steps);
 		}
 
@@ -170,10 +179,10 @@ public class Board {
 
 	private void checkInCorridor(Point location) throws UnableToMoveException {
 		if (location.x < 0 || location.y < 0 ||
-				location.x > size || location.y > size) {
+				location.x > width || location.y > height) {
 			throw new UnableToMoveException("You're trying to go outside the board");
 		}
-		else if (!corridors.get(location.x + location.y * size)) {
+		else if (!corridors.get(location.x + location.y * width)) {
 			throw new UnableToMoveException("You're trying to move through a wall");
 		}
 	}

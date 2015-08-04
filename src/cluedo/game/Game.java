@@ -1,7 +1,5 @@
 package cluedo.game;
 
-import game.Solution;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +12,7 @@ public class Game {
 	private GameData data;
 	private Board board;
 	private Solution solution;
-	private List<Player> players;
+	private List<Player> players = new ArrayList<Player>();
 
 
 	public Game(Loader loader) {
@@ -69,6 +67,10 @@ public class Game {
 
 	public void setBoard(Board board){
 		this.board = board;
+	}
+
+	public List<Player> getPlayers() {
+		return players;
 	}
 
 }
