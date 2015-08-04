@@ -1,4 +1,4 @@
-package cluedo.ui.base;
+package cluedo.ui;
 
 import java.util.List;
 

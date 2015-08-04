@@ -1,4 +1,4 @@
-package cluedo.ui;
+package cluedo.ui.console;
 
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import cluedo.game.Board;
 import cluedo.game.Board.Direction;
 import cluedo.game.Board.UnableToMoveException;
@@ -25,10 +24,12 @@ import cluedo.game.objects.Card;
 import cluedo.game.objects.Room;
 import cluedo.game.objects.Suspect;
 import cluedo.game.objects.Weapon;
-import cluedo.ui.base.Renderer;
+import cluedo.ui.Renderer;
 
 public class ConsoleRenderer implements Renderer {
 	private static BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in));
+
+	private BoardRenderer boardRenderer;
 
 	public static String getFilename(String defaultName) {
 		System.out.println("Which setup would you like to use?");
@@ -50,7 +51,7 @@ public class ConsoleRenderer implements Renderer {
 
 	public void run(Game game) {
 		this.game = game;
-		calculateBoardBase();
+		this.boardRenderer = new BoardRenderer(game.getBoard(), game.getData());
 
 		for (Player player : queryPlayers(game.getData().getSuspects())) {
 			game.addPlayer(player);
@@ -93,7 +94,6 @@ public class ConsoleRenderer implements Renderer {
 		}
 	}
 
-	private StringBuilder[] boardBase;
 	private Game game;
 	private static List<Player> players;
 	private static ArrayList<Player> nullPlayers;
@@ -105,7 +105,7 @@ public class ConsoleRenderer implements Renderer {
 		int players = 0;
 
 		while (players < 3 || players > suspects.size()) {
-			drawBoard();
+			boardRenderer.drawBoard(game);
 			System.out.println("How many players (3-" + suspects.size() + ")?");
 			try {
 				players = Integer.parseInt(readLine("> "));
@@ -440,87 +440,5 @@ public class ConsoleRenderer implements Renderer {
 			System.out.println(weapon.getName());
 		}
 		System.out.println("");
-	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-	public void drawBoard() {
-		drawBoard(0, game.getBoard().getHeight());
-	}
-
-	public void drawBoard(int startY, int endY) {
-		String[] board = buildCurrentBoard();
-		for (int y = startY; y < endY; y++) {
-			System.out.println(board[y]);
-		}
-	}
-
-	private void calculateBoardBase() {
-		Board board = game.getBoard();
-		int height = board.getHeight();
-		int width = board.getWidth();
-
-		boardBase = new StringBuilder[height];
-		for (int y = 0; y < height; y++) {
-			boardBase[y] = new StringBuilder(board.getWidth());
-			for (int x = 0; x < width; x++) {
-				if (board.isCorridor(x, y)) {
-					boardBase[y].append('\u2592'); // Medium shade
-				}
-				else {
-					boardBase[y].append('\u2588'); // Solid block
-				}
-			}
-		}
-		for (Room room : game.getData().getRooms()) {
-			for (Point point : room.getPoints()) {
-				boardBase[point.y].setCharAt(point.x, ' ');
-			}
-//			drawRoomName(room, chars);
-			//TODO: Draw doors
-		}
-	}
-
-	private void drawRoomName(Room room, String[][] chars) {
-//		Point center = room.getCenterPoint();
-//		String name = room.getName();
-//		int startX = center.x - (name.length() / 2);
-//		int endX = startX + name.length();
-//		for (int x = startX; x < endX; x++) {
-//			chars[center.y][x] = Character.toString(name.charAt(x - startX));
-//		}
-	}
-
-	private String[] buildCurrentBoard() {
-		Board board = game.getBoard();
-
-		StringBuilder[] copies = new StringBuilder[board.getHeight()];
-		for (Player player : game.getPlayers()) {
-			if (!player.getInGame()) {
-				continue;
-			}
-			Point location = board.getPlayerLocation(player);
-			//TODO: Handle players in rooms
-			if (copies[location.y] == null) {
-				copies[location.y] = new StringBuilder(boardBase[location.y]);
-			}
-			copies[location.y].setCharAt(location.x, player.getToken().getIdentifier());
-		}
-		//TODO: Add weapons too
-		String[] result = new String[board.getHeight()];
-		for (int i = 0; i < board.getHeight(); i++) {
-			result[i] = (copies[i] == null) ? boardBase[i].toString() : copies[i].toString();
-		}
-		return result;
 	}
 }

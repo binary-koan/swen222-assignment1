@@ -7,7 +7,7 @@ import cluedo.game.Game;
 import cluedo.game.Player;
 import cluedo.loader.Loader;
 import cluedo.loader.Loader.SyntaxException;
-import cluedo.ui.ConsoleRenderer;
+import cluedo.ui.console.ConsoleRenderer;
 
 public class Main {
 

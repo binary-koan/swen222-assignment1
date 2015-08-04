@@ -95,7 +95,7 @@ public class Loader {
 	 * Returns all suspect ids in the file, mapped to the corresponding Suspect
 	 * @return
 	 */
-	public Map<String, Suspect> getSuspectsById() {
+	public Map<Character, Suspect> getSuspectsById() {
 		return suspectsById;
 	}
 
