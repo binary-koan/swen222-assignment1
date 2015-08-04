@@ -17,7 +17,7 @@ public class Game {
 
 	public Game(Loader loader) {
 		this.data = new GameData(loader);
-		this.setBoard(new Board(loader));
+		this.board = new Board(loader);
 	}
 
 
@@ -72,5 +72,4 @@ public class Game {
 	public List<Player> getPlayers() {
 		return players;
 	}
-
 }

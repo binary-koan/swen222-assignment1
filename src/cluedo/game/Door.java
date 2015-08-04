@@ -9,7 +9,8 @@ public class Door {
 	private Room room;
 	private boolean isVertical;
 	private Point location;
-	private int number;
+	private int displayNumber;
+
 
 	public Door(Room room, Boolean isVertical){
 		this.room = room;
@@ -27,6 +28,14 @@ public class Door {
 
 	public boolean isVertical() {
 		return isVertical;
+	}
+
+	public void setDisplayNumber(int i) {
+		displayNumber = i;
+	}
+
+	public int getDisplayNumber(){
+		return this.displayNumber;
 	}
 
 }

@@ -7,9 +7,11 @@ import java.io.Console;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 import cluedo.game.Board;
 import cluedo.game.Board.Direction;
@@ -180,7 +182,10 @@ public class ConsoleRenderer implements Renderer {
 	private void takePassage(Player player) {
 		// Should probably be a special case which doesn't use up a move ...
 		// I don't think that's in the spec so let's just do the easiest thing
+
 		// /S/ Soo I just made it so that it doesnt use up a move
+		// Buuut im still not sure how this should update the location in the
+		// board class, almost tempted to integrate this as move method in board?
 
 		if(player.getRoom() != null && player.getRoom().getPassageExit() != null){
 			player.setRoom(player.getRoom().getPassageExit());
@@ -212,9 +217,9 @@ public class ConsoleRenderer implements Renderer {
 		String room;
 		String weapon;
 
-		suspect = System.console().readLine("> ");
-		room = System.console().readLine("> ");
-		weapon = System.console().readLine("> ");
+		suspect = readLine("> ");
+		room = readLine("> ");
+		weapon = readLine("> ");
 		//To Do: check for proper format
 
 		for(Player p : players){
@@ -275,12 +280,27 @@ public class ConsoleRenderer implements Renderer {
 		// Would it make sense to only be able to move once? Like, once you type "m" you're not allowed to move again?
 
 		// /S/ Ok so apparently if you move into a room it ends your turn, and I dont see why if you would move anywhere
-		// if youre about to make an accusation, so I just made move end the player's turn in doTurn.
+		// if youre about to make an accusation, so I just made move() end the player's turn in doTurn.
 
 //		if(player.getMovesLeft() <= 0){
 //			System.out.println("You have already used up all your moves.");
 //			return;
 //		}
+
+		Door door = null;
+
+		displayRoom(player.getRoom());
+
+		if(player.getRoom() != null){
+			System.out.println("Enter the door you wish to leave from");
+			try{
+				int d =  Integer.parseInt(System.console().readLine("> "));
+				door = player.getRoom().getDoor(d);
+			}catch (NumberFormatException e) {
+				System.out.println("Please enter a number!");
+			}
+		}
+
 		List<Direction> directions = new ArrayList<Direction>();
 		System.out.println("Enter the directions you wish to take (no spaces): NORTH(N), EAST(E), SOUTH(S), WEST(W)");
 		String dir = System.console().readLine(">");
@@ -306,21 +326,19 @@ public class ConsoleRenderer implements Renderer {
 			}
 			j ++;
 		}
-		if(player.getRoom() != null){
-			System.out.println("Enter the door you wish to leave from");
-//			Door door = new Door(null, null);         //Not sure how weare doing the doors
-//			Door door = player.getRoom().getDoor(...);
-//			try {
-//				board.movePlayer(player, directions, door);
-//			} catch (UnableToMoveException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}				   //Also need safety checks, static or not?
-		}																	//Also are we redrawing the board?
-		else{																//What if player collides in wall?
-			//board.movePlayer(player, directions); 						//static or not?
-		}
-	}
+
+			try {
+				game.getBoard().movePlayer(player, directions, door);
+
+			} catch (UnableToMoveException e) {
+			// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	}										//Also are we redrawing the board every step?
+
+
+
+
 
 
 
@@ -338,47 +356,39 @@ public class ConsoleRenderer implements Renderer {
 			System.out.println("You are not in a room");
 			return;
 		}
-		int minX = 99999999;
-		int maxX = 0;
-		int minY = 99999999;
-		int maxY = 0;
 
+		ArrayList<Integer> xPoints = new ArrayList<Integer>();
+		ArrayList<Integer> yPoints = new ArrayList<Integer>();
 
 		//compute smallest area that contains all room points
 		//forgot to use a bounding box...
 		//way ive done it seems kind of verbose...
 		for(Point p : room.getPoints()){
-			if(p.getX() < minX){
-				minX = (int) p.getX();
-			}
-			if(p.getX() > maxX){
-				maxX = (int) p.getX();
-			}
-			if(p.getY() < minY){
-				minY = (int) p.getY();
-			}
-			if(p.getY() > minY){
-				maxY = (int) p.getY();
-			}
-		}
+			xPoints.add((int) p.getX());
+			yPoints.add((int) p.getY());
 
+		}
+		int minX = Collections.min(xPoints);
+		int maxX = Collections.max(xPoints);
+		int minY = Collections.min(yPoints);
+		int maxY = Collections.max(yPoints);
 		//bounding box lengths
 		int width = maxX - minX;
 		int height = maxY - minY;
-
-		//BoundingBox boundingBox = new BoundingBox(0, 0, width, height);
 
 		char roomChars[][] = new char[height][width];
 
 		//=========alternate
 
+		Rectangle boundingBox = new Rectangle(minX, minY, width, height);
+		//not sure if its easier this way?
 
 
 		//=========alternate
 
 		//adding characters
-		for(int i = 0; i < maxY; i++){
-			for(int j = 0; j<maxX; i++){							// /S/
+		for(int i = minY; i < maxY; i++){
+			for(int j = minX; j<maxX; i++){							// /S/
 				if(room.getPoints().contains(new Point(i, j))){		//Ok will this actually compare it properly
 					roomChars[i][j] = room.getName().charAt(0);		//and return it, as i am making a new point?
 				}
@@ -388,12 +398,7 @@ public class ConsoleRenderer implements Renderer {
 			}
 		}
 		for(Door door : room.getDoors()){
-			if(door.isVertical() == true){
-				roomChars[door.getLocation().y][door.getLocation().x] = '/';
-			}
-			else{
-				roomChars[door.getLocation().y][door.getLocation().x] = '_';
-			}
+			roomChars[door.getLocation().y][door.getLocation().x] = (char) door.getDisplayNumber();
 		}
 
 		//printing room
