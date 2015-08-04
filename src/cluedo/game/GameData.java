@@ -1,6 +1,7 @@
 package cluedo.game;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,11 +13,14 @@ import cluedo.loader.Loader;
 public class GameData {
 	private Map<String, Room> rooms;
 	private Map<String, Suspect> suspects;
+	private Map<String, Suspect> suspectsById;
 	private Map<String, Weapon> weapons;
+
 
 	public GameData(Loader loader) {
 		this.rooms = loader.getRooms();
 		this.suspects = loader.getSuspects();
+		this.suspectsById = loader.getSuspectsById();
 		this.weapons = loader.getWeapons();
 	}
 
@@ -24,6 +28,10 @@ public class GameData {
 		List<Suspect> result = new ArrayList<Suspect>();
 		result.addAll(suspects.values());
 		return result;
+	}
+
+	public Map<String, Suspect> getSuspectsById(){
+		return suspectsById;
 	}
 
 	public List<Weapon> getWeapons(){

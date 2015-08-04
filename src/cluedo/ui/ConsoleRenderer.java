@@ -39,7 +39,7 @@ public class ConsoleRenderer implements Renderer {
 	}
 
 	private static String readLine(String prompt) {
-		System.out.print(prompt + " ");
+		System.out.print(prompt);
 		while(true){
 			try {
 				return consoleReader.readLine();
@@ -96,8 +96,8 @@ public class ConsoleRenderer implements Renderer {
 
 	private StringBuilder[] boardBase;
 	private Game game;
-	private static List<Player> players;				//should these be here?
-	private static ArrayList<Player> nullPlayers;		//should these be here?
+	private static List<Player> players;
+	private static ArrayList<Player> nullPlayers;
 	private static Player winningPlayer;
 
 	public List<Player> queryPlayers(List<Suspect> list) {
@@ -210,12 +210,19 @@ public class ConsoleRenderer implements Renderer {
 
 
 	private void makeAccusation(Player player) {
-		System.out.println("Make your accusation in the following order: suspect (eg ***properformat***), room, weapon");
+		System.out.println("Make your accusation in the following format: <suspectId room weapon>, "
+				+ "eg <g hall candlestick>");
 		String suspect;
 		String room;
 		String weapon;
 
-		for(Suspect s : game.g)
+		for(Map.Entry<String, Suspect> id : game.getData().getSuspectsById().entrySet()){
+			//line formating?
+			System.out.print(game.getData().getSuspectsById().get(id).getName()+ "--- ");
+			System.out.print(id);
+		}
+
+		for()
 
 		suspect = readLine("> ");
 		room = readLine("> ");
@@ -375,7 +382,6 @@ public class ConsoleRenderer implements Renderer {
 		for(Point p : room.getPoints()){
 			xPoints.add((int) p.getX());
 			yPoints.add((int) p.getY());
-
 		}
 		int minX = Collections.min(xPoints);
 		int maxX = Collections.max(xPoints);
@@ -387,13 +393,13 @@ public class ConsoleRenderer implements Renderer {
 
 		char roomChars[][] = new char[height][width];
 
-		//=========alternate
+		//=========alternate way?
 
 		Rectangle boundingBox = new Rectangle(minX, minY, width, height);
 		//not sure if its easier this way?
 
 
-		//=========alternate
+		//=========alternate way?
 
 		//adding characters
 		for(int i = minY; i < maxY; i++){
@@ -417,6 +423,11 @@ public class ConsoleRenderer implements Renderer {
 			}
 		}
 	}
+
+
+
+
+
 
 
 
