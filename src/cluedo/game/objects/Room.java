@@ -1,13 +1,36 @@
 package cluedo.game.objects;
 
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import cluedo.game.Door;
 
 public class Room implements Card {
+	public class BoundingBox {
+		private int minX = Integer.MAX_VALUE;
+		private int maxX = Integer.MIN_VALUE;
+		private int minY = Integer.MAX_VALUE;
+		private int maxY = Integer.MIN_VALUE;
+		
+		public int getMinX() {
+			return minX;
+		}
+		public int getMaxX() {
+			return maxX;
+		}
+		public int getMinY() {
+			return minY;
+		}
+		public int getMaxY() {
+			return maxY;
+		}
+		public String toString() {
+			return "BoundingBox: " + minX + "," + minY + " ; " + maxX + "," + maxY;
+		}
+	}
 
 	private char id;
 	private final String name;
@@ -15,12 +38,12 @@ public class Room implements Card {
 	private Room passageExit;
 	private List<Door> doors = new ArrayList<Door>();
 
-	private List<Point> points = new ArrayList<Point>();
-	private Rectangle boundingBox;
+	private Set<Point> points = new HashSet<Point>();
+	private BoundingBox boundingBox = new BoundingBox();
 
 	private List<Suspect> occupants = new ArrayList<Suspect>();
 
-	public Room(char id, String name){
+	public Room(char id, String name) {
 		this.name = name;
 		this.id = id;
 	}
@@ -72,16 +95,22 @@ public class Room implements Card {
 
 	public void addPoint(int x, int y){
 		points.add(new Point(x, y));
-		if (x < boundingBox.x) {
-			boundingBox.width += (boundingBox.x - x);
-			boundingBox.x = x;
+		
+		if (x < boundingBox.minX) {
+			boundingBox.minX = x;
 		}
-		else if (x > (boundingBox.x + boundingBox.width)) {
-			boundingBox.width = (x - boundingBox.x);
+		if (x > boundingBox.maxX) {
+			boundingBox.maxX = x;
+		}
+		if (y < boundingBox.minY) {
+			boundingBox.minY = y;
+		}
+		if (y > boundingBox.maxY) {
+			boundingBox.maxY = y;
 		}
 	}
 
-	public List<Point> getPoints(){
+	public Set<Point> getPoints(){
 		return this.points;
 	}
 
@@ -89,8 +118,8 @@ public class Room implements Card {
 		return this.doors;
 	}
 
-	public Door getDoor(int number){									//For when doors are displayed as numbers
-		return doors.get(number);
+	public Door getDoor(int index) {
+		return doors.get(index);
 	}
 
 	public void setPassageExit(Room room){
@@ -102,14 +131,17 @@ public class Room implements Card {
 	}
 
 	public Point getCenterPoint(){
-		return null;
+		return new Point(
+			boundingBox.minX + (boundingBox.maxX - boundingBox.minX) / 2,
+			boundingBox.minY + (boundingBox.maxY - boundingBox.minY) / 2
+		);
 	}
 
 	public void addDoor(Point point, boolean isVertical) {
 		doors.add(new Door(this, point, isVertical));
 	}
 
-	public Rectangle getBoundingBox() {
+	public BoundingBox getBoundingBox() {
 		return boundingBox;
 	}
 

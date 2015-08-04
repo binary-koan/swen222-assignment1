@@ -28,9 +28,16 @@ public class GameData {
 		result.addAll(suspects.values());
 		return result;
 	}
-
+	
 	public Map<Character, Suspect> getSuspectsById(){
 		return suspectsById;
+	}
+	
+	public Suspect getSuspect(String name) {
+		if (suspects.containsKey(name)) {
+			return suspects.get(name);
+		}
+		return suspectsById.get(name);
 	}
 
 	public List<Weapon> getWeapons(){
@@ -38,10 +45,24 @@ public class GameData {
 		result.addAll(weapons.values());
 		return result;
 	}
+	
+	public Weapon getWeapon(String name) {
+//		if (suspects.containsKey(name)) {
+			return weapons.get(name);
+//		}
+//		return suspectsById.get(name);
+	}
 
 	public List<Room> getRooms(){
 		List<Room> result = new ArrayList<Room>();
 		result.addAll(rooms.values());
 		return result;
+	}
+	
+	public Room getRoom(String name) {
+//		if (suspects.containsKey(name)) {
+			return rooms.get(name);
+//		}
+//		return suspectsById.get(name);
 	}
 }

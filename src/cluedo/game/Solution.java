@@ -1,20 +1,29 @@
 package cluedo.game;
 
-import java.util.ArrayList;
-
-import cluedo.game.objects.Card;
 import cluedo.game.objects.Room;
 import cluedo.game.objects.Suspect;
 import cluedo.game.objects.Weapon;
 
 public class Solution {
-	public ArrayList<Card> hand;
+	private Suspect suspect;
+	private Room room;
+	private Weapon weapon;
 
-	public Solution(){
-
+	public Solution(Suspect suspect, Room room, Weapon weapon) {
+		this.suspect = suspect;
+		this.room = room;
+		this.weapon = weapon;
+	}
+	
+	public Suspect getSuspect() {
+		return suspect;
 	}
 
-	public void addCard(Card card) {
-		this.hand.add(card);
+	public Room getRoom() {
+		return room;
+	}
+
+	public Weapon getWeapon() {
+		return weapon;
 	}
 }

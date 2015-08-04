@@ -36,7 +36,6 @@ public class Board {
 	// Contains (width * height) bits in 'blocks' of (size).
 	// The bit at (x + width * y) is true if the point (x,y) is a corridor
 	private BitSet corridors;
-	private Map<Suspect, Point> startLocations;
 	private Map<Point, Door> doorLocations;
 
 	private Map<Player, Point> playerLocations = new HashMap<Player, Point>();
@@ -50,7 +49,6 @@ public class Board {
 		this.width = loader.getBoardWidth();
 		this.height = loader.getBoardHeight();
 		this.corridors = loader.getCorridors();
-		this.startLocations = loader.getStartLocations();
 
 		this.doorLocations = new HashMap<Point, Door>();
 		for (Room room : loader.getRooms().values()) {
@@ -87,7 +85,7 @@ public class Board {
 	 * @param player
 	 */
 	public void addPlayer(Player player) {
-		Point startLocation = startLocations.get(player.getToken());
+		Point startLocation = player.getToken().getStartLocation();
 		if (startLocation == null) {
 			throw new RuntimeException("Player " + player + "'s token doesn't have a start position");
 		}

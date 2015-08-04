@@ -62,7 +62,6 @@ public class Loader {
 	private int boardWidth;
 	private int boardHeight;
 	private BitSet corridors;
-	private Map<Suspect, Point> startLocations;
 
 	/**
 	 * Constructs a new object by loading data from the specified file
@@ -131,14 +130,6 @@ public class Loader {
 	}
 
 	/**
-	 * Returns all the suspect tokens in the game, mapped to the starting location of that token
-	 * @return
-	 */
-	public Map<Suspect, Point> getStartLocations() {
-		return startLocations;
-	}
-
-	/**
 	 * Loads data from the file(name) passed to the constructor into the fields of this object
 	 */
 	private void loadData(String filename) throws IOException, SyntaxException {
@@ -146,6 +137,7 @@ public class Loader {
 
 		try {
 			String line = readDataLine(br);
+			System.out.println(line);
 			if (line == null || !line.equals("---")) {
 				fail("YAML header not found");
 			}
@@ -244,9 +236,6 @@ public class Loader {
 			Room room = new Room(id, name);
 			rooms.put(name, room);
 			roomsById.put(id, room);
-		}
-		for (Map.Entry<Character, Room> entry : roomsById.entrySet()) {
-			System.out.println("Room " + entry.getKey() + " = " + entry.getValue());
 		}
 	}
 
@@ -361,6 +350,8 @@ public class Loader {
 		if (room == null) {
 			fail("Couldn't find room connected to door at (" + x + "," + y + ")");
 		}
+		
+		room.addPoint(x, y);
 		boolean isVertical = (chr == '/');
 		room.addDoor(new Point(x, y), isVertical);
 	}

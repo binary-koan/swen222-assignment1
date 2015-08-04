@@ -1,61 +1,66 @@
 package cluedo.game;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
+import cluedo.game.Game.Disprover;
+import cluedo.game.objects.Card;
 import cluedo.game.objects.Room;
 import cluedo.game.objects.Suspect;
 import cluedo.game.objects.Weapon;
 import cluedo.loader.Loader;
 
 public class Game {
+	public class Disprover {
+		private Player player;
+		private Card card;
+
+		public Disprover(Player player, Card card) {
+			this.player = player;
+			this.card = card;
+		}
+		
+		public Player getPlayer() {
+			return player;
+		}
+		
+		public Card getCard() {
+			return card;
+		}
+	}
+
+	private static Random random = new Random();
+	
 	private GameData data;
 	private Board board;
 	private Solution solution;
 	private List<Player> players = new ArrayList<Player>();
-
+	private List<Player> lostPlayers = new ArrayList<Player>();
 
 	public Game(Loader loader) {
 		this.data = new GameData(loader);
 		this.board = new Board(loader);
 	}
 
-
 	public void addPlayer(Player player) {
 		players.add(player);
 		getBoard().addPlayer(player);
 	}
 
-
-	public void assignHands() {
+	public void distributeCards() {
 		List<Weapon> weapons = data.getWeapons();
 		List<Suspect> suspects = data.getSuspects();
 		List<Room> rooms = data.getRooms();
 
-
-		//method doing two things - bad design?
-		//Will the following revert changes back to the arraylists?
-		//also empty checks needed?
-
-		solution = new Solution();
-		solution.addCard(suspects.remove((int)(Math.random() * suspects.size())));
-		solution.addCard(rooms.remove((int)(Math.random() * rooms.size())));
-		solution.addCard(weapons.remove((int)(Math.random() * weapons.size())));
-
-		while(!weapons.isEmpty() || !suspects.isEmpty() || !rooms.isEmpty()){
-			for(Player p : players){
-				if(!weapons.isEmpty()){
-					p.addCardToHand(weapons.remove((int)(Math.random() * weapons.size())));
-				}
-				if(!suspects.isEmpty()){
-					p.addCardToHand(suspects.remove((int)(Math.random() * suspects.size())));
-				}
-				if(rooms.isEmpty()){
-					p.addCardToHand(rooms.remove((int)(Math.random() * rooms.size())));
-				}
-			}
-		}
+		Suspect murderer = suspects.remove(random.nextInt(suspects.size()));
+		Room murderRoom = rooms.remove(random.nextInt(rooms.size()));
+		Weapon murderWeapon = weapons.remove(random.nextInt(weapons.size()));
+		solution = new Solution(murderer, murderRoom, murderWeapon);
+		
+		distributeToPlayers(weapons);
+		distributeToPlayers(suspects);
+		distributeToPlayers(rooms);
 	}
 
 	public GameData getData() {
@@ -72,5 +77,38 @@ public class Game {
 
 	public List<Player> getPlayers() {
 		return players;
+	}
+	
+	private void distributeToPlayers(List<? extends Card> cards) {
+		while (true) {
+			for (Player p : players) {
+				if (cards.isEmpty())
+					return;
+				
+				p.getHand().add(cards.remove(random.nextInt(cards.size())));
+			}
+		}
+	}
+
+	public void removePlayer(Player player) {
+		players.remove(player);
+		lostPlayers.add(player);
+	}
+
+	public Solution getSolution() {
+		return solution;
+	}
+
+	public Disprover disproveSuggestion(Suspect suspect, Room room, Weapon weapon) {
+		for(Player player : players) {
+			for(Card card : player.getHand()){
+				if(card.getName().equals(suspect.getName()) ||
+						card.getName().equals(room.getName()) ||
+						card.getName().equals(weapon.getName())) {
+					return new Disprover(player, card);
+				}
+			}
+		}
+		return null;
 	}
 }
