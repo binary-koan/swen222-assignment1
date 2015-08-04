@@ -92,6 +92,14 @@ public class Loader {
 	}
 
 	/**
+	 * Returns all suspect ids in the file, mapped to the corresponding Suspect
+	 * @return
+	 */
+	public Map<String, Suspect> getSuspectsById() {
+		return suspectsById;
+	}
+
+	/**
 	 * Returns all weapons loaded from the file
 	 * @return
 	 */

@@ -38,7 +38,7 @@ public class ConsoleRenderer implements Renderer {
 	}
 
 	private static String readLine(String prompt) {
-		System.out.print(prompt + " ");
+		System.out.print(prompt);
 		while(true){
 			try {
 				return consoleReader.readLine();
@@ -95,8 +95,8 @@ public class ConsoleRenderer implements Renderer {
 
 	private StringBuilder[] boardBase;
 	private Game game;
-	private static List<Player> players;				//should these be here?
-	private static ArrayList<Player> nullPlayers;		//should these be here?
+	private static List<Player> players;
+	private static ArrayList<Player> nullPlayers;
 	private static Player winningPlayer;
 
 	public List<Player> queryPlayers(List<Suspect> list) {
@@ -189,8 +189,6 @@ public class ConsoleRenderer implements Renderer {
 
 		if(player.getRoom() != null && player.getRoom().getPassageExit() != null){
 			player.setRoom(player.getRoom().getPassageExit());
-			//TO DO: Change player location
-			//TO DO: Draw player token in different room
 		}
 		else {
 			// Maybe try and get a more informative error message?
@@ -212,33 +210,42 @@ public class ConsoleRenderer implements Renderer {
 
 
 	private void makeAccusation(Player player) {
-		System.out.println("Make your accusation in the following order: suspect (eg ***properformat***), room, weapon");
-		String suspect;
-		String room;
-		String weapon;
+		System.out.println("Make your accusation in the following format: <suspectId room weapon>, "
+				+ "eg <g hall candlestick>");
+		displayElements();
 
-		suspect = readLine("> ");
-		room = readLine("> ");
-		weapon = readLine("> ");
-		//To Do: check for proper format
+		String suspect = "";
+		String room = "";
+		String weapon = "";
 
-		for(Player p : players){
-			for(Card c: p.getHand()){
-				if(c.getName() == suspect || c.getName() == room || c.getName() == weapon){
-					System.out.println("Your accusation was incorrect! You have lost.");
+		String accusation = readLine("> ");
+		String[] elements = accusation.split("[\\s\\xA0]+"); //splits it by whitespace (i think/hope)
 
-					player.setInGame(false);//TO DO: player state set null
-					nullPlayers.add(player);
-					return;
-				}
-			}
-			//actual check with solution needed here, how to do without many ifs()?
-
-			System.out.println("Your accussation was correct! You have won.");
-			setWinningPlayer(player);
-
-			//TO DO:set game state to ended
+		if(elements.length > 0){
+			suspect = elements[0];
+			room = elements[1];
+			weapon = elements[2];
 		}
+
+		try{
+			for(Player p : players){
+				for(Card c: p.getHand()){
+					if(c.getName() == suspect || c.getName() == room || c.getName() == weapon){
+						System.out.println("Your accusation was incorrect! You have lost.");
+						player.setInGame(false);
+						nullPlayers.add(player);
+						return;
+					}
+				}
+				//actual check with solution needed here, how to do without many ifs()?
+				System.out.println("Your accussation was correct! You have won.");
+				setWinningPlayer(player);
+			}
+		}catch(NullPointerException e){// /s/ is it actually nullpointer? what kind of exception?
+			System.out.println("No such card(s). Please use the valid format");
+		}
+
+
 
 
 	}
@@ -248,32 +255,38 @@ public class ConsoleRenderer implements Renderer {
 			System.out.println("You must be in a room to make a suggestion");
 			return;
 		}
-		// Shouldn't be needed if it's the last thing in a turn
-//		if(player.getCanSuggest() == false){
-//			System.out.println("You have already made a suggestion");
-//			return;
-//		}
-		System.out.println("Make your suggestion in the following order: suspect (eg ***properformat***), weapon");
-		String suspect;
+		System.out.println("Make your suggestion in the following format: <suspectId weapon>, "
+				+ "eg <g candlestick>");
+		displayElements();
+
+		String suspect = "";
 		String room = player.getRoom().getName();
-		String weapon;
+		String weapon = "";
 
-		suspect = System.console().readLine("> ");
-		weapon = System.console().readLine("> ");
-		//To Do: check for proper format
+		String suggestion = readLine("> ");
+		String[] elements = suggestion.split("[\\s\\xA0]+"); //splits it by whitespace (i think/hope)
 
-		for(Player p : players){
-			for(Card c: p.getHand()){
-				if(c.getName() == suspect || c.getName() == room || c.getName() == weapon){
-					System.out.println("Your suggestion was proved incorrect by "+ p.getName());
-					System.out.println("They are holding card "+ c.getName() +"- note this down.");
-//					player.setCanSuggest(false);
-					return;
+		if(elements.length > 0){
+			suspect = game.getData().getSuspectsById().get(elements[0]).getName();
+			weapon = elements[1];
+		}
+
+		try{
+			for(Player p : players){
+				for(Card c: p.getHand()){
+					if(c.getName() == suspect || c.getName() == room || c.getName() == weapon){
+						System.out.println("Your suggestion was proved incorrect by "+ p.getName());
+						System.out.println("They are holding card "+ c.getName() +"- note this down.");
+//						player.setCanSuggest(false);
+						return;
+					}
 				}
 			}
+			System.out.println("No one was able to disprove your suggestion.");
+		}catch(NullPointerException e){ // /s/ is it actually nullpointer? what kind of exception?
+			System.out.println("No such card(s). Please use the valid format");
 		}
-		System.out.println("No one was able to disprove your suggestion.");
-//		player.setCanSuggest(false);
+
 	}
 
 	private void move(Player player) {
@@ -366,7 +379,6 @@ public class ConsoleRenderer implements Renderer {
 		for(Point p : room.getPoints()){
 			xPoints.add((int) p.getX());
 			yPoints.add((int) p.getY());
-
 		}
 		int minX = Collections.min(xPoints);
 		int maxX = Collections.max(xPoints);
@@ -378,13 +390,13 @@ public class ConsoleRenderer implements Renderer {
 
 		char roomChars[][] = new char[height][width];
 
-		//=========alternate
+		//=========alternate way?
 
 		Rectangle boundingBox = new Rectangle(minX, minY, width, height);
 		//not sure if its easier this way?
 
 
-		//=========alternate
+		//=========alternate way?
 
 		//adding characters
 		for(int i = minY; i < maxY; i++){
@@ -408,6 +420,33 @@ public class ConsoleRenderer implements Renderer {
 			}
 		}
 	}
+
+	//Convenience method for printing out collections
+	private void displayElements(){
+		System.out.println("Suspect --- Id");
+		for(Map.Entry<String, Suspect> id : game.getData().getSuspectsById().entrySet()){
+			//line formating?
+			System.out.print(game.getData().getSuspectsById().get(id).getName()+ "--- ");
+			System.out.print(id);
+		}
+		System.out.println("");
+		System.out.println("Rooms");
+		for(Room room : game.getData().getRooms()){
+			System.out.println(room.getName());
+		}
+		System.out.println("");
+		System.out.println("Weapons");
+		for(Weapon weapon: game.getData().getWeapons()){
+			System.out.println(weapon.getName());
+		}
+		System.out.println("");
+	}
+
+
+
+
+
+
 
 
 
