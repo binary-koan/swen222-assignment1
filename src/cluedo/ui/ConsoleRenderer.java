@@ -189,8 +189,6 @@ public class ConsoleRenderer implements Renderer {
 
 		if(player.getRoom() != null && player.getRoom().getPassageExit() != null){
 			player.setRoom(player.getRoom().getPassageExit());
-			//TO DO: Change player location
-			//TO DO: Draw player token in different room
 		}
 		else {
 			// Maybe try and get a more informative error message?
@@ -216,6 +214,8 @@ public class ConsoleRenderer implements Renderer {
 		String suspect;
 		String room;
 		String weapon;
+
+		for(Suspect s : game.g)
 
 		suspect = readLine("> ");
 		room = readLine("> ");
