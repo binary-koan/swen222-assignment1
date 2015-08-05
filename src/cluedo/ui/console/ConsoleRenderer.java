@@ -73,6 +73,9 @@ public class ConsoleRenderer {
 			game.addPlayer(player);
 		}
 		game.distributeCards();
+		System.out.println("Solution: " + game.getSolution().getRoom().getName());
+		System.out.println("Solution: " + game.getSolution().getSuspect().getName());
+		System.out.println("Solution: " + game.getSolution().getWeapon().getName());
 
 		int remainingPlayers = game.getPlayers().size();
 
@@ -87,7 +90,7 @@ public class ConsoleRenderer {
 
 				// Check if the player won or lost as a result of this turn
 				if (result == TurnController.Result.WON) {
-					System.out.println(player.getName() + "wins!");
+					System.out.println(player.getName() + " wins!");
 					return;
 				}
 				else if (result == TurnController.Result.LOST) {
@@ -154,7 +157,7 @@ public class ConsoleRenderer {
 
 		List<Player> result = new ArrayList<Player>();
 		for (int i = 0; i < players; i++) {
-			System.out.println("Player " + i + " name?");
+			System.out.println("Player " + (i + 1) + " name?");
 			String name = readLine("> ");
 			Suspect token = suspects.remove((int) (Math.random() * suspects.size()));
 			result.add(new Player(name, token));

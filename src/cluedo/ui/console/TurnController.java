@@ -94,7 +94,13 @@ public class TurnController {
 				System.out.println("- " + entry.getValue() + " (" + entry.getKey() + ")");
 			}
 
-			char input = ConsoleRenderer.readLine("> ").charAt(0);
+			String line = ConsoleRenderer.readLine("> ");
+			if (line.length() == 0) {
+				System.out.println("Please enter the single character ID of the action you want to take.");
+				continue;
+			}
+
+			char input = line.charAt(0);
 			if (!allowedActions.containsKey(input)) {
 				System.out.println("You can't do that right now.\n"
 						+ "Make sure you enter the single character ID of the action you want to take.");
@@ -107,6 +113,9 @@ public class TurnController {
 					allowedActions.remove('m');
 					if (player.getRoom() != null) {
 						allowedActions.put('s', "End your turn by making a suggestion");
+					}
+					else {
+						allowedActions.remove('s');
 					}
 				}
 			}
@@ -232,8 +241,14 @@ public class TurnController {
 				System.out.println("No one was able to disprove your suggestion.");
 			}
 			else {
-				System.out.println("Your suggestion was proved incorrect by " + disprover.getPlayer().getName());
-				System.out.println("They are holding card " + disprover.getCard().getName() + " - note this down.");
+				if (disprover.getPlayer().equals(player)) {
+					System.out.println("You can prove your own suggestion incorrect.");
+					System.out.println("You are holding card " + disprover.getCard().getName());
+				}
+				else {
+					System.out.println("Your suggestion was proved incorrect by " + disprover.getPlayer().getName());
+					System.out.println("They are holding card " + disprover.getCard().getName() + " - note this down.");
+				}
 				return;
 			}
 		}
@@ -244,11 +259,9 @@ public class TurnController {
 	 * returns the result
 	 */
 	private Result makeAccusation() {
-		System.out
-				.println("Make your accusation in the following format: suspect, room, weapon.");
+		System.out.println("Make your accusation in the following format: suspect, room, weapon.");
 		System.out.println("  eg. Mr. Beige, Bathroom, Shotgun");
-		System.out
-				.println("Alternatively, press Enter without typing to cancel.\n");
+		System.out.println("Alternatively, press Enter without typing to cancel.\n");
 		displayCards(game.getData().getSuspects(), "Suspects");
 		displayCards(game.getData().getRooms(), "Rooms");
 		displayCards(game.getData().getWeapons(), "Weapons");

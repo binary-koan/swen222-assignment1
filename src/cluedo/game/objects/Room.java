@@ -172,8 +172,9 @@ public class Room implements Card {
 	 * Returns the point at the center of the room's bounding box
 	 */
 	public Point getCenterPoint() {
-		return new Point(boundingBox.minX + (boundingBox.maxX - boundingBox.minX) / 2,
-				boundingBox.minY + (boundingBox.maxY - boundingBox.minY) / 2);
+		float x = boundingBox.minX + (boundingBox.maxX - boundingBox.minX) / 2.0f;
+		float y = boundingBox.minY + (boundingBox.maxY - boundingBox.minY) / 2.0f;
+		return new Point(Math.round(x), Math.round(y));
 	}
 
 }

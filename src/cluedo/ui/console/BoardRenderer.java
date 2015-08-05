@@ -242,11 +242,11 @@ public class BoardRenderer {
 		Point center = room.getCenterPoint();
 		String name = room.getName();
 
-		int startX = (center.x * 3) - baseX - (name.length() / 2) + 1;
+		int startX = (center.x * 3) - baseX - (name.length() / 2);
 		int endX = startX + name.length();
 
-		StringBuilder nameRow = base[center.y - baseY];
-		for (int realX = startX; realX < endX; ++realX) {
+		StringBuilder nameRow = base[center.y - baseY - 1];
+		for (int realX = startX; realX < endX && realX < nameRow.length(); ++realX) {
 			nameRow.setCharAt(realX, name.charAt(realX - startX));
 		}
 	}
@@ -274,24 +274,20 @@ public class BoardRenderer {
 			contents += room.getWeapon().getName() + "; ";
 		}
 		for (Player player : game.getPlayers()) {
-			if (player.getRoom() != null) {
-				System.err.print(player.getToken().getIdentifier() + ":" + player.getRoom().getName() + "; ");
-			}
 			if (room.equals(player.getRoom())) {
 				contents += player.getToken().getIdentifier() + ", ";
 			}
 		}
-		System.err.println();
 		if (contents.equals("(")) {
 			return;
 		}
 		contents = contents.substring(0, contents.length() - 2) + ")";
 
-		int startX = (center.x * 3) - baseX - (contents.length() / 2) + 1;
+		int startX = (center.x * 3) - baseX - (contents.length() / 2);
 		int endX = startX + contents.length();
 
-		StringBuilder contentsRow = boardBase[center.y + 1];
-		for (int realX = startX; realX < endX; ++realX) {
+		StringBuilder contentsRow = base[center.y - baseY];
+		for (int realX = startX; realX < endX && realX < contentsRow.length(); ++realX) {
 			contentsRow.setCharAt(realX, contents.charAt(realX - startX));
 		}
 	}

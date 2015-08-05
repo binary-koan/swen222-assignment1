@@ -4,9 +4,7 @@ import static org.junit.Assert.*;
 
 import java.awt.Point;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import org.junit.After;
 import org.junit.Rule;
