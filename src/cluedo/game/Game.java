@@ -20,18 +20,18 @@ public class Game {
 			this.player = player;
 			this.card = card;
 		}
-		
+
 		public Player getPlayer() {
 			return player;
 		}
-		
+
 		public Card getCard() {
 			return card;
 		}
 	}
 
 	private static Random random = new Random();
-	
+
 	private GameData data;
 	private Board board;
 	private Solution solution;
@@ -57,7 +57,7 @@ public class Game {
 		Room murderRoom = rooms.remove(random.nextInt(rooms.size()));
 		Weapon murderWeapon = weapons.remove(random.nextInt(weapons.size()));
 		solution = new Solution(murderer, murderRoom, murderWeapon);
-		
+
 		distributeToPlayers(weapons);
 		distributeToPlayers(suspects);
 		distributeToPlayers(rooms);
@@ -78,13 +78,13 @@ public class Game {
 	public List<Player> getPlayers() {
 		return players;
 	}
-	
+
 	private void distributeToPlayers(List<? extends Card> cards) {
 		while (true) {
 			for (Player p : players) {
 				if (cards.isEmpty())
 					return;
-				
+
 				p.getHand().add(cards.remove(random.nextInt(cards.size())));
 			}
 		}
@@ -99,12 +99,10 @@ public class Game {
 		return solution;
 	}
 
-	public Disprover disproveSuggestion(Suspect suspect, Room room, Weapon weapon) {
+	public Disprover disproveSuggestion(Card suspect, Card room, Card weapon) {
 		for(Player player : players) {
 			for(Card card : player.getHand()){
-				if(card.getName().equals(suspect.getName()) ||
-						card.getName().equals(room.getName()) ||
-						card.getName().equals(weapon.getName())) {
+				if(card.equals(suspect) || card.equals(room) || card.equals(weapon)) {
 					return new Disprover(player, card);
 				}
 			}

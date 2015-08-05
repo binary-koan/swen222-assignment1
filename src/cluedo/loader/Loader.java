@@ -215,7 +215,7 @@ public class Loader {
 		suspectsById = new HashMap<Character, Suspect>();
 		for (Matcher match : loadEntries(br, SUSPECT_ENTRY, "suspect")) {
 			char id = match.group(1).charAt(0);
-			String name = match.group(2);
+			String name = match.group(2).trim();
 			Color color = Color.getColor(match.group(3));
 			Suspect suspect = new Suspect(id, name, color);
 			suspects.put(name, suspect);
@@ -350,7 +350,7 @@ public class Loader {
 		if (room == null) {
 			fail("Couldn't find room connected to door at (" + x + "," + y + ")");
 		}
-		
+
 		room.addPoint(x, y);
 		boolean isVertical = (chr == '/');
 		room.addDoor(new Point(x, y), isVertical);

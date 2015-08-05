@@ -14,7 +14,7 @@ public class Room implements Card {
 		private int maxX = Integer.MIN_VALUE;
 		private int minY = Integer.MAX_VALUE;
 		private int maxY = Integer.MIN_VALUE;
-		
+
 		public int getMinX() {
 			return minX;
 		}
@@ -26,9 +26,6 @@ public class Room implements Card {
 		}
 		public int getMaxY() {
 			return maxY;
-		}
-		public String toString() {
-			return "BoundingBox: " + minX + "," + minY + " ; " + maxX + "," + maxY;
 		}
 	}
 
@@ -95,7 +92,7 @@ public class Room implements Card {
 
 	public void addPoint(int x, int y){
 		points.add(new Point(x, y));
-		
+
 		if (x < boundingBox.minX) {
 			boundingBox.minX = x;
 		}

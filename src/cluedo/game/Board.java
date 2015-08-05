@@ -24,10 +24,10 @@ public class Board {
 
 	/** Possible movement directions - passed to movePlayer() */
 	public enum Direction {
-		NORTH,
-		EAST,
-		SOUTH,
-		WEST
+		UP,
+		RIGHT,
+		DOWN,
+		LEFT
 	}
 
 	private int width;
@@ -112,17 +112,19 @@ public class Board {
 			throw new RuntimeException("Player " + player + " isn't on the board");
 		}
 
+		// Simple case - player is just moving along a corridor
 		if (door == null) {
 			if (player.getRoom() != null) {
 				throw new UnableToMoveException("You must go out through a door");
 			}
 			movePlayerAlongPath(player, steps);
+			return;
 		}
 
-		if (player.getRoom() != door.getRoom()) {
+		// Complex case - player is going out of a room
+		if (player.getRoom() == null || !player.getRoom().equals(door.getRoom())) {
 			throw new UnableToMoveException("You're not in that room");
 		}
-
 		for (Map.Entry<Point, Door> entry : doorLocations.entrySet()) {
 			if (entry.getValue() == door) {
 				playerLocations.put(player, door.getLocation());
@@ -170,13 +172,13 @@ public class Board {
 
 	private Point moveFrom(Point location, Direction step) {
 		switch (step) {
-		case NORTH:
-			return new Point(location.x, location.y + 1);
-		case EAST:
-			return new Point(location.x + 1, location.y);
-		case SOUTH:
+		case UP:
 			return new Point(location.x, location.y - 1);
-		case WEST:
+		case RIGHT:
+			return new Point(location.x + 1, location.y);
+		case DOWN:
+			return new Point(location.x, location.y + 1);
+		case LEFT:
 		default:
 			return new Point(location.x - 1, location.y);
 		}

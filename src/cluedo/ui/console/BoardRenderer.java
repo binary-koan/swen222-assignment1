@@ -1,6 +1,9 @@
 package cluedo.ui.console;
 
 import java.awt.Point;
+import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Set;
 
 import cluedo.game.Board;
@@ -13,13 +16,92 @@ import cluedo.game.objects.Room;
 public class BoardRenderer {
 	private static String SPACE = "\u00A0";
 	private static String BLANK = SPACE+SPACE+SPACE;
-	
+
 	private Board board;
 	private StringBuilder[] boardBase;
 
 	public BoardRenderer(Board board, GameData data) {
 		this.board = board;
 		calculateBoardBase(data);
+	}
+
+	public void drawRoomWithExits(Room room) {
+		if(room == null) {
+			System.out.println("You are not in a room");
+			return;
+		}
+
+		Room.BoundingBox boundingBox = room.getBoundingBox();
+		StringBuilder[] roomDisplay = new StringBuilder[boundingBox.getMaxY() - boundingBox.getMinY() + 1];
+		for (Point point : room.getPoints()) {
+			int y = point.y - boundingBox.getMinY();
+			if (roomDisplay[y] == null) {
+				roomDisplay[y] = new StringBuilder();
+				for (int x = boundingBox.getMinX(); x <= boundingBox.getMaxX(); x++) {
+					appendTile(roomDisplay[y], BLANK);
+				}
+			}
+			setTile(roomDisplay[y], point.x - boundingBox.getMinX(), roomPointTile(point, room.getPoints()));
+		}
+		int i = 1;
+		for (Door door : room.getDoors()) {
+			drawDoor(door, boundingBox.getMinX(), boundingBox.getMinY(), roomDisplay, Integer.toString(i));
+			i++;
+		}
+
+		for (StringBuilder builder : roomDisplay) {
+			System.out.println(builder.toString());
+		}
+
+//		ArrayList<Integer> xPoints = new ArrayList<Integer>();
+//		ArrayList<Integer> yPoints = new ArrayList<Integer>();
+//
+//		//compute smallest area that contains all room points
+//		//forgot to use a bounding box...
+//		//way ive done it seems kind of verbose...
+//		for(Point p : room.getPoints()){
+//			xPoints.add((int) p.getX());
+//			yPoints.add((int) p.getY());
+//		}
+//		int minX = Collections.min(xPoints);
+//		int maxX = Collections.max(xPoints);
+//		int minY = Collections.min(yPoints);
+//		int maxY = Collections.max(yPoints);
+//		//bounding box lengths
+//		int width = maxX - minX;
+//		int height = maxY - minY;
+//
+//		char roomChars[][] = new char[height][width];
+//
+//		//=========alternate way?
+//
+//		Rectangle boundingBox = new Rectangle(minX, minY, width, height);
+//		//not sure if its easier this way?
+//
+//
+//		//=========alternate way?
+//
+//		//adding characters
+//		for(int i = minY; i < maxY; i++){
+//			for(int j = minX; j<maxX; i++){							// /S/
+//				if(room.getPoints().contains(new Point(i, j))){		//Ok will this actually compare it properly
+//					roomChars[i][j] = room.getName().charAt(0);		//and return it, as i am making a new point?
+//				}
+//				else{
+//					roomChars[i][j] = ' ';							//space outside room
+//				}
+//			}
+//		}
+//		for(Door door : room.getDoors()){
+//			roomChars[door.getLocation().y][door.getLocation().x] = (char) door.getDisplayNumber();
+//		}
+//
+//		//printing room
+//		for(int i = 0; i < height; i++){
+//			for(int j = 0; j < height; j++){
+//				System.out.println(roomChars[i][j]);
+//			}
+//		}
 	}
 
 	public void drawBoard(Game game) {
@@ -57,22 +139,20 @@ public class BoardRenderer {
 				setTile(boardBase[point.y], point.x, roomPointTile(point, room.getPoints()));
 			}
 			for (Door door : room.getDoors()) {
-				drawDoor(door, boardBase);
+				drawDoor(door, 0, 0, boardBase, "*");
 			}
 			drawRoomName(room, boardBase);
-			//TODO: Draw doors
 		}
 	}
-	
+
 	// A character is chosen from this list for each point in the room based on which
 	// directions contain another point in that room. Directions are OR'd together
 	// with 0001 = tile above, 0010 = tile left, 0100 = tile below, 1000 = tile right
 	private static final String[] ROOM_AUTOTILE = {
-		"???", "???", "???", "__/",                   // bottom right corner = 0011
-		"???", "???", "\u203E\u203E\\", SPACE+SPACE+"|",//"\u2595",   // top right corner = 0110, right side = 0111
-		"???", "\\__", "???", "___", "/\u203E\u203E", // bottom left = 1001, bottom = 1011, top left = 1100
-//		"\u258F"+SPACE+SPACE, "\u203E\u203E\u203E", BLANK       // left side = 1101, top = 1110, middle = 1111
-		"|"+SPACE+SPACE, "\u203E\u203E\u203E", BLANK       // left side = 1101, top = 1110, middle = 1111
+		"???", "???", "???", "__/",                      // bottom right corner = 0011
+		"???", "???", "\u203E\u203E\\", SPACE+SPACE+"|", // top right corner = 0110, right side = 0111
+		"???", "\\__", "???", "___", "/\u203E\u203E",    // bottom left = 1001, bottom = 1011, top left = 1100
+		"|"+SPACE+SPACE, "\u203E\u203E\u203E", BLANK     // left side = 1101, top = 1110, middle = 1111
 	};
 
 	private String roomPointTile(Point current, Set<Point> all) {
@@ -88,35 +168,37 @@ public class BoardRenderer {
 		return ROOM_AUTOTILE[tileIndex];
 	}
 
-	private void drawDoor(Door door, StringBuilder[] boardBase) {
+	private void drawDoor(Door door, int baseX, int baseY, StringBuilder[] boardBase, String rep) {
 		Point location = door.getLocation();
+		int x = location.x - baseX;
+		int y = location.y - baseY;
+
 		if (door.isVertical()) {
 			if (location.x == door.getRoom().getBoundingBox().getMinX()) {
 				// Left of room
-				setTile(boardBase[location.y], location.x, "*"+SPACE+SPACE);
+				setTile(boardBase[y], x, rep+SPACE+SPACE);
 			}
 			else {
 				// Right of room
-				setTile(boardBase[location.y], location.x, SPACE+SPACE+"*");
+				setTile(boardBase[y], x, SPACE+SPACE+rep);
 			}
 		}
-		else {
+		else if (rep.equals("*")) {
 			// Top or bottom of room
-			setTile(boardBase[location.y], location.x, "***");
+			setTile(boardBase[y], x, "***");
+		}
+		else {
+			setTile(boardBase[y], x, SPACE+rep+SPACE);
 		}
 	}
 
 	private void drawRoomName(Room room, StringBuilder[] boardBase) {
 		Point center = room.getCenterPoint();
 		String name = room.getName();
-		
-		System.out.println("Drawing room " + name);
-		System.out.println(center);
-		System.out.println(room.getBoundingBox());
-		
-		int startX = (center.x * 3) - (name.length() / 2);
+
+		int startX = (center.x * 3) - (name.length() / 2) + 1;
 		int endX = startX + name.length();
-		
+
 		StringBuilder nameRow = boardBase[center.y];
 		for(int realX = startX; realX < endX; ++realX) {
 			nameRow.setCharAt(realX, name.charAt(realX - startX));
@@ -136,7 +218,7 @@ public class BoardRenderer {
 			if (copies[location.y] == null) {
 				copies[location.y] = new StringBuilder(boardBase[location.y]);
 			}
-			copies[location.y].setCharAt(location.x, player.getToken().getIdentifier());
+			setTile(copies[location.y], location.x, SPACE+player.getToken().getIdentifier()+SPACE);
 		}
 		//TODO: Add weapons too
 		String[] result = new String[board.getHeight()];
@@ -145,7 +227,7 @@ public class BoardRenderer {
 		}
 		return result;
 	}
-	
+
 	private void appendTile(StringBuilder row, String str) {
 		appendTile(row, str.charAt(0), str.charAt(1), str.charAt(2));
 	}
