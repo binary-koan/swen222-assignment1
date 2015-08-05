@@ -41,6 +41,7 @@ public class Game {
 	public Game(Loader loader) {
 		this.data = new GameData(loader);
 		this.board = new Board(loader);
+		distributeWeapons();
 	}
 
 	public void addPlayer(Player player) {
@@ -77,6 +78,14 @@ public class Game {
 
 	public List<Player> getPlayers() {
 		return players;
+	}
+
+	private void distributeWeapons() {
+		List<Room> roomsWithoutWeapon = new ArrayList<Room>(data.getRooms());
+		for (Weapon weapon : data.getWeapons()) {
+			Room room = roomsWithoutWeapon.remove(random.nextInt(roomsWithoutWeapon.size()));
+			room.setWeapon(weapon);
+		}
 	}
 
 	private void distributeToPlayers(List<? extends Card> cards) {

@@ -243,7 +243,7 @@ public class TurnController {
 
 	private Door queryLeavingDoor(Room room) {
 		System.out.println("You are in the " + room.getName());
-		boardRenderer.drawRoomWithExits(room);
+		boardRenderer.drawRoomWithExits(room, game);
 		System.out.println("Enter the door you wish to leave from");
 
 		while (true) {
@@ -305,8 +305,8 @@ public class TurnController {
 	private void displayCards(Collection<? extends Card> cards, String title) {
 		System.out.println(title + ":");
 		String line = "  ";
-		for (Suspect suspect : game.getData().getSuspectsById().values()) {
-			line += suspect.getName();
+		for (Card card : cards) {
+			line += card.getName();
 			if (line.length() > 70) {
 				System.out.println(line);
 				line = "  ";
