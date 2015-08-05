@@ -148,7 +148,6 @@ public class Loader {
 
 		try {
 			String line = readDataLine(br);
-			System.out.println(line);
 			if (line == null || !line.equals("---")) {
 				fail("YAML header not found");
 			}
@@ -337,18 +336,18 @@ public class Loader {
 	 *            x-position of the character
 	 * @param y
 	 *            y-position of the character
-	 * @param size
-	 *            width and height of the board
+	 * @param width
+	 *            width of the board
 	 * @param line
 	 *            the row that this character is part of
 	 */
-	private void parseBoardCharacter(char chr, int x, int y, int size,
+	private void parseBoardCharacter(char chr, int x, int y, int width,
 			String line) throws SyntaxException {
 		if (chr == ' ') {
 			return;
 		}
 		else if (chr == '.') {
-			corridors.set(x + (y * size));
+			corridors.set(x + (y * width));
 		}
 		else if (chr == '_' || chr == '/') {
 			addDoor(chr, x, y, line);
@@ -358,6 +357,7 @@ public class Loader {
 		}
 		else if (suspectsById.containsKey(chr)) {
 			suspectsById.get(chr).setStartLocation(x, y);
+			corridors.set(x + (y * width));
 		}
 		else {
 			fail("Unknown character on board at (" + x + "," + y + "): " + chr);

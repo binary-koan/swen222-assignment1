@@ -102,9 +102,13 @@ public class TurnController {
 			}
 
 			if (input == 'm') {
-				move();
-				showPlayerPosition();
-				allowedActions.remove('m');
+				if (move()) {
+					showPlayerPosition();
+					allowedActions.remove('m');
+					if (player.getRoom() != null) {
+						allowedActions.put('s', "End your turn by making a suggestion");
+					}
+				}
 			}
 			else if (input == 't') {
 				takePassage();
@@ -128,7 +132,7 @@ public class TurnController {
 				showHand();
 			}
 
-			System.out.println("What would you like to do now?");
+			System.out.println("\nWhat would you like to do now?");
 		}
 	}
 
@@ -207,7 +211,7 @@ public class TurnController {
 			System.out.println("You are suggesting that the murder was committed in the " + player.getRoom().getName());
 			System.out.println("Make your accusation in the following format: suspect, weapon.");
 			System.out.println("  eg. Mr. Beige, Shotgun");
-			System.out.println("Alternatively, press Enter without typing to cancel.");
+			System.out.println("Alternatively, press Enter without typing to cancel.\n");
 			displayCards(game.getData().getSuspects(), "Suspects");
 			displayCards(game.getData().getWeapons(), "Weapons");
 
@@ -229,7 +233,8 @@ public class TurnController {
 			}
 			else {
 				System.out.println("Your suggestion was proved incorrect by " + disprover.getPlayer().getName());
-				System.out.println("They are holding card " + disprover.getCard().getName() + "- note this down.");
+				System.out.println("They are holding card " + disprover.getCard().getName() + " - note this down.");
+				return;
 			}
 		}
 	}
@@ -243,7 +248,7 @@ public class TurnController {
 				.println("Make your accusation in the following format: suspect, room, weapon.");
 		System.out.println("  eg. Mr. Beige, Bathroom, Shotgun");
 		System.out
-				.println("Alternatively, press Enter without typing to cancel.");
+				.println("Alternatively, press Enter without typing to cancel.\n");
 		displayCards(game.getData().getSuspects(), "Suspects");
 		displayCards(game.getData().getRooms(), "Rooms");
 		displayCards(game.getData().getWeapons(), "Weapons");
@@ -279,7 +284,7 @@ public class TurnController {
 	 * Get movement directions from the player and moves them based on that
 	 * input
 	 */
-	private void move() {
+	private boolean move() {
 		while (true) {
 			Door door = null;
 			if (player.getRoom() != null) {
@@ -288,7 +293,7 @@ public class TurnController {
 
 			List<Direction> directions = queryMovement();
 			if (directions == null) {
-				return;
+				return false;
 			}
 
 			try {
@@ -300,6 +305,7 @@ public class TurnController {
 				continue;
 			}
 		}
+		return true;
 	}
 
 	/**
@@ -429,7 +435,7 @@ public class TurnController {
 	 */
 	private Card[] parseAccusation(String accusation) {
 		String[] parts = parseArray(accusation, 3);
-		Card[] result = new Card[2];
+		Card[] result = new Card[3];
 		result[0] = game.getData().getSuspect(parts[0]);
 		result[1] = game.getData().getRoom(parts[1]);
 		result[2] = game.getData().getWeapon(parts[2]);

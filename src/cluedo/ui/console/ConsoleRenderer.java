@@ -26,7 +26,7 @@ public class ConsoleRenderer {
 	 */
 	public static String queryFilename(String defaultName) {
 		System.out.println("Which setup would you like to use?");
-		System.out.println("Enter a filename or press ENTER for default.");
+		System.out.println("Enter a filename or press Enter without typing to load the default setup.");
 		String line = readLine("> ");
 		return line.isEmpty() ? defaultName : line;
 	}
@@ -91,6 +91,8 @@ public class ConsoleRenderer {
 					return;
 				}
 				else if (result == TurnController.Result.LOST) {
+					System.out.println(player.getName() + " is now out of the game.\n");
+					player.setInGame(false);
 					remainingPlayers--;
 					if (remainingPlayers == 1) {
 						break;

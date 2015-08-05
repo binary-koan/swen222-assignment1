@@ -1,6 +1,7 @@
 package cluedo.game;
 
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.List;
@@ -106,8 +107,7 @@ public class Board {
 	public void addPlayer(Player player) {
 		Point startLocation = player.getToken().getStartLocation();
 		if (startLocation == null) {
-			throw new RuntimeException("Player " + player
-					+ "'s token doesn't have a start position");
+			throw new RuntimeException("Player " + player + "'s token doesn't have a start position");
 		}
 		this.playerLocations.put(player, startLocation);
 	}
@@ -133,18 +133,18 @@ public class Board {
 	 *             if the player tries to move to an invalid location, or is
 	 *             trying to exit from a room they're not in
 	 */
-	public void movePlayer(Player player, List<Direction> steps, Door door)
-			throws UnableToMoveException {
+	public void movePlayer(Player player, List<Direction> steps, Door door) throws UnableToMoveException {
 		if (!playerLocations.containsKey(player)) {
 			throw new RuntimeException("Player " + player + " isn't on the board");
 		}
+		List<Direction> stepsCopy = new ArrayList<Direction>(steps);
 
 		// Simple case - player is just moving along a corridor
 		if (door == null) {
 			if (player.getRoom() != null) {
 				throw new UnableToMoveException("You must go out through a door");
 			}
-			movePlayerAlongPath(player, steps);
+			movePlayerAlongPath(player, stepsCopy);
 			return;
 		}
 
@@ -157,7 +157,7 @@ public class Board {
 			if (entry.getValue() == door) {
 				playerLocations.put(player, door.getLocation());
 				player.setRoom(null);
-				movePlayerAlongPath(player, steps);
+				movePlayerAlongPath(player, stepsCopy);
 				return;
 			}
 		}
@@ -174,8 +174,7 @@ public class Board {
 	 * @throws UnableToMoveException
 	 *             if the player tries to move to an invalid location
 	 */
-	private void movePlayerAlongPath(Player player, List<Direction> steps)
-			throws UnableToMoveException {
+	private void movePlayerAlongPath(Player player, List<Direction> steps) throws UnableToMoveException {
 		Point currentLocation = playerLocations.get(player);
 		if (currentLocation == null) {
 			throw new RuntimeException("Player " + player + " isn't on the board");
@@ -192,11 +191,11 @@ public class Board {
 		Door door = doorLocations.get(newLocation);
 		if (door != null) {
 			if (door.isVertical() &&
-					!(finalStep == Direction.UP || finalStep == Direction.DOWN)) {
+					(finalStep == Direction.UP || finalStep == Direction.DOWN)) {
 				throw new UnableToMoveException("You can't enter this door that way");
 			}
 			else if (!door.isVertical() &&
-					!(finalStep == Direction.LEFT || finalStep == Direction.RIGHT)) {
+					(finalStep == Direction.LEFT || finalStep == Direction.RIGHT)) {
 				throw new UnableToMoveException("You can't enter this door that way");
 			}
 			player.setRoom(door.getRoom());

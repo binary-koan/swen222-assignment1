@@ -18,11 +18,11 @@ public class Player {
 
 	private Room room;
 	private int currentDiceRoll;
-	private boolean inGame;
+	private boolean inGame = true;
 
 	/**
 	 * Construct a new player
-	 * 
+	 *
 	 * @param name
 	 *            the name of the player
 	 * @param token
@@ -94,7 +94,7 @@ public class Player {
 
 	/**
 	 * Starts a turn, setting the player's dice roll
-	 * 
+	 *
 	 * @param diceRoll
 	 *            number rolled by the player this turn
 	 */

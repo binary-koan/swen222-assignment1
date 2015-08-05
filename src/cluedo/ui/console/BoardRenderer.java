@@ -274,10 +274,14 @@ public class BoardRenderer {
 			contents += room.getWeapon().getName() + "; ";
 		}
 		for (Player player : game.getPlayers()) {
+			if (player.getRoom() != null) {
+				System.err.print(player.getToken().getIdentifier() + ":" + player.getRoom().getName() + "; ");
+			}
 			if (room.equals(player.getRoom())) {
 				contents += player.getToken().getIdentifier() + ", ";
 			}
 		}
+		System.err.println();
 		if (contents.equals("(")) {
 			return;
 		}

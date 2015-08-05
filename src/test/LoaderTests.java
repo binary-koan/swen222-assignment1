@@ -18,7 +18,7 @@ public class LoaderTests {
 	private static final String TEST_ROOMS = "rooms:\n  A: Some Room\n";
 	private static final String TEST_SUSPECTS = "suspects:\n  a: First Person [white]\n";
 	private static final String TEST_WEAPONS = "weapons:\n  - Deadly Weapon\n";
-	private static final String TEST_BOARD = "-----\nAAA. |\nAAA..|\n_A/..|\n.... |\n ... |\n-----";
+	private static final String TEST_BOARD = "-----\nAAA. |\nAAA..|\n_A/..|\na... |\n ... |\n-----";
 	private static final String TEST_FULL_CONTENT = "---\n" + TEST_ROOMS
 			+ TEST_SUSPECTS + TEST_WEAPONS + TEST_BOARD;
 
@@ -85,7 +85,16 @@ public class LoaderTests {
 		assertNotNull(loader);
 	}
 
-	private Loader testLoader(String string) throws SyntaxException {
+	public static Loader getTestLoader() {
+		try {
+			return testLoader(TEST_FULL_CONTENT);
+		}
+		catch (SyntaxException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private static Loader testLoader(String string) throws SyntaxException {
 		try {
 			PrintWriter out = new PrintWriter("test.txt");
 			out.println(string);
