@@ -152,11 +152,9 @@ public class Board {
 		for (Direction step : steps) {
 			newLocation = moveFrom(newLocation, step);
 			checkInCorridor(newLocation);
-//			player.setMovesLeft(player.getMovesLeft()-1);			//Getter/setter overkill?
 		}
 
 		newLocation = moveFrom(newLocation, finalStep);
-//		player.setLocation(newLocation);							//Scott change// Neccessary?
 		Door door = doorLocations.get(newLocation);
 		if (door != null) {
 //			TODO A CHECK IF IT'S HORIZONTAL OR VERTICAL

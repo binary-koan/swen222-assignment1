@@ -116,6 +116,14 @@ public class Game {
 				}
 			}
 		}
+		// Players who have lost can still disprove suggestions
+		for(Player player : lostPlayers) {
+			for(Card card : player.getHand()){
+				if(card.equals(suspect) || card.equals(room) || card.equals(weapon)) {
+					return new Disprover(player, card);
+				}
+			}
+		}
 		return null;
 	}
 }

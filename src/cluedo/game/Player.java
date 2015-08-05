@@ -8,12 +8,11 @@ import cluedo.game.objects.Room;
 import cluedo.game.objects.Suspect;
 
 public class Player {
-
 	private String name;
 	private Suspect token;
 	private Room room;
 	private List<Card> hand = new ArrayList<Card>();
-	
+
 	private Boolean inGame = true;
 	private int currentDiceRoll;
 

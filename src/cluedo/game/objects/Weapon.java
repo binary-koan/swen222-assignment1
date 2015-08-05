@@ -1,7 +1,6 @@
 package cluedo.game.objects;
 
 public class Weapon implements Card {
-
 	private String name;
 	private Room room;
 
