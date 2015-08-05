@@ -19,13 +19,14 @@ public class LoaderTests {
 	private static final String TEST_SUSPECTS = "suspects:\n  a: First Person [white]\n";
 	private static final String TEST_WEAPONS = "weapons:\n  - Deadly Weapon\n";
 	private static final String TEST_BOARD = "-----\nAAA. |\nAAA..|\n_A/..|\n.... |\n ... |\n-----";
-	private static final String TEST_FULL_CONTENT = "---\n" + TEST_ROOMS + TEST_SUSPECTS + TEST_WEAPONS + TEST_BOARD;
+	private static final String TEST_FULL_CONTENT = "---\n" + TEST_ROOMS
+			+ TEST_SUSPECTS + TEST_WEAPONS + TEST_BOARD;
 
 	@After
 	public void tearDown() {
 		new File("test.txt").delete();
 	}
-	
+
 	@Rule
 	public ExpectedException expectedException = ExpectedException.none();
 
@@ -35,42 +36,42 @@ public class LoaderTests {
 		expectedException.expectMessage("header not found");
 		testLoader("some content");
 	}
-	
+
 	@Test
 	public void testFailsWithNoGroupHeader() throws SyntaxException {
 		expectedException.expect(SyntaxException.class);
 		expectedException.expectMessage("Expected group header");
 		testLoader("---\nnot a header");
 	}
-	
+
 	@Test
 	public void testFailsWithUnknownGroup() throws SyntaxException {
 		expectedException.expect(SyntaxException.class);
 		expectedException.expectMessage("Unrecognized group");
 		testLoader("---\nnotheader:");
 	}
-	
+
 	@Test
 	public void testFailsWithoutRooms() throws SyntaxException {
 		expectedException.expect(SyntaxException.class);
-		expectedException.expectMessage("rooms definition");
+		expectedException.expectMessage("All groups");
 		testLoader("---\n" + TEST_SUSPECTS + TEST_WEAPONS + TEST_BOARD);
 	}
-	
+
 	@Test
 	public void testFailsWithoutSuspects() throws SyntaxException {
 		expectedException.expect(SyntaxException.class);
-		expectedException.expectMessage("suspects definition");
+		expectedException.expectMessage("All groups");
 		testLoader("---\n" + TEST_ROOMS + TEST_WEAPONS + TEST_BOARD);
 	}
-	
+
 	@Test
 	public void testFailsWithoutWeapons() throws SyntaxException {
 		expectedException.expect(SyntaxException.class);
-		expectedException.expectMessage("weapons definition");
+		expectedException.expectMessage("All groups");
 		testLoader("---\n" + TEST_ROOMS + TEST_SUSPECTS + TEST_BOARD);
 	}
-	
+
 	@Test
 	public void testFailsWithoutBoard() throws SyntaxException {
 		expectedException.expect(SyntaxException.class);
@@ -78,12 +79,18 @@ public class LoaderTests {
 		testLoader("---\n" + TEST_ROOMS + TEST_SUSPECTS + TEST_WEAPONS);
 	}
 
+	@Test
+	public void testSucceeds() throws SyntaxException {
+		Loader loader = testLoader(TEST_FULL_CONTENT);
+		assertNotNull(loader);
+	}
+
 	private Loader testLoader(String string) throws SyntaxException {
 		try {
 			PrintWriter out = new PrintWriter("test.txt");
 			out.println(string);
 			out.close();
-			
+
 			return new Loader("test.txt");
 		}
 		catch (IOException e) {

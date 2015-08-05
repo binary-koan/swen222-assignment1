@@ -7,13 +7,16 @@ import java.util.List;
 import java.util.Map;
 
 import cluedo.game.objects.Room;
-import cluedo.game.objects.Suspect;
 import cluedo.loader.Loader;
 
+/**
+ * Represents the game board. This class also tracks the location of objects
+ * such as players and doors, and handles player movement.
+ */
 public class Board {
 	/**
-	 * Exception thrown when a player is unable to move to a point
-	 * (because it's not a corridor, it's outside the board, etc.)
+	 * Exception thrown when a player is unable to move to a point (because it's
+	 * not a corridor, it's outside the board, etc.)
 	 */
 	@SuppressWarnings("serial")
 	public class UnableToMoveException extends Exception {
@@ -24,10 +27,7 @@ public class Board {
 
 	/** Possible movement directions - passed to movePlayer() */
 	public enum Direction {
-		UP,
-		RIGHT,
-		DOWN,
-		LEFT
+		UP, RIGHT, DOWN, LEFT
 	}
 
 	private int width;
@@ -42,8 +42,10 @@ public class Board {
 
 	/**
 	 * Construct a new board
-	 * @param loader will be used to get corridor positions, suspect start locations,
-	 * 				 door locations, etc.
+	 *
+	 * @param loader
+	 *            will be used to get corridor positions, suspect start
+	 *            locations, door locations, etc.
 	 */
 	public Board(Loader loader) {
 		this.width = loader.getBoardWidth();
@@ -58,42 +60,60 @@ public class Board {
 		}
 	}
 
+	/**
+	 * Returns the width of the board (in tiles)
+	 */
 	public int getWidth() {
 		return width;
 	}
 
+	/**
+	 * Returns the height of the board (in tiles)
+	 */
 	public int getHeight() {
 		return height;
 	}
 
+	/**
+	 * Returns true if the given point is a corridor, false otherwise
+	 *
+	 * @param x
+	 *            x-coordinate (in tiles)
+	 * @param y
+	 *            y-coordinate (in tiles)
+	 */
 	public boolean isCorridor(int x, int y) {
 		return corridors.get(x + width * y);
 	}
 
 	/**
 	 * Get the current location of a particular player
+	 *
 	 * @param player
-	 * @return the location of the player, or null if the player is not on the board
+	 * @return the location of the player, or null if the player is not on the
+	 *         board
 	 */
 	public Point getPlayerLocation(Player player) {
 		return playerLocations.get(player);
 	}
 
 	/**
-	 * Add a player to the game, placing them at the start point of their
+	 * Add a player to the board, placing them at the start point of their
 	 * suspect token
+	 *
 	 * @param player
 	 */
 	public void addPlayer(Player player) {
 		Point startLocation = player.getToken().getStartLocation();
 		if (startLocation == null) {
-			throw new RuntimeException("Player " + player + "'s token doesn't have a start position");
+			throw new RuntimeException("Player " + player
+					+ "'s token doesn't have a start position");
 		}
 		this.playerLocations.put(player, startLocation);
 	}
 
 	/**
-	 * Removes all players from the game
+	 * Remove all players from the board
 	 */
 	public void clearPlayers() {
 		playerLocations.clear();
@@ -101,13 +121,20 @@ public class Board {
 
 	/**
 	 * Move a player out of a room through a door, then along the specified path
-	 * @param player player to move
-	 * @param steps path to move the player along
-	 * @param door door the player should start moving from TODO update comment with null
-	 * @throws UnableToMoveException if the player tries to move to an invalid location,
-	 * 								 or is trying to exit from a room they're not in
+	 *
+	 * @param player
+	 *            player to move
+	 * @param steps
+	 *            path to move the player along
+	 * @param door
+	 *            door the player should start moving from TODO update comment
+	 *            with null
+	 * @throws UnableToMoveException
+	 *             if the player tries to move to an invalid location, or is
+	 *             trying to exit from a room they're not in
 	 */
-	public void movePlayer(Player player, List<Direction> steps, Door door) throws UnableToMoveException {
+	public void movePlayer(Player player, List<Direction> steps, Door door)
+			throws UnableToMoveException {
 		if (!playerLocations.containsKey(player)) {
 			throw new RuntimeException("Player " + player + " isn't on the board");
 		}
@@ -122,12 +149,14 @@ public class Board {
 		}
 
 		// Complex case - player is going out of a room
-		if (player.getRoom() == null || !player.getRoom().equals(door.getRoom())) {
+		if (player.getRoom() == null
+				|| !player.getRoom().equals(door.getRoom())) {
 			throw new UnableToMoveException("You're not in that room");
 		}
 		for (Map.Entry<Point, Door> entry : doorLocations.entrySet()) {
 			if (entry.getValue() == door) {
 				playerLocations.put(player, door.getLocation());
+				player.setRoom(null);
 				movePlayerAlongPath(player, steps);
 				return;
 			}
@@ -137,11 +166,16 @@ public class Board {
 
 	/**
 	 * Move a player along the specified path
-	 * @param player player to move
-	 * @param steps path to move the player along
-	 * @throws UnableToMoveException if the player tries to move to an invalid location
+	 *
+	 * @param player
+	 *            player to move
+	 * @param steps
+	 *            path to move the player along
+	 * @throws UnableToMoveException
+	 *             if the player tries to move to an invalid location
 	 */
-	private void movePlayerAlongPath(Player player, List<Direction> steps) throws UnableToMoveException {
+	private void movePlayerAlongPath(Player player, List<Direction> steps)
+			throws UnableToMoveException {
 		Point currentLocation = playerLocations.get(player);
 		if (currentLocation == null) {
 			throw new RuntimeException("Player " + player + " isn't on the board");
@@ -157,7 +191,14 @@ public class Board {
 		newLocation = moveFrom(newLocation, finalStep);
 		Door door = doorLocations.get(newLocation);
 		if (door != null) {
-//			TODO A CHECK IF IT'S HORIZONTAL OR VERTICAL
+			if (door.isVertical() &&
+					!(finalStep == Direction.UP || finalStep == Direction.DOWN)) {
+				throw new UnableToMoveException("You can't enter this door that way");
+			}
+			else if (!door.isVertical() &&
+					!(finalStep == Direction.LEFT || finalStep == Direction.RIGHT)) {
+				throw new UnableToMoveException("You can't enter this door that way");
+			}
 			player.setRoom(door.getRoom());
 		}
 		else {
@@ -168,6 +209,15 @@ public class Board {
 
 	}
 
+	/**
+	 * Moves one step from the given point in the given direction
+	 *
+	 * @param location
+	 *            point to move from
+	 * @param step
+	 *            direction to move in
+	 * @return a new point created by moving one step in the direction
+	 */
 	private Point moveFrom(Point location, Direction step) {
 		switch (step) {
 		case UP:
@@ -182,13 +232,24 @@ public class Board {
 		}
 	}
 
+	/**
+	 * Checks whether a location is a corridor (ie. a valid place to move) or
+	 * not
+	 *
+	 * @param location
+	 *            point to check
+	 * @throws UnableToMoveException
+	 *             if the point is outside the board or is not a corridor
+	 */
 	private void checkInCorridor(Point location) throws UnableToMoveException {
-		if (location.x < 0 || location.y < 0 ||
-				location.x > width || location.y > height) {
-			throw new UnableToMoveException("You're trying to go outside the board");
+		if (location.x < 0 || location.y < 0 || location.x > width
+				|| location.y > height) {
+			throw new UnableToMoveException(
+					"You're trying to go outside the board");
 		}
 		else if (!corridors.get(location.x + location.y * width)) {
-			throw new UnableToMoveException("You're trying to move through a wall");
+			throw new UnableToMoveException(
+					"You're trying to move through a wall");
 		}
 	}
 }

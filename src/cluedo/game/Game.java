@@ -4,14 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import cluedo.game.Game.Disprover;
 import cluedo.game.objects.Card;
 import cluedo.game.objects.Room;
 import cluedo.game.objects.Suspect;
 import cluedo.game.objects.Weapon;
 import cluedo.loader.Loader;
 
+/**
+ * Represents a game of Cluedo. A central class which contains references to the
+ * various components of the game
+ */
 public class Game {
+	/**
+	 * A combination of player and card which disproves a player's suggestion
+	 */
 	public class Disprover {
 		private Player player;
 		private Card card;
@@ -36,19 +42,42 @@ public class Game {
 	private Board board;
 	private Solution solution;
 	private List<Player> players = new ArrayList<Player>();
-	private List<Player> lostPlayers = new ArrayList<Player>();
 
+	/**
+	 * Construct a new game
+	 *
+	 * @param loader
+	 *            object to retrieve game and board info from
+	 */
 	public Game(Loader loader) {
 		this.data = new GameData(loader);
 		this.board = new Board(loader);
 		distributeWeapons();
 	}
 
+	/**
+	 * Adds a player to the game
+	 *
+	 * @param player
+	 *            player to add
+	 */
 	public void addPlayer(Player player) {
 		players.add(player);
 		getBoard().addPlayer(player);
 	}
 
+	/**
+	 * Returns a list of all players (including those who have already lost the
+	 * game)
+	 */
+	public List<Player> getPlayers() {
+		return players;
+	}
+
+	/**
+	 * Creates a random solution for the game, and distributes all other cards
+	 * randomly to the current set of players
+	 */
 	public void distributeCards() {
 		List<Weapon> weapons = data.getWeapons();
 		List<Suspect> suspects = data.getSuspects();
@@ -64,22 +93,58 @@ public class Game {
 		distributeToPlayers(rooms);
 	}
 
+	/**
+	 * Returns the data this game is associated with (suspects, rooms, etc)
+	 */
 	public GameData getData() {
 		return data;
 	}
 
+	/**
+	 * Represents the board the game is being played on
+	 */
 	public Board getBoard() {
 		return board;
 	}
 
-	public void setBoard(Board board){
-		this.board = board;
+	/**
+	 * Returns the game's solution - whodunnit, where and how
+	 */
+	public Solution getSolution() {
+		return solution;
 	}
 
-	public List<Player> getPlayers() {
-		return players;
+	/**
+	 * If one of the given cards is in a player's hand, this will return a
+	 * Disprover containing that player and the card that disproved the
+	 * suggestion
+	 *
+	 * @param room
+	 *            room that was suggested
+	 * @param weapon
+	 *            weapon that was suggested
+	 * @return an object disproving the suggestion, or null if it could not be
+	 *         disproved
+	 */
+	public Disprover disproveSuggestion(Player player, Card suspect, Card room,
+			Card weapon) {
+		int startingIndex = players.indexOf(player);
+
+		for (int i = startingIndex, j = 0; j < players.size(); i++, j++) {
+			for (Card card : players.get(i).getHand()) {
+				if (card.equals(suspect) || card.equals(room)
+						|| card.equals(weapon)) {
+					return new Disprover(players.get(i), card);
+				}
+			}
+		}
+
+		return null;
 	}
 
+	/**
+	 * Randomly assigns weapons to rooms
+	 */
 	private void distributeWeapons() {
 		List<Room> roomsWithoutWeapon = new ArrayList<Room>(data.getRooms());
 		for (Weapon weapon : data.getWeapons()) {
@@ -88,6 +153,9 @@ public class Game {
 		}
 	}
 
+	/**
+	 * Distributes a list of cards to all players in sequence
+	 */
 	private void distributeToPlayers(List<? extends Card> cards) {
 		while (true) {
 			for (Player p : players) {
@@ -97,33 +165,5 @@ public class Game {
 				p.getHand().add(cards.remove(random.nextInt(cards.size())));
 			}
 		}
-	}
-
-	public void removePlayer(Player player) {
-		players.remove(player);
-		lostPlayers.add(player);
-	}
-
-	public Solution getSolution() {
-		return solution;
-	}
-
-	public Disprover disproveSuggestion(Card suspect, Card room, Card weapon) {
-		for(Player player : players) {
-			for(Card card : player.getHand()){
-				if(card.equals(suspect) || card.equals(room) || card.equals(weapon)) {
-					return new Disprover(player, card);
-				}
-			}
-		}
-		// Players who have lost can still disprove suggestions
-		for(Player player : lostPlayers) {
-			for(Card card : player.getHand()){
-				if(card.equals(suspect) || card.equals(room) || card.equals(weapon)) {
-					return new Disprover(player, card);
-				}
-			}
-		}
-		return null;
 	}
 }

@@ -4,37 +4,52 @@ import java.awt.Point;
 
 import cluedo.game.objects.Room;
 
+/**
+ * Represents a door on the board which leads to a room
+ */
 public class Door {
 
 	private Room room;
 	private boolean isVertical;
 	private Point location;
-	private int displayNumber;
 
-	public Door(Room room, Point location, Boolean isVertical){
+	/**
+	 * Construct a new door
+	 * 
+	 * @param room
+	 *            room the door leads to
+	 * @param location
+	 *            the location of the door
+	 * @param isVertical
+	 *            whether the door can be accessed from left/right (true) or
+	 *            top/bottom (false)
+	 */
+	public Door(Room room, Point location, Boolean isVertical) {
 		this.room = room;
 		this.location = location;
 		this.isVertical = isVertical;
 	}
 
-	public Room getRoom(){
+	/**
+	 * Returns the room this door leads to
+	 */
+	public Room getRoom() {
 		return this.room;
 	}
 
-	public Point getLocation(){
-		return this.location;
-	}
-
+	/**
+	 * Returns true if the door can be accessed from left/right, false if it can
+	 * be accessed from top/bottom
+	 */
 	public boolean isVertical() {
 		return isVertical;
 	}
 
-	public void setDisplayNumber(int i) {
-		displayNumber = i;
-	}
-
-	public int getDisplayNumber(){
-		return this.displayNumber;
+	/**
+	 * Returns the location of the door on the board
+	 */
+	public Point getLocation() {
+		return this.location;
 	}
 
 }

@@ -8,7 +8,15 @@ import java.util.Set;
 
 import cluedo.game.Door;
 
+/**
+ * Represents a room on the board. This class encapsulates the location of the
+ * room on the board, its properties and its current contents.
+ */
 public class Room implements Card {
+	/**
+	 * A rectangle defined by its minimum and maximum X and Y. Used to calculate
+	 * (among other things) the center point of the room.
+	 */
 	public class BoundingBox {
 		private int minX = Integer.MAX_VALUE;
 		private int maxX = Integer.MIN_VALUE;
@@ -18,18 +26,20 @@ public class Room implements Card {
 		public int getMinX() {
 			return minX;
 		}
+
 		public int getMaxX() {
 			return maxX;
 		}
+
 		public int getMinY() {
 			return minY;
 		}
+
 		public int getMaxY() {
 			return maxY;
 		}
 	}
 
-	private char id;
 	private final String name;
 	private Weapon weapon;
 	private Room passageExit;
@@ -38,59 +48,110 @@ public class Room implements Card {
 	private Set<Point> points = new HashSet<Point>();
 	private BoundingBox boundingBox = new BoundingBox();
 
-	private List<Suspect> occupants = new ArrayList<Suspect>();
-
-	public Room(char id, String name) {
+	/**
+	 * Constructs a new room with the specified name
+	 *
+	 * @param name
+	 *            a string to identify the room
+	 */
+	public Room(String name) {
 		this.name = name;
-		this.id = id;
 	}
 
 	/**
-	 * Returns the name of the room.
+	 * Returns a string identifying the room, as passed to the constructor
 	 */
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
 		return name;
 	}
 
 	/**
-	 * Adds an occupant to the list of tokens in a room.
-	 * @param character
+	 * Returns the weapon currently in the room, or null if there isn't one
 	 */
-	public void addOccupent(Suspect character){
-		occupants.add(character);
+	public Weapon getWeapon() {
+		return this.weapon;
 	}
 
 	/**
-	 * Returns the occupants/tokens in the room.
-	 * @return
+	 * Sets the weapon in the room to the specified weapon
 	 */
-	public List<Suspect> getOccupants(){
-		return occupants;
-	}
-
-	/**
-	 * Removes an occupant from the list of tokens in a room.
-	 * @param character
-	 */
-	public void removeOccupant(Suspect character){
-		occupants.remove(character);
-	}
-
-	public void setWeapon(Weapon weapon){
+	public void setWeapon(Weapon weapon) {
 		this.weapon = weapon;
 	}
 
 	/**
-	 * Returns the weapon in this room, null if none.
+	 * Gets the endpoint of the secret passage leading from this room, or null
+	 * if this room has no passage
 	 */
-	public Weapon getWeapon(){
-		return this.weapon;
-
+	public Room getPassageExit() {
+		return this.passageExit;
 	}
 
-	public void addPoint(int x, int y){
+	/**
+	 * Sets the endpoint of the secret passage leading from this room
+	 */
+	public void setPassageExit(Room room) {
+		this.passageExit = room;
+	}
+
+	/**
+	 * Returns the collection of doors which lead to this room
+	 */
+	public List<Door> getDoors() {
+		return this.doors;
+	}
+
+	/**
+	 * Returns a set of all points contained in the room
+	 */
+	public Set<Point> getPoints() {
+		return this.points;
+	}
+
+	/**
+	 * Returns the bounding box of the room
+	 */
+	public BoundingBox getBoundingBox() {
+		return boundingBox;
+	}
+
+	/**
+	 * Creates a door at the specified location (in board coordinates) which
+	 * leads to this room
+	 *
+	 * @param point
+	 *            location to place the door
+	 * @param isVertical
+	 *            true if the door can be accessed from the left or right, false
+	 *            if it can be accessed from above or below
+	 */
+	public void addDoor(Point point, boolean isVertical) {
+		doors.add(new Door(this, point, isVertical));
+	}
+
+	/**
+	 * Returns the door at the specified index in the room's doors. Allows the
+	 * player to specify which door to use when leaving a room
+	 *
+	 * @param index
+	 *            the index of the door to return
+	 * @return the door at the specified position, or null if there isn't one
+	 */
+	public Door getDoor(int index) {
+		return doors.get(index);
+	}
+
+	/**
+	 * Adds the point (x, y) to the collection of points this room contains. x
+	 * and y should be in board (tile) coordinates
+	 *
+	 * @param x
+	 *            x-coordinate of the point to add
+	 * @param y
+	 *            y-coordinate of the point to add
+	 */
+	public void addPoint(int x, int y) {
 		points.add(new Point(x, y));
 
 		if (x < boundingBox.minX) {
@@ -107,39 +168,12 @@ public class Room implements Card {
 		}
 	}
 
-	public Set<Point> getPoints(){
-		return this.points;
-	}
-
-	public List<Door> getDoors(){
-		return this.doors;
-	}
-
-	public Door getDoor(int index) {
-		return doors.get(index);
-	}
-
-	public void setPassageExit(Room room){
-		this.passageExit = room;
-	}
-
-	public Room getPassageExit(){
-		return this.passageExit;
-	}
-
-	public Point getCenterPoint(){
-		return new Point(
-			boundingBox.minX + (boundingBox.maxX - boundingBox.minX) / 2,
-			boundingBox.minY + (boundingBox.maxY - boundingBox.minY) / 2
-		);
-	}
-
-	public void addDoor(Point point, boolean isVertical) {
-		doors.add(new Door(this, point, isVertical));
-	}
-
-	public BoundingBox getBoundingBox() {
-		return boundingBox;
+	/**
+	 * Returns the point at the center of the room's bounding box
+	 */
+	public Point getCenterPoint() {
+		return new Point(boundingBox.minX + (boundingBox.maxX - boundingBox.minX) / 2,
+				boundingBox.minY + (boundingBox.maxY - boundingBox.minY) / 2);
 	}
 
 }

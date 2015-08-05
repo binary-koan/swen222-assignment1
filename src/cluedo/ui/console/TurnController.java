@@ -16,35 +16,62 @@ import cluedo.game.Board.Direction;
 import cluedo.game.Board.UnableToMoveException;
 import cluedo.game.objects.Card;
 import cluedo.game.objects.Room;
-import cluedo.game.objects.Suspect;
 
+/**
+ * An instance of this class is created per player per turn. It handles printing
+ * the player's location and allowed actions, and processes selected actions
+ */
 public class TurnController {
+	/**
+	 * The result of the turn - whether the player won or lost as a result of
+	 * their actions
+	 */
 	public enum Result {
-		NONE,
-		WON,
-		LOST
+		NONE, WON, LOST
 	}
 
 	private Player player;
 	private Game game;
 	private BoardRenderer boardRenderer;
 
+	/**
+	 * Create and run a new TurnController
+	 *
+	 * @param player
+	 *            current player
+	 * @param renderer
+	 *            renderer to use for input and drawing
+	 * @return the result of the turn
+	 */
 	public static Result run(Player player, ConsoleRenderer renderer) {
 		return new TurnController(player, renderer).run();
 	}
 
+	/**
+	 * Construct a new TurnController
+	 *
+	 * @param player
+	 *            current player
+	 * @param renderer
+	 *            renderer to use for input and drawing
+	 */
 	public TurnController(Player player, ConsoleRenderer renderer) {
 		this.player = player;
 		this.game = renderer.getGame();
 		this.boardRenderer = renderer.getBoardRenderer();
 	}
 
+	/**
+	 * Run the controller and returns the result of the player's actions this
+	 * turn
+	 */
 	public Result run() {
-		int diceRoll = (int)(Math.random() * 6) + 1;
+		int diceRoll = (int) (Math.random() * 6) + 1;
 		player.startTurn(diceRoll);
 
-		System.out.println("Currently "+ player.getName() +"'s turn." +
-				" You are " + player.getToken().getName() + " (" + player.getToken().getIdentifier() + ")");
+		System.out.println("Currently " + player.getName() + "'s turn."
+				+ " You are " + player.getToken().getName()
+				+ " (" + player.getToken().getIdentifier() + ")");
 		System.out.println("You rolled a " + player.getDiceRoll() + "!");
 
 		Result result = doTurn();
@@ -54,20 +81,23 @@ public class TurnController {
 		return result;
 	}
 
+	/**
+	 * Process input and passes on actions to their respective handlers
+	 */
 	private Result doTurn() {
 		Map<Character, String> allowedActions = getAllowedActions();
 		showPlayerPosition();
 		System.out.println("What would you like to do?");
 
-		while(true) {
+		while (true) {
 			for (Map.Entry<Character, String> entry : allowedActions.entrySet()) {
 				System.out.println("- " + entry.getValue() + " (" + entry.getKey() + ")");
 			}
 
 			char input = ConsoleRenderer.readLine("> ").charAt(0);
 			if (!allowedActions.containsKey(input)) {
-				System.out.println("You can't do that right now.\n" +
-						"Make sure you enter the single character ID of the action you want to take.");
+				System.out.println("You can't do that right now.\n"
+						+ "Make sure you enter the single character ID of the action you want to take.");
 				continue;
 			}
 
@@ -76,22 +106,22 @@ public class TurnController {
 				showPlayerPosition();
 				allowedActions.remove('m');
 			}
-			else if(input == 't'){
+			else if (input == 't') {
 				takePassage();
 				showPlayerPosition();
 				allowedActions.remove('t');
 			}
-			else if (input == 's'){
+			else if (input == 's') {
 				makeSuggestion();
 				return Result.NONE;
 			}
 			else if (input == 'a') {
 				return makeAccusation();
 			}
-			else if (input == 'e'){
+			else if (input == 'e') {
 				return Result.NONE;
 			}
-			else if (input == 'b'){
+			else if (input == 'b') {
 				boardRenderer.drawBoard(game);
 			}
 			else if (input == 'h') {
@@ -102,6 +132,9 @@ public class TurnController {
 		}
 	}
 
+	/**
+	 * Return the actions the player is allowed to take in the current context
+	 */
 	private Map<Character, String> getAllowedActions() {
 		Map<Character, String> allowedActions = new LinkedHashMap<Character, String>();
 		allowedActions.put('m', "Move");
@@ -118,8 +151,12 @@ public class TurnController {
 		return allowedActions;
 	}
 
+	/**
+	 * Print the player's current room (if it exists) or a segment of the board
+	 * containing their token
+	 */
 	private void showPlayerPosition() {
-		if (player.getRoom()!=null) {
+		if (player.getRoom() != null) {
 			System.out.println("You are in the " + player.getRoom().getName() + ".");
 			Point center = player.getRoom().getCenterPoint();
 			boardRenderer.drawBoard(center.y - 2, center.y + 3, game);
@@ -131,6 +168,9 @@ public class TurnController {
 		}
 	}
 
+	/**
+	 * Print the cards the player is currently holding
+	 */
 	private void showHand() {
 		System.out.println("You are holding:");
 		for (Card card : player.getHand()) {
@@ -138,8 +178,12 @@ public class TurnController {
 		}
 	}
 
+	/**
+	 * Set the player's location to the opposite end of the passage leading from
+	 * their current room
+	 */
 	private void takePassage() {
-		if(player.getRoom() == null) {
+		if (player.getRoom() == null) {
 			System.out.println("You are not in a room!");
 		}
 		else if (player.getRoom().getPassageExit() == null) {
@@ -150,42 +194,12 @@ public class TurnController {
 		}
 	}
 
-	private Result makeAccusation() {
-		System.out.println("Make your accusation in the following format: suspect, room, weapon.");
-		System.out.println("  eg. Mr. Beige, Bathroom, Shotgun");
-		System.out.println("Alternatively, press Enter without typing to cancel.");
-		displayCards(game.getData().getSuspects(), "Suspects");
-		displayCards(game.getData().getRooms(), "Rooms");
-		displayCards(game.getData().getWeapons(), "Weapons");
-
-		while (true) {
-			String accusation = ConsoleRenderer.readLine("> ");
-			if (accusation == null || accusation.isEmpty()) {
-				return Result.NONE;
-			}
-
-			Card[] elements = parseAccusation(accusation);
-			if (elements == null) {
-				System.out.println("Make sure you include a suspect, room and weapon in the required format!");
-				continue;
-			}
-
-			Solution solution = game.getSolution();
-			if (elements[0].equals(solution.getSuspect()) &&
-					elements[1].equals(solution.getRoom()) &&
-					elements[2].equals(solution.getWeapon())) {
-				System.out.println("You are correct!");
-				return Result.WON;
-			}
-			else {
-				System.out.println("Sorry, that's not the solution.");
-				return Result.LOST;
-			}
-		}
-	}
-
+	/**
+	 * Get a suggestion from the player and attempts to disprove it, printing
+	 * out the result
+	 */
 	private void makeSuggestion() {
-		if(player.getRoom() == null) {
+		if (player.getRoom() == null) {
 			System.out.println("You must be in a room to make a suggestion");
 			return;
 		}
@@ -208,21 +222,67 @@ public class TurnController {
 				continue;
 			}
 
-			Game.Disprover disprover = game.disproveSuggestion(elements[0], player.getRoom(), elements[1]);
+			Game.Disprover disprover = game.disproveSuggestion(player,
+					elements[0], player.getRoom(), elements[1]);
 			if (disprover == null) {
 				System.out.println("No one was able to disprove your suggestion.");
 			}
 			else {
-				System.out.println("Your suggestion was proved incorrect by "+ disprover.getPlayer().getName());
-				System.out.println("They are holding card "+ disprover.getCard().getName() +"- note this down.");
+				System.out.println("Your suggestion was proved incorrect by " + disprover.getPlayer().getName());
+				System.out.println("They are holding card " + disprover.getCard().getName() + "- note this down.");
 			}
 		}
 	}
 
+	/**
+	 * Get an accusation from the player, validates it against the solution and
+	 * returns the result
+	 */
+	private Result makeAccusation() {
+		System.out
+				.println("Make your accusation in the following format: suspect, room, weapon.");
+		System.out.println("  eg. Mr. Beige, Bathroom, Shotgun");
+		System.out
+				.println("Alternatively, press Enter without typing to cancel.");
+		displayCards(game.getData().getSuspects(), "Suspects");
+		displayCards(game.getData().getRooms(), "Rooms");
+		displayCards(game.getData().getWeapons(), "Weapons");
+
+		while (true) {
+			String accusation = ConsoleRenderer.readLine("> ");
+			if (accusation == null || accusation.isEmpty()) {
+				return Result.NONE;
+			}
+
+			Card[] elements = parseAccusation(accusation);
+			if (elements == null) {
+				System.out
+						.println("Make sure you include a suspect, room and weapon in the required format!");
+				continue;
+			}
+
+			Solution solution = game.getSolution();
+			if (elements[0].equals(solution.getSuspect())
+					&& elements[1].equals(solution.getRoom())
+					&& elements[2].equals(solution.getWeapon())) {
+				System.out.println("You are correct!");
+				return Result.WON;
+			}
+			else {
+				System.out.println("Sorry, that's not the solution.");
+				return Result.LOST;
+			}
+		}
+	}
+
+	/**
+	 * Get movement directions from the player and moves them based on that
+	 * input
+	 */
 	private void move() {
 		while (true) {
 			Door door = null;
-			if(player.getRoom() != null){
+			if (player.getRoom() != null) {
 				door = queryLeavingDoor(player.getRoom());
 			}
 
@@ -234,13 +294,21 @@ public class TurnController {
 			try {
 				game.getBoard().movePlayer(player, directions, door);
 				break;
-			} catch (UnableToMoveException e) {
+			}
+			catch (UnableToMoveException e) {
 				System.out.println(e.getMessage());
 				continue;
 			}
 		}
 	}
 
+	/**
+	 * Ask the player which door they want to leave their room from, and return
+	 * the result
+	 *
+	 * @param room
+	 *            the player's current room
+	 */
 	private Door queryLeavingDoor(Room room) {
 		System.out.println("You are in the " + room.getName());
 		boardRenderer.drawRoomWithExits(room, game);
@@ -261,6 +329,9 @@ public class TurnController {
 		}
 	}
 
+	/**
+	 * Get a list of directions from the player
+	 */
 	private List<Direction> queryMovement() {
 		while (true) {
 			List<Direction> result = new ArrayList<Direction>();
@@ -280,13 +351,16 @@ public class TurnController {
 				continue;
 			}
 
-			for(int i = 0; i < dirString.length(); i++){
+			for (int i = 0; i < dirString.length(); i++) {
 				result.add(parseDirection(dirString.charAt(i)));
 			}
 			return result;
 		}
 	}
 
+	/**
+	 * Parse the given character as a direction (assumes it is one of {uldr})
+	 */
 	private Direction parseDirection(char dir) {
 		if (dir == 'u') {
 			return Direction.UP;
@@ -302,6 +376,9 @@ public class TurnController {
 		}
 	}
 
+	/**
+	 * Displays the given collection of cards
+	 */
 	private void displayCards(Collection<? extends Card> cards, String title) {
 		System.out.println(title + ":");
 		String line = "  ";
@@ -327,25 +404,55 @@ public class TurnController {
 		}
 	}
 
+	/**
+	 * Parses a suggestion given by the player as input
+	 *
+	 * @return the suspect and weapon that were suggested
+	 */
 	private Card[] parseSuggestion(String suggestion) {
 		String[] parts = parseArray(suggestion, 2);
-		return new Card[] {
-			game.getData().getSuspect(parts[0]),
-			game.getData().getWeapon(parts[1])
-		};
+		Card[] result = new Card[2];
+		result[0] = game.getData().getSuspect(parts[0]);
+		result[1] = game.getData().getWeapon(parts[1]);
+		if (result[0] == null || result[1] == null) {
+			return null;
+		}
+		else {
+			return result;
+		}
 	}
 
+	/**
+	 * Parses an accusation given by the player as input
+	 *
+	 * @return the suspect, room and weapon that were suggested
+	 */
 	private Card[] parseAccusation(String accusation) {
 		String[] parts = parseArray(accusation, 3);
-		return new Card[] {
-			game.getData().getSuspect(parts[0]),
-			game.getData().getRoom(parts[2]),
-			game.getData().getWeapon(parts[1])
-		};
+		Card[] result = new Card[2];
+		result[0] = game.getData().getSuspect(parts[0]);
+		result[1] = game.getData().getRoom(parts[1]);
+		result[2] = game.getData().getWeapon(parts[2]);
+		if (result[0] == null || result[1] == null || result[2] == null) {
+			return null;
+		}
+		else {
+			return result;
+		}
 	}
 
-	private String[] parseArray(String accusation, int desiredLength) {
-		String[] strings = accusation.split(",\\s+");
+	/**
+	 * Assume the string is a comma-separated array and split it into its parts
+	 *
+	 * @param input
+	 *            the string to split
+	 * @param desiredLength
+	 *            length to check the result against
+	 * @return the resulting array of strings, or null if it is not of the
+	 *         desired length
+	 */
+	private String[] parseArray(String input, int desiredLength) {
+		String[] strings = input.split(",\\s+");
 		if (strings.length != desiredLength) {
 			return null;
 		}

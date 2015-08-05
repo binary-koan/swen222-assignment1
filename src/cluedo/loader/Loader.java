@@ -13,20 +13,18 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import cluedo.game.Door;
-import cluedo.game.GameData;
 import cluedo.game.objects.Room;
 import cluedo.game.objects.Suspect;
 import cluedo.game.objects.Weapon;
-import cluedo.loader.Loader.SyntaxException;
 
 /**
- * Loads information about suspects, rooms, weapons and board layout from a file.
- * See "data/standard.txt" for an example and explanation of the syntax.
+ * Loads information about suspects, rooms, weapons and board layout from a
+ * file. See "data/standard.txt" for an example and explanation of the syntax.
  */
 public class Loader {
 	/**
-	 * Exception thrown if the syntax of the game file is not understood by the parser
+	 * Exception thrown if the syntax of the game file is not understood by the
+	 * parser
 	 */
 	@SuppressWarnings("serial")
 	public class SyntaxException extends Exception {
@@ -40,17 +38,18 @@ public class Loader {
 	// Matches group headers like "suspects:" or "rooms:"
 	private static final Pattern GROUP_HEADER = Pattern.compile("([a-z]+):$");
 	// Matches suspect definitions of the form "  b: Mr. Black [black]"
-	private static final Pattern SUSPECT_ENTRY =
-			Pattern.compile("^\\s+(.)\\s*:\\s*([a-zA-Z\\.\\-\\s]+)\\[([a-z]+)\\]$");
+	private static final Pattern SUSPECT_ENTRY = Pattern
+			.compile("^\\s+(.)\\s*:\\s*([a-zA-Z\\.\\-\\s]+)\\[([a-z]+)\\]$");
 	// Matches room definitions of the form "  S: Sitting Room"
-	private static final Pattern ROOM_ENTRY =
-			Pattern.compile("^\\s+(.)\\s*:\\s*([a-zA-Z\\.\\-\\s]+)$");
+	private static final Pattern ROOM_ENTRY = Pattern
+			.compile("^\\s+(.)\\s*:\\s*([a-zA-Z\\.\\-\\s]+)$");
 	// Matches passage definitions of the form "Sitting Room: Bathroom"
-	private static final Pattern PASSAGE_ENTRY =
-			Pattern.compile("^\\s+([a-zA-Z\\.\\-\\s]+):\\s*([a-zA-Z\\.\\-\\s]+)$");
-	private static final Pattern WEAPON_ENTRY =
-			Pattern.compile("^\\s+-\\s+([a-zA-Z\\.\\-\\s]+)$");
-	// Matches comments, ie. any line starting with a "#", optionally with whitespace before it
+	private static final Pattern PASSAGE_ENTRY = Pattern
+			.compile("^\\s+([a-zA-Z\\.\\-\\s]+):\\s*([a-zA-Z\\.\\-\\s]+)$");
+	private static final Pattern WEAPON_ENTRY = Pattern
+			.compile("^\\s+-\\s+([a-zA-Z\\.\\-\\s]+)$");
+	// Matches comments, ie. any line starting with a "#", optionally with
+	// whitespace before it
 	private static final Pattern COMMENT = Pattern.compile("^\\s*#");
 
 	private Map<String, Room> rooms;
@@ -65,9 +64,12 @@ public class Loader {
 
 	/**
 	 * Constructs a new object by loading data from the specified file
-	 * @param filename file to load data from
+	 *
+	 * @param filename
+	 *            file to load data from
 	 * @throws IOException
-	 * @throws SyntaxException if unknown syntax is encountered while loading
+	 * @throws SyntaxException
+	 *             if unknown syntax is encountered while loading
 	 */
 	public Loader(String filename) throws IOException, SyntaxException {
 		loadData(filename);
@@ -75,6 +77,7 @@ public class Loader {
 
 	/**
 	 * Returns all room names in the file, mapped to the corresponding Room
+	 *
 	 * @return
 	 */
 	public Map<String, Room> getRooms() {
@@ -82,7 +85,9 @@ public class Loader {
 	}
 
 	/**
-	 * Returns all suspect names in the file, mapped to the corresponding Suspect
+	 * Returns all suspect names in the file, mapped to the corresponding
+	 * Suspect
+	 *
 	 * @return
 	 */
 	public Map<String, Suspect> getSuspects() {
@@ -91,6 +96,7 @@ public class Loader {
 
 	/**
 	 * Returns all suspect ids in the file, mapped to the corresponding Suspect
+	 *
 	 * @return
 	 */
 	public Map<Character, Suspect> getSuspectsById() {
@@ -99,6 +105,7 @@ public class Loader {
 
 	/**
 	 * Returns all weapons loaded from the file
+	 *
 	 * @return
 	 */
 	public Map<String, Weapon> getWeapons() {
@@ -107,6 +114,7 @@ public class Loader {
 
 	/**
 	 * Returns the board width used in the file
+	 *
 	 * @return
 	 */
 	public int getBoardWidth() {
@@ -122,15 +130,18 @@ public class Loader {
 
 	/**
 	 * Returns a representation of the corridors on the file's board
-	 * @return A bit set containing (boardSize * boardSize) bits in 'blocks' of (size),
-	 *         such that the bit at (x + boardSize * y) is true if the point (x,y) is a corridor
+	 *
+	 * @return A bit set containing (boardSize * boardSize) bits in 'blocks' of
+	 *         (size), such that the bit at (x + boardSize * y) is true if the
+	 *         point (x,y) is a corridor
 	 */
 	public BitSet getCorridors() {
 		return corridors;
 	}
 
 	/**
-	 * Loads data from the file(name) passed to the constructor into the fields of this object
+	 * Loads data from the file(name) passed to the constructor into the fields
+	 * of this object
 	 */
 	private void loadData(String filename) throws IOException, SyntaxException {
 		BufferedReader br = new BufferedReader(new FileReader(filename));
@@ -148,8 +159,11 @@ public class Loader {
 		}
 	}
 
-	private void loadGroups(BufferedReader br) throws IOException, SyntaxException {
-		while (loadGroup(br)) { continue; }
+	private void loadGroups(BufferedReader br) throws IOException,
+			SyntaxException {
+		while (loadGroup(br)) {
+			continue;
+		}
 
 		if (rooms == null) {
 			fail("No rooms definition found");
@@ -166,10 +180,11 @@ public class Loader {
 	}
 
 	/**
-	 * Tries to load a group (title + entries) from the given reader. If it fails to find
-	 * a group title, it will load the board instead.
+	 * Tries to load a group (title + entries) from the given reader. If it
+	 * fails to find a group title, it will load the board instead.
 	 */
-	private boolean loadGroup(BufferedReader br) throws IOException, SyntaxException {
+	private boolean loadGroup(BufferedReader br) throws IOException,
+			SyntaxException {
 		String line = readDataLine(br);
 		Matcher matcher;
 
@@ -178,7 +193,7 @@ public class Loader {
 		}
 		else if ((matcher = GROUP_HEADER.matcher(line)).find()) {
 			String title = matcher.group(1);
-			switch(title) {
+			switch (title) {
 			case "suspects":
 				loadSuspects(br);
 				return true;
@@ -197,6 +212,9 @@ public class Loader {
 			}
 		}
 		else if (Pattern.matches("^---+$", line)) {
+			if (suspects == null || rooms == null || weapons == null) {
+				fail("All groups must come before the start of the board");
+			}
 			loadBoard(br, line.length());
 			return true;
 		}
@@ -207,10 +225,11 @@ public class Loader {
 	}
 
 	/**
-	 * Loads entries in the 'suspects' group, populating the (suspects) and (suspectsById) fields.
-	 * Assumes the group title has already been read.
+	 * Loads entries in the 'suspects' group, populating the (suspects) and
+	 * (suspectsById) fields. Assumes the group title has already been read.
 	 */
-	private void loadSuspects(BufferedReader br) throws IOException, SyntaxException {
+	private void loadSuspects(BufferedReader br) throws IOException,
+			SyntaxException {
 		suspects = new HashMap<String, Suspect>();
 		suspectsById = new HashMap<Character, Suspect>();
 		for (Matcher match : loadEntries(br, SUSPECT_ENTRY, "suspect")) {
@@ -224,16 +243,17 @@ public class Loader {
 	}
 
 	/**
-	 * Loads entries in the 'rooms' group, populating the (rooms) and (roomsById) fields.
-	 * Assumes the group title has already been read.
+	 * Loads entries in the 'rooms' group, populating the (rooms) and
+	 * (roomsById) fields. Assumes the group title has already been read.
 	 */
-	private void loadRooms(BufferedReader br) throws IOException, SyntaxException {
+	private void loadRooms(BufferedReader br) throws IOException,
+			SyntaxException {
 		rooms = new HashMap<String, Room>();
 		roomsById = new HashMap<Character, Room>();
 		for (Matcher match : loadEntries(br, ROOM_ENTRY, "room")) {
 			char id = match.group(1).charAt(0);
 			String name = match.group(2);
-			Room room = new Room(id, name);
+			Room room = new Room(name);
 			rooms.put(name, room);
 			roomsById.put(id, room);
 		}
@@ -243,7 +263,8 @@ public class Loader {
 	 * Loads entries in the 'passages' group, updating (rooms) with their links.
 	 * Assumes the group title has already been read.
 	 */
-	private void loadPassages(BufferedReader br) throws IOException, SyntaxException {
+	private void loadPassages(BufferedReader br) throws IOException,
+			SyntaxException {
 		for (Matcher match : loadEntries(br, PASSAGE_ENTRY, "passage")) {
 			String from = match.group(1);
 			String to = match.group(2);
@@ -258,7 +279,8 @@ public class Loader {
 	 * Loads entries in the 'weapons' group, populating the (weapons) field.
 	 * Assumes the group title has already been read.
 	 */
-	private void loadWeapons(BufferedReader br) throws IOException, SyntaxException {
+	private void loadWeapons(BufferedReader br) throws IOException,
+			SyntaxException {
 		weapons = new HashMap<String, Weapon>();
 		for (Matcher match : loadEntries(br, WEAPON_ENTRY, "weapon")) {
 			String name = match.group(1);
@@ -267,18 +289,20 @@ public class Loader {
 	}
 
 	/**
-	 * Attempts to load a board of the specified size, populating the (corridors) field and
-	 * adding information to other fields as necessary. Assumes the opening line of dashes
-	 * has been read, but reads the closing line.
+	 * Attempts to load a board of the specified size, populating the
+	 * (corridors) field and adding information to other fields as necessary.
+	 * Assumes the opening line of dashes has been read, but reads the closing
+	 * line.
 	 */
-	private void loadBoard(BufferedReader br, int width) throws IOException, SyntaxException {
+	private void loadBoard(BufferedReader br, int width) throws IOException,
+			SyntaxException {
 		boardWidth = width;
 		corridors = new BitSet();
 		Pattern endRow = Pattern.compile("^-{" + width + "}$");
 
 		int y;
 
-		for (y = 0 ;; y++) {
+		for (y = 0;; y++) {
 			String line = readDataLine(br);
 			if (line == null) {
 				fail("Board definition must end with a sequence of " + width + " dashes");
@@ -292,7 +316,8 @@ public class Loader {
 
 			line = line.substring(0, line.length() - 1);
 			if (line.length() != width) {
-				fail("Each row of the board must be exactly " + width + " characters long (excluding the final '|')");
+				fail("Each row of the board must be exactly " + width
+						+ " characters long (excluding the final '|')");
 			}
 			for (int x = 0; x < width; x++) {
 				parseBoardCharacter(line.charAt(x), x, y, width, line);
@@ -303,15 +328,22 @@ public class Loader {
 	}
 
 	/**
-	 * Attempts to parse the given character and update internal state depending on what it represents
-	 * (corridor, door, room, start location, etc.)
-	 * @param chr character in the board definition
-	 * @param x x-position of the character
-	 * @param y y-position of the character
-	 * @param size width and height of the board
-	 * @param line the row that this character is part of
+	 * Attempts to parse the given character and update internal state depending
+	 * on what it represents (corridor, door, room, start location, etc.)
+	 *
+	 * @param chr
+	 *            character in the board definition
+	 * @param x
+	 *            x-position of the character
+	 * @param y
+	 *            y-position of the character
+	 * @param size
+	 *            width and height of the board
+	 * @param line
+	 *            the row that this character is part of
 	 */
-	private void parseBoardCharacter(char chr, int x, int y, int size, String line) throws SyntaxException {
+	private void parseBoardCharacter(char chr, int x, int y, int size,
+			String line) throws SyntaxException {
 		if (chr == ' ') {
 			return;
 		}
@@ -334,13 +366,20 @@ public class Loader {
 
 	/**
 	 * Creates a door at the specified position
-	 * @param chr either '/' (horizontal door) or '_' (vertical door)
-	 * @param x x-position of the door
-	 * @param y y-position of the door
-	 * @param line current board definition row (used to figure out which room the door is part of)
+	 *
+	 * @param chr
+	 *            either '/' (horizontal door) or '_' (vertical door)
+	 * @param x
+	 *            x-position of the door
+	 * @param y
+	 *            y-position of the door
+	 * @param line
+	 *            current board definition row (used to figure out which room
+	 *            the door is part of)
 	 * @throws SyntaxException
 	 */
-	private void addDoor(char chr, int x, int y, String line) throws SyntaxException {
+	private void addDoor(char chr, int x, int y, String line)
+			throws SyntaxException {
 		char beside = x == 0 ? line.charAt(x + 1) : line.charAt(x - 1);
 		if (!roomsById.containsKey(beside) && x < line.length() - 1) {
 			beside = line.charAt(x + 1);
@@ -357,14 +396,16 @@ public class Loader {
 	}
 
 	/**
-	 * Convenience method to load all lines matching the specified pattern from the reader
-	 * FAILS: Reads one line too many
+	 * Convenience method to load all lines matching the specified pattern from
+	 * the reader FAILS: Reads one line too many
+	 *
 	 * @param br
 	 * @param pattern
 	 * @param lookingFor
 	 * @return
 	 */
-	private List<Matcher> loadEntries(BufferedReader br, Pattern pattern, String lookingFor) throws IOException, SyntaxException {
+	private List<Matcher> loadEntries(BufferedReader br, Pattern pattern,
+			String lookingFor) throws IOException, SyntaxException {
 		List<Matcher> result = new ArrayList<Matcher>();
 		String line;
 
@@ -386,8 +427,11 @@ public class Loader {
 	}
 
 	/**
-	 * Returns the next relevant line from the reader (skips comments and empty lines)
-	 * @param br reader to read lines from
+	 * Returns the next relevant line from the reader (skips comments and empty
+	 * lines)
+	 *
+	 * @param br
+	 *            reader to read lines from
 	 * @return
 	 */
 	private String readDataLine(BufferedReader br) throws IOException {

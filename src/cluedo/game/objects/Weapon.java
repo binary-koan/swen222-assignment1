@@ -1,24 +1,25 @@
 package cluedo.game.objects;
 
+/**
+ * Represents a possible murder weapon in the game
+ */
 public class Weapon implements Card {
 	private String name;
-	private Room room;
 
-	public Weapon(String name){
+	/**
+	 * Creates a new weapon
+	 * 
+	 * @param name
+	 *            a string identifying the weapon
+	 */
+	public Weapon(String name) {
 		this.name = name;
-
 	}
 
+	/**
+	 * Returns the name of this weapon
+	 */
 	public String getName() {
 		return name;
 	}
-
-	public void setRoom(Room room){
-		this.room = room;
-	}
-
-	public Room getRoom(){
-		return this.room;
-	}
-
 }
