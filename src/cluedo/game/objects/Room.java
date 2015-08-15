@@ -1,6 +1,7 @@
 package cluedo.game.objects;
 
 import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -171,10 +172,10 @@ public class Room implements Card {
 	/**
 	 * Returns the point at the center of the room's bounding box
 	 */
-	public Point getCenterPoint() {
-		float x = boundingBox.minX + (boundingBox.maxX - boundingBox.minX) / 2.0f;
-		float y = boundingBox.minY + (boundingBox.maxY - boundingBox.minY) / 2.0f;
-		return new Point(Math.round(x), Math.round(y));
+	public Point2D.Float getCenterPoint() {
+		float x = (boundingBox.minX + boundingBox.maxX + 1) / 2.0f;
+		float y = (boundingBox.minY + boundingBox.maxY + 1) / 2.0f;
+		return new Point2D.Float(x, y);
 	}
 
 }

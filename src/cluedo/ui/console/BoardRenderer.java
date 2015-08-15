@@ -1,6 +1,7 @@
 package cluedo.ui.console;
 
 import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.util.Set;
 
 import cluedo.game.Board;
@@ -239,13 +240,13 @@ public class BoardRenderer {
 	 */
 	private void drawRoomName(Room room, int baseX, int baseY,
 			StringBuilder[] base) {
-		Point center = room.getCenterPoint();
+		Point2D.Float center = room.getCenterPoint();
 		String name = room.getName();
 
-		int startX = (center.x * 3) - baseX - (name.length() / 2);
+		int startX = Math.round(center.x * 3) - baseX - (name.length() / 2);
 		int endX = startX + name.length();
 
-		StringBuilder nameRow = base[center.y - baseY - 1];
+		StringBuilder nameRow = base[Math.round(center.y) - baseY - 1];
 		for (int realX = startX; realX < endX && realX < nameRow.length(); ++realX) {
 			nameRow.setCharAt(realX, name.charAt(realX - startX));
 		}
@@ -268,7 +269,7 @@ public class BoardRenderer {
 	 */
 	private void drawRoomContents(Room room, int baseX, int baseY,
 			StringBuilder[] base, Game game) {
-		Point center = room.getCenterPoint();
+		Point2D.Float center = room.getCenterPoint();
 		String contents = "(";
 		if (room.getWeapon() != null) {
 			contents += room.getWeapon().getName() + "; ";
@@ -283,10 +284,10 @@ public class BoardRenderer {
 		}
 		contents = contents.substring(0, contents.length() - 2) + ")";
 
-		int startX = (center.x * 3) - baseX - (contents.length() / 2);
+		int startX = Math.round(center.x * 3) - baseX - (contents.length() / 2);
 		int endX = startX + contents.length();
 
-		StringBuilder contentsRow = base[center.y - baseY];
+		StringBuilder contentsRow = base[Math.round(center.y) - baseY];
 		for (int realX = startX; realX < endX && realX < contentsRow.length(); ++realX) {
 			contentsRow.setCharAt(realX, contents.charAt(realX - startX));
 		}

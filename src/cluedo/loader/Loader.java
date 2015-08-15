@@ -39,7 +39,7 @@ public class Loader {
 	private static final Pattern GROUP_HEADER = Pattern.compile("([a-z]+):$");
 	// Matches suspect definitions of the form "  b: Mr. Black [black]"
 	private static final Pattern SUSPECT_ENTRY = Pattern
-			.compile("^\\s+(.)\\s*:\\s*([a-zA-Z\\.\\-\\s]+)\\[([a-z]+)\\]$");
+			.compile("^\\s+(.)\\s*:\\s*([a-zA-Z\\.\\-\\s]+)(#[0-9a-fA-F]{6})$");
 	// Matches room definitions of the form "  S: Sitting Room"
 	private static final Pattern ROOM_ENTRY = Pattern
 			.compile("^\\s+(.)\\s*:\\s*([a-zA-Z\\.\\-\\s]+)$");
@@ -234,7 +234,7 @@ public class Loader {
 		for (Matcher match : loadEntries(br, SUSPECT_ENTRY, "suspect")) {
 			char id = match.group(1).charAt(0);
 			String name = match.group(2).trim();
-			Color color = Color.getColor(match.group(3));
+			Color color = Color.decode(match.group(3));
 			Suspect suspect = new Suspect(id, name, color);
 			suspects.put(name, suspect);
 			suspectsById.put(id, suspect);

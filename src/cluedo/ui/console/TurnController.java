@@ -1,6 +1,7 @@
 package cluedo.ui.console;
 
 import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -171,8 +172,8 @@ public class TurnController {
 	private void showPlayerPosition() {
 		if (player.getRoom() != null) {
 			System.out.println("You are in the " + player.getRoom().getName() + ".");
-			Point center = player.getRoom().getCenterPoint();
-			boardRenderer.drawBoard(center.y - 2, center.y + 3, game);
+			Point2D.Float center = player.getRoom().getCenterPoint();
+			boardRenderer.drawBoard(Math.round(center.y) - 2, Math.round(center.y) + 3, game);
 		}
 		else {
 			System.out.println("You are in a corridor.");

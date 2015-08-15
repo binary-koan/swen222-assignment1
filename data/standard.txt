@@ -14,12 +14,12 @@ suspects:
   # Suspects consist of a single letter ID, a name and a colour. The ID is used to set the
   # start location on the board definition below, and to show the location of the player
   # with that token in the (default) text interface.
-  s: Miss Scarlett [red]
-  p: Professor Plum [purple]
-  e: Mrs. Peacock [blue]
-  g: The Reverend Green [green]
-  m: Colonel Mustard [yellow]
-  w: Mrs. White [white]
+  s: Miss Scarlett #ff0000
+  p: Professor Plum #ff00ff
+  e: Mrs. Peacock #0000ff
+  g: The Reverend Green #00ff00
+  m: Colonel Mustard #ffff00
+  w: Mrs. White #ffffff
 rooms:
   # Rooms are similar to suspects, but only need an ID and a name. This ID is also for
   # setting which spaces the room occupies in the board definition.

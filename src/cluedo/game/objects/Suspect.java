@@ -61,4 +61,8 @@ public class Suspect implements Card {
 	public Point getStartLocation() {
 		return this.startLocation;
 	}
+
+	public Color getColor() {
+		return color;
+	}
 }
