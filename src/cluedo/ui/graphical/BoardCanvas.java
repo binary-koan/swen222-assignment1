@@ -3,6 +3,7 @@ package cluedo.ui.graphical;
 import cluedo.game.Board;
 import cluedo.game.Game;
 import cluedo.game.objects.Room;
+import cluedo.ui.graphical.util.Autotiler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -75,7 +76,8 @@ public class BoardCanvas extends JPanel {
             g.fillRect(realX, realY, tileSize, tileSize);
         }
         else {
-            int flags = getAutoTileFlags(x, y, color);
+//            int flags = getAutoTileFlags(x, y, color);
+            Autotiler.Flags flags = Autotiler.getFlags(cellColors, x, y);
             autoTile(g, color, flags, tileSize, realX, realY);
 
             //TODO: Just do this when showing where to move
@@ -88,44 +90,43 @@ public class BoardCanvas extends JPanel {
         }
     }
 
-    private int getAutoTileFlags(int x, int y, Color color) {
-        int flags = 0;
-        if (x > 0 && color.equals(cellColors[x - 1][y])) {
-            flags |= HAS_WEST;
-        }
-        if (x < (cellColors.length - 1) && color.equals(cellColors[x + 1][y])) {
-            flags |= HAS_EAST;
-        }
-        if (y > 0 && color.equals(cellColors[x][y - 1])) {
-            flags |= HAS_NORTH;
-        }
-        if (y < (cellColors[0].length - 1) && color.equals(cellColors[x][y + 1])) {
-            flags |= HAS_SOUTH;
-        }
-        return flags;
-    }
-
     @Override
     public Dimension getPreferredSize() {
         return new Dimension(600, 600);
     }
 
-    private void autoTile(Graphics g, Color color, int flags, int tileSize, int realX, int realY) {
+    private void autoTile(Graphics g, Color color, Autotiler.Flags flags, int tileSize, int realX, int realY) {
         g.setColor(color);
         g.fillRect(realX, realY, tileSize, tileSize);
         g.setColor(color.darker());
+
         int wallThickness = tileSize / 8;
-        if ((flags & HAS_NORTH) == 0) {
+        int eastX = realX + tileSize - wallThickness;
+        int southY = realY + tileSize - wallThickness;
+
+        if (flags.emptyNorth()) {
             g.fillRect(realX, realY, tileSize, wallThickness);
         }
-        if ((flags & HAS_EAST) == 0) {
-            g.fillRect(realX + tileSize - wallThickness, realY, wallThickness, tileSize);
+        if (flags.emptyEast()) {
+            g.fillRect(eastX, realY, wallThickness, tileSize);
         }
-        if ((flags & HAS_WEST) == 0) {
+        if (flags.emptyWest()) {
             g.fillRect(realX, realY, wallThickness, tileSize);
         }
-        if ((flags & HAS_SOUTH) == 0) {
-            g.fillRect(realX, realY + tileSize - wallThickness, tileSize, wallThickness);
+        if (flags.emptySouth()) {
+            g.fillRect(realX, southY, tileSize, wallThickness);
+        }
+        if (flags.emptyNorthEast()) {
+            g.fillRect(eastX, realY, wallThickness, wallThickness);
+        }
+        if (flags.emptyNorthWest()) {
+            g.fillRect(realX, realY, wallThickness, wallThickness);
+        }
+        if (flags.emptySouthEast()) {
+            g.fillRect(eastX, southY, wallThickness, wallThickness);
+        }
+        if (flags.emptySouthWest()) {
+            g.fillRect(realX, southY, wallThickness, wallThickness);
         }
     }
 }

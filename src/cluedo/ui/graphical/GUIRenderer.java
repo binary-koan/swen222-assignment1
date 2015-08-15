@@ -33,6 +33,7 @@ public class GUIRenderer extends JFrame implements ActionListener {
         for (Player player : players) {
             game.addPlayer(player);
         }
+        boardCanvas.setEnabled(true);
     }
 
     private int queryPlayerCount() {
