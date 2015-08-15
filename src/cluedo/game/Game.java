@@ -9,6 +9,7 @@ import cluedo.game.objects.Room;
 import cluedo.game.objects.Suspect;
 import cluedo.game.objects.Weapon;
 import cluedo.loader.Loader;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * Represents a game of Cluedo. A central class which contains references to the
@@ -55,6 +56,15 @@ public class Game {
 		distributeWeapons();
 	}
 
+	public void reset() {
+		players.clear();
+        board.clearPlayers();
+        for (Room room : data.getRooms()) {
+            room.setWeapon(null);
+        }
+        distributeWeapons();
+	}
+
 	/**
 	 * Adds a player to the game
 	 *
@@ -79,9 +89,9 @@ public class Game {
 	 * randomly to the current set of players
 	 */
 	public void distributeCards() {
-		List<Weapon> weapons = data.getWeapons();
-		List<Suspect> suspects = data.getSuspects();
-		List<Room> rooms = data.getRooms();
+		List<Weapon> weapons = new ArrayList<>(data.getWeapons());
+		List<Suspect> suspects = new ArrayList<>(data.getSuspects());
+		List<Room> rooms = new ArrayList<>(data.getRooms());
 
 		Suspect murderer = suspects.remove(random.nextInt(suspects.size()));
 		Room murderRoom = rooms.remove(random.nextInt(rooms.size()));

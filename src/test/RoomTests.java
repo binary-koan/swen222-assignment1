@@ -25,8 +25,8 @@ public class RoomTests {
 		Room room = mockRoom(new Point[] {
 				new Point(1, 2), new Point(1, 3), new Point(4, 2), new Point(2, 3)
 		});
-		assertEquals(2, room.getCenterPoint().x);
-		assertEquals(2, room.getCenterPoint().y);
+		assertEquals(3, room.getCenterPoint().x);
+		assertEquals(3, room.getCenterPoint().y);
 	}
 
 	private Room mockRoom(Point[] points) {

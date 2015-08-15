@@ -140,7 +140,7 @@ public class BoardRenderer {
 			}
 		}
 
-		// Then autotile rooms and add their doors
+		// Then autotile rooms and addToLayout their doors
 		for (Room room : data.getRooms()) {
 			for (Point point : room.getPoints()) {
 				setTile(boardBase[point.y], point.x,

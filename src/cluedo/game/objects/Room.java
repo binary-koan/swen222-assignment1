@@ -147,9 +147,9 @@ public class Room implements Card {
 	 * and y should be in board (tile) coordinates
 	 *
 	 * @param x
-	 *            x-coordinate of the point to add
+	 *            x-coordinate of the point to addToLayout
 	 * @param y
-	 *            y-coordinate of the point to add
+	 *            y-coordinate of the point to addToLayout
 	 */
 	public void addPoint(int x, int y) {
 		points.add(new Point(x, y));
