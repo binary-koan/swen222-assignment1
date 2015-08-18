@@ -11,18 +11,32 @@ import cluedo.ui.graphical.util.Autotiler;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.font.TextLayout;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.List;
 
-public class BoardCanvas extends JPanel {
+public class BoardCanvas extends JPanel implements MouseListener, MouseMotionListener {
     private static final Color CORRIDOR_COLOR = Color.LIGHT_GRAY;
     private static final Color WALL_COLOR = Color.BLACK;
     private static final Color ROOM_COLOR = Color.ORANGE;
     private static final Color DOOR_COLOR = Color.RED;
+    private static final Color CAN_MOVE_COLOR = new Color(1, 1, 1, 0.5f);
+    private static final Color CANNOT_MOVE_COLOR = new Color(1, 0, 0, 0.5f);
 
     private Game game;
     private Board board;
+
+    private int startX;
+    private int startY;
+    private int tileSize;
+
+    private Player currentPlayer;
+    private Point moveLocation;
 
     Color[][] cellColors;
 
@@ -41,6 +55,13 @@ public class BoardCanvas extends JPanel {
                 cellColors[p.x][p.y] = ROOM_COLOR;
             }
         }
+
+        addMouseListener(this);
+        addMouseMotionListener(this);
+    }
+
+    public void setPlayer(Player player) {
+        currentPlayer = player;
     }
 
     @Override
@@ -50,34 +71,31 @@ public class BoardCanvas extends JPanel {
         }
 
         Graphics2D g2 = (Graphics2D) g;
-        // Use antialiasing
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-                RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
         int xTileSize = getWidth() / board.getWidth();
         int yTileSize = getHeight() / board.getHeight();
-        int tileSize = Math.min(xTileSize, yTileSize);
+        tileSize = Math.min(xTileSize, yTileSize);
 
         g2.setColor(WALL_COLOR);
         g2.fillRect(0, 0, getWidth(), getHeight());
 
-        int startX = (getWidth() - (tileSize * board.getWidth())) / 2;
-        int startY = (getHeight() - (tileSize * board.getHeight())) / 2;
+        startX = (getWidth() - (tileSize * board.getWidth())) / 2;
+        startY = (getHeight() - (tileSize * board.getHeight())) / 2;
         g2.translate(startX, startY);
 
         for (int y = 0; y < board.getHeight(); y++) {
             for (int x = 0; x < board.getWidth(); x++) {
-                drawTile(g2, tileSize, x, y);
+                drawTile(g2, x, y);
             }
         }
 
         for (Room room : game.getData().getRooms()) {
-            drawRoomInfo(g2, room, tileSize);
+            drawRoomInfo(g2, room);
 
             for (Door door : room.getDoors()) {
-                drawDoor(g2, room, door, tileSize);
+                drawDoor(g2, room, door);
             }
         }
 
@@ -85,6 +103,15 @@ public class BoardCanvas extends JPanel {
             for (Player player : game.getPlayers()) {
                 if (player.isInGame()) {
                     drawPlayer(player, tileSize, g2);
+                }
+            }
+            List<Point> path = calculateMovePath();
+            if (path == null) {
+                drawTile(g2, moveLocation.x, moveLocation.y, CANNOT_MOVE_COLOR);
+            }
+            else {
+                for (Point point : path) {
+                    drawTile(g2, point.x, point.y, CAN_MOVE_COLOR);
                 }
             }
         }
@@ -95,14 +122,18 @@ public class BoardCanvas extends JPanel {
         }
     }
 
+    private List<Point> calculateMovePath() {
+        return null;
+    }
+
     private void drawPlayer(Player player, int tileSize, Graphics2D g2) {
         Suspect token = player.getToken();
+        g2.setColor(token.getColor());
+        int offset = tileSize / 8;
+        int size = tileSize - offset * 2;
 
         if (player.getRoom() == null) {
             Point point = board.getPlayerLocation(player);
-            int offset = tileSize / 8;
-            int size = tileSize - offset * 2;
-            g2.setColor(token.getColor());
             g2.fillOval(point.x * tileSize + offset, point.y * tileSize + offset, size, size);
         }
         else {
@@ -110,7 +141,7 @@ public class BoardCanvas extends JPanel {
         }
     }
 
-    private void drawDoor(Graphics2D g2, Room room, Door door, int tileSize) {
+    private void drawDoor(Graphics2D g2, Room room, Door door) {
         g2.setColor(DOOR_COLOR);
 
         Point point = door.getLocation();
@@ -137,7 +168,7 @@ public class BoardCanvas extends JPanel {
         }
     }
 
-    private void drawRoomInfo(Graphics2D g2, Room room, int tileSize) {
+    private void drawRoomInfo(Graphics2D g2, Room room) {
         drawRoomName(room, tileSize, g2);
         drawRoomWeapon(room, tileSize, g2);
     }
@@ -182,17 +213,15 @@ public class BoardCanvas extends JPanel {
         g2.drawString(room.getName(), x, y);
     }
 
-    private void drawTile(Graphics g, int tileSize, int x, int y) {
+    private void drawTile(Graphics g, int x, int y) {
+        drawTile(g, x, y, cellColors[x][y]);
+    }
+
+    private void drawTile(Graphics g, int x, int y, Color color) {
         int realX = x * tileSize;
         int realY = y * tileSize;
-        Color color = cellColors[x][y];
 
-        if (color == null) {
-            g.setColor(WALL_COLOR);
-            g.fillRect(realX, realY, tileSize, tileSize);
-        }
-        else {
-//            int flags = getAutoTileFlags(x, y, color);
+        if (color != null && (color.equals(CORRIDOR_COLOR) || color.equals(ROOM_COLOR))) {
             Autotiler.Flags flags = Autotiler.getFlags(cellColors, x, y);
             autoTile(g, color, flags, tileSize, realX, realY);
 
@@ -203,6 +232,14 @@ public class BoardCanvas extends JPanel {
 //                int dotSize = Math.round(tileSize / 5.0f);
 //                g.fillOval(dotX, dotY, dotSize, dotSize);
 //            }
+        }
+        else if (color == null) {
+            g.setColor(WALL_COLOR);
+            g.fillRect(realX, realY, tileSize, tileSize);
+        }
+        else {
+            g.setColor(color);
+            g.fillRect(realX, realY, tileSize, tileSize);
         }
     }
 
@@ -245,4 +282,39 @@ public class BoardCanvas extends JPanel {
             g.fillRect(realX, southY, wallThickness, wallThickness);
         }
     }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        //TODO move player
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        if (currentPlayer != null) {
+            moveLocation = getTilePosition(e.getX(), e.getY());
+            repaint();
+        }
+    }
+
+    private Point getTilePosition(int x, int y) {
+        return new Point(
+                (x - startX) / tileSize,
+                (y - startY) / tileSize
+        );
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) { }
+
+    @Override
+    public void mouseExited(MouseEvent e) { }
+
+    @Override
+    public void mousePressed(MouseEvent e) { }
+
+    @Override
+    public void mouseReleased(MouseEvent e) { }
+
+    @Override
+    public void mouseDragged(MouseEvent e) { }
 }

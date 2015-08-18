@@ -73,7 +73,7 @@ public class TurnController {
 		System.out.println("Currently " + player.getName() + "'s turn."
 				+ " You are " + player.getToken().getName()
 				+ " (" + player.getToken().getIdentifier() + ")");
-		System.out.println("You rolled a " + player.getDiceRoll() + "!");
+		System.out.println("You rolled a " + player.getDieRoll() + "!");
 
 		Result result = doTurn();
 
@@ -355,15 +355,15 @@ public class TurnController {
 	private List<Direction> queryMovement() {
 		while (true) {
 			List<Direction> result = new ArrayList<Direction>();
-			System.out.println("Enter up to " + player.getDiceRoll() + " steps you want to take, with no spaces.");
+			System.out.println("Enter up to " + player.getDieRoll() + " steps you want to take, with no spaces.");
 			System.out.println("Valid directions are (u)p, (l)eft, (d)own and (r)ight.");
 			String dirString = ConsoleRenderer.readLine("> ");
 
 			if (dirString == null || dirString.isEmpty()) {
 				return null;
 			}
-			else if (dirString.length() > player.getDiceRoll()) {
-				System.out.println("You can't move more than " + player.getDiceRoll() + " steps!");
+			else if (dirString.length() > player.getDieRoll()) {
+				System.out.println("You can't move more than " + player.getDieRoll() + " steps!");
 				continue;
 			}
 			else if (!Pattern.matches("^[uldr]+$", dirString)) {

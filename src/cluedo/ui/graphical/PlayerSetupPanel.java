@@ -74,18 +74,18 @@ public class PlayerSetupPanel extends GridPanel implements ActionListener, Docum
 
         for (int i = 0; i < nPlayers; i++) {
             JLabel label = new JLabel("Player " + (i + 1));
-            addToLayout(new GridItemBuilder(label).pad(5));
+            setup(label).pad(5).addToLayout();
 
             PlaceholderTextField textField = new PlaceholderTextField();
             textField.setPlaceholder("Name");
             textField.getDocument().addDocumentListener(this);
             textFields.add(textField);
-            addToLayout(new GridItemBuilder(textField).flexH().pad(5));
+            setup(textField).flexH().pad(5).addToLayout();
 
             JComboBox<String> comboBox = new JComboBox<>(suspectStrings);
             comboBox.addActionListener(this);
             comboBoxes.add(comboBox);
-            addToLayout(new GridItemBuilder(comboBox).pad(5));
+            setup(comboBox).pad(5).addToLayout();
 
             finishRow();
         }

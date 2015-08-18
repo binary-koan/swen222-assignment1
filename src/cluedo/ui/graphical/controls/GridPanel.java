@@ -4,13 +4,26 @@ import javax.swing.*;
 import java.awt.*;
 
 public class GridPanel extends JPanel {
-    public static class GridItemBuilder {
+    public class GridItemBuilder {
         private Component component;
         private GridBagConstraints constraints;
 
         public GridItemBuilder(Component component) {
             this.component = component;
             this.constraints = new GridBagConstraints();
+        }
+
+        public Component addToLayout() {
+            constraints.gridx = currentColumn;
+            constraints.gridy = currentRow;
+            GridPanel.this.add(component, constraints);
+            GridPanel.this.currentColumn++;
+            return component;
+        }
+
+        public GridItemBuilder center() {
+            constraints.anchor = GridBagConstraints.CENTER;
+            return this;
         }
 
         public GridItemBuilder flexH() {
@@ -48,13 +61,17 @@ public class GridPanel extends JPanel {
         super(new GridBagLayout());
     }
 
-    public Component addToLayout(GridItemBuilder item) {
-        item.constraints.gridx = currentColumn;
-        item.constraints.gridy = currentRow;
-        add(item.component, item.constraints);
-        currentColumn++;
-        return item.component;
+    public GridItemBuilder setup(Component component) {
+        return new GridItemBuilder(component);
     }
+
+//    public Component addToLayout(GridItemBuilder item) {
+//        item.constraints.gridx = currentColumn;
+//        item.constraints.gridy = currentRow;
+//        add(item.component, item.constraints);
+//        currentColumn++;
+//        return item.component;
+//    }
 
 //    public Component addToLayout(Component component, double weight) {
 //        GridBagConstraints constraints = new GridBagConstraints();

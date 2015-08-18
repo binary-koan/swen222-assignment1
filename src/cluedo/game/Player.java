@@ -73,7 +73,7 @@ public class Player {
 	 * Get the number the player rolled this turn, or 0 if it isn't this
 	 * player's turn
 	 */
-	public int getDiceRoll() {
+	public int getDieRoll() {
 		return this.currentDiceRoll;
 	}
 
