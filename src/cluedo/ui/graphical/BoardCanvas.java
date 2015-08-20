@@ -8,6 +8,7 @@ import cluedo.game.objects.Room;
 import cluedo.game.objects.Suspect;
 import cluedo.game.objects.Weapon;
 import cluedo.ui.graphical.util.Autotiler;
+import cluedo.ui.graphical.util.PathFinder;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,8 +18,6 @@ import java.awt.event.MouseMotionListener;
 import java.awt.font.TextLayout;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.List;
 
 public class BoardCanvas extends JPanel implements MouseListener, MouseMotionListener {
     private static final Color CORRIDOR_COLOR = Color.LIGHT_GRAY;
@@ -36,7 +35,9 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
     private int tileSize;
 
     private Player currentPlayer;
+    private int movesRemaining;
     private Point moveLocation;
+    private PathFinder.MovePath movePath;
 
     Color[][] cellColors;
 
@@ -62,6 +63,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 
     public void setPlayer(Player player) {
         currentPlayer = player;
+        movesRemaining = player.getDieRoll();
     }
 
     @Override
@@ -105,15 +107,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
                     drawPlayer(player, tileSize, g2);
                 }
             }
-            List<Point> path = calculateMovePath();
-            if (path == null) {
-                drawTile(g2, moveLocation.x, moveLocation.y, CANNOT_MOVE_COLOR);
-            }
-            else {
-                for (Point point : path) {
-                    drawTile(g2, point.x, point.y, CAN_MOVE_COLOR);
-                }
-            }
+            drawMovePath(g2);
         }
         else {
             g.translate(-startX, -startY);
@@ -122,8 +116,16 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
         }
     }
 
-    private List<Point> calculateMovePath() {
-        return null;
+    private void drawMovePath(Graphics2D g2) {
+        movePath = PathFinder.calculate(board, board.getPlayerLocation(currentPlayer), moveLocation, movesRemaining);
+        if (movePath == null) {
+            drawTile(g2, moveLocation.x, moveLocation.y, CANNOT_MOVE_COLOR);
+        }
+        else {
+            for (Point point : movePath.asPoints()) {
+                drawTile(g2, point.x, point.y, CAN_MOVE_COLOR);
+            }
+        }
     }
 
     private void drawPlayer(Player player, int tileSize, Graphics2D g2) {
@@ -285,7 +287,15 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        //TODO move player
+        if (movePath != null) {
+            try {
+                board.movePlayer(currentPlayer, movePath.asDirections(), null);
+                movesRemaining -= movePath.size();
+                repaint();
+            } catch (Board.UnableToMoveException ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "Can't move!", JOptionPane.WARNING_MESSAGE);
+            }
+        }
     }
 
     @Override

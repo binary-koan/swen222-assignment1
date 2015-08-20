@@ -82,6 +82,7 @@ public class GUIRenderer extends JFrame implements ActionListener {
         actionsPanel = new GridPanel();
         actionsPanel.setup(new JButton("Suggest")).pad(5).addToLayout();
         actionsPanel.setup(new JButton("Accuse")).pad(5).addToLayout();
+        actionsPanel.setup(new JButton("Show Hand")).pad(5).addToLayout();
         actionsPanel.setup(new JButton("End turn")).pad(5).addToLayout();
         panel.setup(actionsPanel).center().addToLayout();
         panel.finishRow();

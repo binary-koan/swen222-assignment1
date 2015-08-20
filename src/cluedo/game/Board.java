@@ -84,6 +84,9 @@ public class Board {
 	 *            y-coordinate (in tiles)
 	 */
 	public boolean isCorridor(int x, int y) {
+		if (x < 0 || x >= width || y < 0 || y >= height) {
+            return false;
+        }
 		return corridors.get(x + width * y);
 	}
 
