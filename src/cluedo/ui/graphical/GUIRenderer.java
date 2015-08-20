@@ -20,6 +20,8 @@ public class GUIRenderer extends JFrame implements ActionListener {
     private PlayerDisplay playerDisplay;
     private GridPanel actionsPanel;
 
+    private int currentPlayerIndex;
+
     public GUIRenderer(Game game) {
         this.game = game;
         setupWindow();
@@ -37,10 +39,12 @@ public class GUIRenderer extends JFrame implements ActionListener {
             game.addPlayer(player);
         }
         startGame();
-        startTurn(players.get(0));
+        currentPlayerIndex = 0;
+        startTurn();
     }
 
-    private void startTurn(Player player) {
+    private void startTurn() {
+        Player player = game.getPlayers().get(currentPlayerIndex);
         int dieRoll = (int) (Math.random() * 6 + 1);
         player.startTurn(dieRoll);
         boardCanvas.setPlayer(player);
@@ -75,20 +79,27 @@ public class GUIRenderer extends JFrame implements ActionListener {
         panel.setup(boardCanvas).flexH().flexV().addToLayout();
         panel.finishRow();
 
-        playerDisplay = new PlayerDisplay();
+        playerDisplay = new PlayerDisplay(boardCanvas);
         panel.setup(playerDisplay).flexH().addToLayout();
         panel.finishRow();
 
         actionsPanel = new GridPanel();
-        actionsPanel.setup(new JButton("Suggest")).pad(5).addToLayout();
-        actionsPanel.setup(new JButton("Accuse")).pad(5).addToLayout();
-        actionsPanel.setup(new JButton("Show Hand")).pad(5).addToLayout();
-        actionsPanel.setup(new JButton("End turn")).pad(5).addToLayout();
+        addButton("Suggest", "player.suggest", actionsPanel);
+        addButton("Accuse", "player.accuse", actionsPanel);
+        addButton("Show hand", "player.showHand", actionsPanel);
+        addButton("End turn", "player.endTurn", actionsPanel);
         panel.setup(actionsPanel).center().addToLayout();
         panel.finishRow();
 
         setContentPane(panel);
         stopGame();
+    }
+
+    private void addButton(String text, String actionCommand, GridPanel layout) {
+        JButton button = new JButton(text);
+        button.setActionCommand(actionCommand);
+        button.addActionListener(this);
+        layout.setup(button).pad(5).addToLayout();
     }
 
     private void startGame() {
@@ -136,6 +147,10 @@ public class GUIRenderer extends JFrame implements ActionListener {
                 throw new NotImplementedException();
             case "file.quit":
                 System.exit(0);
+            case "player.endTurn":
+                currentPlayerIndex = (currentPlayerIndex + 1) % game.getPlayers().size();
+                startTurn();
+                break;
             default:
                 throw new RuntimeException("Unknown action: " + e.getActionCommand());
         }

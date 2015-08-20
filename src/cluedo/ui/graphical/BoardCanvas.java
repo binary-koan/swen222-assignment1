@@ -18,6 +18,8 @@ import java.awt.event.MouseMotionListener;
 import java.awt.font.TextLayout;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 
 public class BoardCanvas extends JPanel implements MouseListener, MouseMotionListener {
     private static final Color CORRIDOR_COLOR = Color.LIGHT_GRAY;
@@ -26,6 +28,8 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
     private static final Color DOOR_COLOR = Color.RED;
     private static final Color CAN_MOVE_COLOR = new Color(1, 1, 1, 0.5f);
     private static final Color CANNOT_MOVE_COLOR = new Color(1, 0, 0, 0.5f);
+
+    private PropertyChangeSupport changes = new PropertyChangeSupport(this);
 
     private Game game;
     private Board board;
@@ -64,6 +68,14 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
     public void setPlayer(Player player) {
         currentPlayer = player;
         movesRemaining = player.getDieRoll();
+    }
+
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        changes.addPropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        changes.removePropertyChangeListener(listener);
     }
 
     @Override
@@ -117,6 +129,10 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
     }
 
     private void drawMovePath(Graphics2D g2) {
+        if (moveLocation == null || board.getPlayerLocation(currentPlayer) == null) {
+            return;
+        }
+
         movePath = PathFinder.calculate(board, board.getPlayerLocation(currentPlayer), moveLocation, movesRemaining);
         if (movePath == null) {
             drawTile(g2, moveLocation.x, moveLocation.y, CANNOT_MOVE_COLOR);
@@ -226,14 +242,6 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
         if (color != null && (color.equals(CORRIDOR_COLOR) || color.equals(ROOM_COLOR))) {
             Autotiler.Flags flags = Autotiler.getFlags(cellColors, x, y);
             autoTile(g, color, flags, tileSize, realX, realY);
-
-            //TODO: Just do this when showing where to move
-//            if (color.equals(CORRIDOR_COLOR)) {
-//                int dotX = Math.round(realX + tileSize * 2 / 5.0f);
-//                int dotY = Math.round(realY + tileSize * 2 / 5.0f);
-//                int dotSize = Math.round(tileSize / 5.0f);
-//                g.fillOval(dotX, dotY, dotSize, dotSize);
-//            }
         }
         else if (color == null) {
             g.setColor(WALL_COLOR);
@@ -290,7 +298,9 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
         if (movePath != null) {
             try {
                 board.movePlayer(currentPlayer, movePath.asDirections(), null);
-                movesRemaining -= movePath.size();
+                int newMovesRemaining = movesRemaining - movePath.size() + 1;
+                changes.firePropertyChange("movesRemaining", movesRemaining, newMovesRemaining);
+                movesRemaining = newMovesRemaining;
                 repaint();
             } catch (Board.UnableToMoveException ex) {
                 JOptionPane.showMessageDialog(this, ex.getMessage(), "Can't move!", JOptionPane.WARNING_MESSAGE);

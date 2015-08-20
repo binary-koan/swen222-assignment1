@@ -5,8 +5,17 @@ import cluedo.ui.graphical.controls.GridPanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
-public class PlayerDisplay extends GridPanel {
+public class PlayerDisplay extends GridPanel implements PropertyChangeListener {
+    @Override
+    public void propertyChange(PropertyChangeEvent e) {
+        if (e.getPropertyName().equals("movesRemaining")) {
+            setRemainingMoves((int) e.getNewValue());
+        }
+    }
+
     private class TokenDisplay extends JPanel {
         @Override
         protected void paintComponent(Graphics g) {
@@ -36,7 +45,9 @@ public class PlayerDisplay extends GridPanel {
     private JLabel nameLabel = new JLabel("No players");
     private JLabel dieRollLabel = new JLabel();
 
-    public PlayerDisplay() {
+    public PlayerDisplay(BoardCanvas canvas) {
+        canvas.addPropertyChangeListener(this);
+
         nameLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, getFont().getSize()));
 
         setup(tokenDisplay).pad(5).center().addToLayout();
@@ -48,7 +59,11 @@ public class PlayerDisplay extends GridPanel {
         currentPlayer = player;
         tokenDisplay.setToolTipText(player.getToken().getName());
         nameLabel.setText(player.getName() + "'s turn");
-        dieRollLabel.setText("You rolled a " + player.getDieRoll() + ". Click on the board to move.");
+        setRemainingMoves(player.getDieRoll());
         repaint();
+    }
+
+    private void setRemainingMoves(int moves) {
+        dieRollLabel.setText("You have " + moves + " moves remaining. Click on the board to move.");
     }
 }

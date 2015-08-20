@@ -178,7 +178,11 @@ public class Board {
 	 *             if the player tries to move to an invalid location
 	 */
 	private void movePlayerAlongPath(Player player, List<Direction> steps) throws UnableToMoveException {
-		Point currentLocation = playerLocations.get(player);
+		if (steps.size() == 0) {
+            return;
+        }
+
+        Point currentLocation = playerLocations.get(player);
 		if (currentLocation == null) {
 			throw new RuntimeException("Player " + player + " isn't on the board");
 		}
