@@ -178,4 +178,9 @@ public class Room implements Card {
 		return new Point2D.Float(x, y);
 	}
 
+	@Override
+	public String toString() {
+		return name;
+	}
+
 }

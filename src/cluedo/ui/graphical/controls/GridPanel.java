@@ -11,6 +11,7 @@ public class GridPanel extends JPanel {
         public GridItemBuilder(Component component) {
             this.component = component;
             this.constraints = new GridBagConstraints();
+            constraints.anchor = GridBagConstraints.WEST;
         }
 
         public Component addToLayout() {
@@ -23,6 +24,11 @@ public class GridPanel extends JPanel {
 
         public GridItemBuilder center() {
             constraints.anchor = GridBagConstraints.CENTER;
+            return this;
+        }
+
+        public GridItemBuilder spanH(int span) {
+            constraints.gridwidth = span;
             return this;
         }
 

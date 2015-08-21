@@ -8,5 +8,5 @@ public interface Card {
 	/**
 	 * Returns a string identifying this card
 	 */
-	public String getName();
+	String getName();
 }

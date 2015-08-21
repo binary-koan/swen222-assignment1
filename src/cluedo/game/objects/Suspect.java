@@ -65,4 +65,9 @@ public class Suspect implements Card {
 	public Color getColor() {
 		return color;
 	}
+
+	@Override
+	public String toString() {
+		return name;
+	}
 }

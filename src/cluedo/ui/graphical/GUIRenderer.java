@@ -3,7 +3,6 @@ package cluedo.ui.graphical;
 import cluedo.game.Game;
 import cluedo.game.Player;
 import cluedo.ui.graphical.controls.GridPanel;
-import cluedo.ui.graphical.controls.GridPanel.GridItemBuilder;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.swing.*;
@@ -38,13 +37,15 @@ public class GUIRenderer extends JFrame implements ActionListener {
         for (Player player : players) {
             game.addPlayer(player);
         }
-        startGame();
+        game.distributeCards();
+
+        enableGameControls();
         currentPlayerIndex = 0;
         startTurn();
     }
 
     private void startTurn() {
-        Player player = game.getPlayers().get(currentPlayerIndex);
+        Player player = getCurrentPlayer();
         int dieRoll = (int) (Math.random() * 6 + 1);
         player.startTurn(dieRoll);
         boardCanvas.setPlayer(player);
@@ -102,7 +103,7 @@ public class GUIRenderer extends JFrame implements ActionListener {
         layout.setup(button).pad(5).addToLayout();
     }
 
-    private void startGame() {
+    private void enableGameControls() {
         boardCanvas.setEnabled(true);
         for (Component component : actionsPanel.getComponents()) {
             component.setEnabled(true);
@@ -147,6 +148,15 @@ public class GUIRenderer extends JFrame implements ActionListener {
                 throw new NotImplementedException();
             case "file.quit":
                 System.exit(0);
+            case "player.suggest":
+                suggest();
+                break;
+            case "player.accuse":
+                accuse();
+                break;
+            case "player.showHand":
+                Dialogs.showHand(this, getCurrentPlayer());
+                break;
             case "player.endTurn":
                 currentPlayerIndex = (currentPlayerIndex + 1) % game.getPlayers().size();
                 startTurn();
@@ -154,5 +164,17 @@ public class GUIRenderer extends JFrame implements ActionListener {
             default:
                 throw new RuntimeException("Unknown action: " + e.getActionCommand());
         }
+    }
+
+    private void accuse() {
+        Dialogs.getAccusation(this, getCurrentPlayer(), game.getData());
+    }
+
+    private void suggest() {
+        Dialogs.getSuggestion(this, getCurrentPlayer(), game.getData());
+    }
+
+    private Player getCurrentPlayer() {
+        return game.getPlayers().get(currentPlayerIndex);
     }
 }
