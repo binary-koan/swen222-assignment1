@@ -107,23 +107,25 @@ public class PathFinder {
             }
             visited.add(current);
 
-            addNeighbours(board, goal, nodes, current);
+            if (!board.isDoor(current.getPoint())) {
+                addNeighbours(board, goal, nodes, current);
+            }
         }
         return null;
     }
 
     private static void addNeighbours(Board board, Point goal, PriorityQueue<Node> nodes, Node current) {
         Point point = current.getPoint();
-        if (board.isCorridor(point.x - 1, point.y)) {
+        if (board.isCorridor(new Point(point.x - 1, point.y))) {
             nodes.add(new Node(current, new Point(point.x - 1, point.y), goal));
         }
-        if (board.isCorridor(point.x + 1, point.y)) {
+        if (board.isCorridor(new Point(point.x + 1, point.y))) {
             nodes.add(new Node(current, new Point(point.x + 1, point.y), goal));
         }
-        if (board.isCorridor(point.x, point.y - 1)) {
+        if (board.isCorridor(new Point(point.x, point.y - 1))) {
             nodes.add(new Node(current, new Point(point.x, point.y - 1), goal));
         }
-        if (board.isCorridor(point.x, point.y + 1)) {
+        if (board.isCorridor(new Point(point.x, point.y + 1))) {
             nodes.add(new Node(current, new Point(point.x, point.y + 1), goal));
         }
     }

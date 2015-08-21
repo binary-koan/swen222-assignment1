@@ -132,7 +132,7 @@ public class BoardRenderer {
 		for (int y = 0; y < height; y++) {
 			boardBase[y] = new StringBuilder(board.getWidth());
 			for (int x = 0; x < width; x++) {
-				if (board.isCorridor(x, y)) {
+				if (board.isCorridor(new Point(x, y))) {
 					appendTile(boardBase[y], SPACE + '\u00B7' + SPACE);
 				}
 				else {

@@ -17,6 +17,8 @@ import cluedo.game.Board.Direction;
 import cluedo.game.Board.UnableToMoveException;
 import cluedo.game.objects.Card;
 import cluedo.game.objects.Room;
+import cluedo.game.objects.Suspect;
+import cluedo.game.objects.Weapon;
 
 /**
  * An instance of this class is created per player per turn. It handles printing
@@ -225,19 +227,18 @@ public class TurnController {
 			displayCards(game.getData().getSuspects(), "Suspects");
 			displayCards(game.getData().getWeapons(), "Weapons");
 
-			String suggestion = ConsoleRenderer.readLine("> ");
-			if (suggestion == null || suggestion.isEmpty()) {
+			String suggestionString = ConsoleRenderer.readLine("> ");
+			if (suggestionString == null || suggestionString.isEmpty()) {
 				return;
 			}
 
-			Card[] elements = parseSuggestion(suggestion);
-			if (elements == null) {
+			Game.Suggestion suggestion = parseSuggestion(suggestionString, player);
+			if (suggestion == null) {
 				System.out.println("Make sure you include a suspect and a weapon in the required format!");
 				continue;
 			}
 
-			Game.Disprover disprover = game.disproveSuggestion(player,
-					elements[0], player.getRoom(), elements[1]);
+			Game.Disprover disprover = game.disproveSuggestion(player, suggestion);
 			if (disprover == null) {
 				System.out.println("No one was able to disprove your suggestion.");
 			}
@@ -268,22 +269,20 @@ public class TurnController {
 		displayCards(game.getData().getWeapons(), "Weapons");
 
 		while (true) {
-			String accusation = ConsoleRenderer.readLine("> ");
-			if (accusation == null || accusation.isEmpty()) {
+			String accusationString = ConsoleRenderer.readLine("> ");
+			if (accusationString == null || accusationString.isEmpty()) {
 				return Result.NONE;
 			}
 
-			Card[] elements = parseAccusation(accusation);
-			if (elements == null) {
+			Game.Suggestion accusation = parseAccusation(accusationString);
+			if (accusation == null) {
 				System.out
 						.println("Make sure you include a suspect, room and weapon in the required format!");
 				continue;
 			}
 
 			Solution solution = game.getSolution();
-			if (elements[0].equals(solution.getSuspect())
-					&& elements[1].equals(solution.getRoom())
-					&& elements[2].equals(solution.getWeapon())) {
+			if (game.getSolution().checkAgainst(accusation)) {
 				System.out.println("You are correct!");
 				return Result.WON;
 			}
@@ -429,16 +428,15 @@ public class TurnController {
 	 *
 	 * @return the suspect and weapon that were suggested
 	 */
-	private Card[] parseSuggestion(String suggestion) {
+	private Game.Suggestion parseSuggestion(String suggestion, Player player) {
 		String[] parts = parseArray(suggestion, 2);
-		Card[] result = new Card[2];
-		result[0] = game.getData().getSuspect(parts[0]);
-		result[1] = game.getData().getWeapon(parts[1]);
-		if (result[0] == null || result[1] == null) {
+		Suspect suspect = game.getData().getSuspect(parts[0]);
+		Weapon weapon = game.getData().getWeapon(parts[1]);
+		if (suspect == null || weapon == null) {
 			return null;
 		}
 		else {
-			return result;
+			return new Game.Suggestion(suspect, weapon, player.getRoom());
 		}
 	}
 
@@ -447,17 +445,16 @@ public class TurnController {
 	 *
 	 * @return the suspect, room and weapon that were suggested
 	 */
-	private Card[] parseAccusation(String accusation) {
+	private Game.Suggestion parseAccusation(String accusation) {
 		String[] parts = parseArray(accusation, 3);
-		Card[] result = new Card[3];
-		result[0] = game.getData().getSuspect(parts[0]);
-		result[1] = game.getData().getRoom(parts[1]);
-		result[2] = game.getData().getWeapon(parts[2]);
-		if (result[0] == null || result[1] == null || result[2] == null) {
+		Suspect suspect = game.getData().getSuspect(parts[0]);
+		Room room = game.getData().getRoom(parts[1]);
+		Weapon weapon = game.getData().getWeapon(parts[2]);
+		if (suspect == null || room == null || weapon == null) {
 			return null;
 		}
 		else {
-			return result;
+			return new Game.Suggestion(suspect, weapon, room);
 		}
 	}
 

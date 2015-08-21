@@ -52,7 +52,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
         cellColors = new Color[board.getWidth()][board.getHeight()];
         for (int y = 0; y < board.getHeight(); y++) {
             for (int x = 0; x < board.getWidth(); x++) {
-                cellColors[x][y] = board.isCorridor(x, y) ? CORRIDOR_COLOR : null;
+                cellColors[x][y] = board.isCorridor(new Point(x, y)) ? CORRIDOR_COLOR : null;
             }
         }
         for (Room room : game.getData().getRooms()) {

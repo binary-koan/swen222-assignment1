@@ -74,8 +74,7 @@ public class BoardTests {
 				Direction.RIGHT, Direction.RIGHT, Direction.DOWN
 		}), null);
 
-		Point location = board.getPlayerLocation(player);
-		assertTrue(board.isCorridor(location.x, location.y));
+		assertTrue(board.isCorridor(board.getPlayerLocation(player)));
 	}
 
 	@Test

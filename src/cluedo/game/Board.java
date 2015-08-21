@@ -78,16 +78,24 @@ public class Board {
 	/**
 	 * Returns true if the given point is a corridor, false otherwise
 	 *
-	 * @param x
-	 *            x-coordinate (in tiles)
-	 * @param y
-	 *            y-coordinate (in tiles)
+	 * @param point
+	 *            point to check (in tiles)
 	 */
-	public boolean isCorridor(int x, int y) {
-		if (x < 0 || x >= width || y < 0 || y >= height) {
+	public boolean isCorridor(Point point) {
+		if (point.x < 0 || point.x >= width || point.y < 0 || point.y >= height) {
             return false;
         }
-		return corridors.get(x + width * y);
+		return corridors.get(point.x + width * point.y);
+	}
+
+	/**
+	 * Returns true if the given point is a door, false otherwise
+	 *
+	 * @param point
+	 *            point to check (in tiles)
+	 */
+	public boolean isDoor(Point point) {
+		return doorLocations.containsKey(point);
 	}
 
 	/**

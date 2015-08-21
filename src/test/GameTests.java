@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import cluedo.game.objects.Suspect;
 import org.junit.Test;
 
 import cluedo.game.Game;
@@ -65,8 +66,9 @@ public class GameTests {
 		Player other = game.getPlayers().get(2);
 		Solution solution = game.getSolution();
 
-		Game.Disprover disprover = game.disproveSuggestion(player, other.getHand().get(1),
-				solution.getRoom(), solution.getWeapon());
+		Game.Disprover disprover = game.disproveSuggestion(player, new Game.Suggestion(
+				(Suspect)other.getHand().get(1), solution.getWeapon(), solution.getRoom()
+		));
 		assertEquals(disprover.getPlayer(), other);
 		assertEquals(disprover.getCard(), other.getHand().get(1));
 	}
@@ -77,8 +79,9 @@ public class GameTests {
 		Player player = game.getPlayers().get(0);
 		Solution solution = game.getSolution();
 
-		Game.Disprover disprover = game.disproveSuggestion(player, solution.getSuspect(),
-				solution.getRoom(), solution.getWeapon());
+		Game.Disprover disprover = game.disproveSuggestion(player, new Game.Suggestion(
+				solution.getSuspect(), solution.getWeapon(), solution.getRoom()
+		));
 		assertNull(disprover);
 	}
 

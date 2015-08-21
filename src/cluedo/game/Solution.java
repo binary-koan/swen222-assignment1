@@ -45,4 +45,12 @@ public class Solution {
 	public Weapon getWeapon() {
 		return weapon;
 	}
+
+	/**
+	 * Returns true if the suggestion is correct, false otherwise
+	 * @param suggestion suggestion to check
+	 */
+	public boolean checkAgainst(Game.Suggestion suggestion) {
+		return suggestion.getRoom() == room && suggestion.getSuspect() == suspect && suggestion.getWeapon() == weapon;
+	}
 }

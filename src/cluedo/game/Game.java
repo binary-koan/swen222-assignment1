@@ -17,6 +17,33 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
  */
 public class Game {
 	/**
+	 * A suggestion or accusation made by a player
+	 */
+    public static class Suggestion {
+        private Suspect suspect;
+        private Weapon weapon;
+        private Room room;
+
+        public Suggestion(Suspect suspect, Weapon weapon, Room room) {
+            this.suspect = suspect;
+            this.weapon = weapon;
+            this.room = room;
+        }
+
+        public Suspect getSuspect() {
+            return suspect;
+        }
+
+        public Weapon getWeapon() {
+            return weapon;
+        }
+
+        public Room getRoom() {
+            return room;
+        }
+    }
+
+	/**
 	 * A combination of player and card which disproves a player's suggestion
 	 */
 	public class Disprover {
@@ -129,21 +156,20 @@ public class Game {
 	 * Disprover containing that player and the card that disproved the
 	 * suggestion
 	 *
-	 * @param room
-	 *            room that was suggested
-	 * @param weapon
-	 *            weapon that was suggested
+	 * @param player
+	 *            player making the suggestion
+	 * @param suggestion
+	 *            suggestion that was made
 	 * @return an object disproving the suggestion, or null if it could not be
 	 *         disproved
 	 */
-	public Disprover disproveSuggestion(Player player, Card suspect, Card room,
-			Card weapon) {
+	public Disprover disproveSuggestion(Player player, Suggestion suggestion) {
 		int startingIndex = players.indexOf(player);
 
 		for (int i = startingIndex, j = 0; j < players.size(); i++, j++) {
 			for (Card card : players.get(i).getHand()) {
-				if (card.equals(suspect) || card.equals(room)
-						|| card.equals(weapon)) {
+				if (card.equals(suggestion.getSuspect()) || card.equals(suggestion.getRoom())
+						|| card.equals(suggestion.getWeapon())) {
 					return new Disprover(players.get(i), card);
 				}
 			}
