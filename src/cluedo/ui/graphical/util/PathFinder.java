@@ -116,17 +116,16 @@ public class PathFinder {
 
     private static void addNeighbours(Board board, Point goal, PriorityQueue<Node> nodes, Node current) {
         Point point = current.getPoint();
-        if (board.isCorridor(new Point(point.x - 1, point.y))) {
-            nodes.add(new Node(current, new Point(point.x - 1, point.y), goal));
-        }
-        if (board.isCorridor(new Point(point.x + 1, point.y))) {
-            nodes.add(new Node(current, new Point(point.x + 1, point.y), goal));
-        }
-        if (board.isCorridor(new Point(point.x, point.y - 1))) {
-            nodes.add(new Node(current, new Point(point.x, point.y - 1), goal));
-        }
-        if (board.isCorridor(new Point(point.x, point.y + 1))) {
-            nodes.add(new Node(current, new Point(point.x, point.y + 1), goal));
+        Point[] surrounding = new Point[] {
+                new Point(point.x - 1, point.y),
+                new Point(point.x + 1, point.y),
+                new Point(point.x, point.y - 1),
+                new Point(point.x, point.y + 1)
+        };
+        for (Point beside : surrounding) {
+            if (board.isCorridor(beside) || board.isDoor(beside)) {
+                nodes.add(new Node(current, beside, goal));
+            }
         }
     }
 
