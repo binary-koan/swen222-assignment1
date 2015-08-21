@@ -2,6 +2,8 @@ package cluedo.ui.graphical.util;
 
 import cluedo.game.Board;
 import cluedo.game.Board.Direction;
+import cluedo.game.Door;
+import cluedo.game.objects.Room;
 
 import java.awt.*;
 import java.util.*;
@@ -10,9 +12,15 @@ import java.util.List;
 public class PathFinder {
     public static class MovePath {
         private List<Point> points;
+        private Door door;
 
-        public MovePath(List<Point> points) {
+        public MovePath(List<Point> points, Door door) {
             this.points = points;
+            this.door = door;
+        }
+
+        public Door getDoor() {
+            return door;
         }
 
         public List<Point> asPoints() {
@@ -93,7 +101,13 @@ public class PathFinder {
         }
     }
 
-    public static MovePath calculate(Board board, Point start, Point goal, int maxSteps) {
+    public static MovePath calculate(Board board, Point start, Room room, Point goal, int maxSteps) {
+        Door exitDoor = null;
+        if (room != null) {
+            exitDoor = room.getClosestDoor(goal);
+            start = exitDoor.getPointBeside();
+        }
+
         PriorityQueue<Node> nodes = new PriorityQueue<>();
         Set<Node> visited = new HashSet<>();
         nodes.add(new Node(null, start, goal));
@@ -102,8 +116,11 @@ public class PathFinder {
             if (visited.contains(current) || current.getDistanceSoFar() > maxSteps) {
                 continue;
             }
+            else if (exitDoor != null && current.getPoint().equals(exitDoor.getLocation())) {
+                continue;
+            }
             else if (current.getPoint().equals(goal)) {
-                return buildPath(current);
+                return buildPath(current, exitDoor);
             }
             visited.add(current);
 
@@ -123,13 +140,13 @@ public class PathFinder {
                 new Point(point.x, point.y + 1)
         };
         for (Point beside : surrounding) {
-            if (board.isCorridor(beside) || board.isDoor(beside)) {
+            if (board.isCorridor(beside) || board.canEnterDoor(beside, point)) {
                 nodes.add(new Node(current, beside, goal));
             }
         }
     }
 
-    private static MovePath buildPath(Node node) {
+    private static MovePath buildPath(Node node, Door door) {
         List<Point> points = new ArrayList<>();
         do {
             points.add(node.getPoint());
@@ -137,6 +154,6 @@ public class PathFinder {
         } while (node != null);
 
         Collections.reverse(points);
-        return new MovePath(points);
+        return new MovePath(points, door);
     }
 }

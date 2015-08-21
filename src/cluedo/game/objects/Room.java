@@ -144,6 +144,28 @@ public class Room implements Card {
 	}
 
 	/**
+	 * Returns the door closest to the given point
+	 *
+	 * @param location
+	 * 			  the location to check
+	 */
+	public Door getClosestDoor(Point location) {
+		double closestDistance = Double.MAX_VALUE;
+		Door closestDoor = null;
+		for (Door door : doors) {
+			int xDistance = door.getLocation().x - location.x;
+			int yDistance = door.getLocation().y - location.y;
+			double distance = Math.sqrt(xDistance * xDistance + yDistance * yDistance);
+
+			if (distance < closestDistance) {
+				closestDistance = distance;
+				closestDoor = door;
+			}
+		}
+		return closestDoor;
+	}
+
+	/**
 	 * Adds the point (x, y) to the collection of points this room contains. x
 	 * and y should be in board (tile) coordinates
 	 *

@@ -52,4 +52,26 @@ public class Door {
 		return this.location;
 	}
 
+	/**
+	 * Returns the point just outside this door (closest corridor tile)
+	 */
+	public Point getPointBeside() {
+		Room.BoundingBox boundingBox = room.getBoundingBox();
+		if (isVertical) {
+			if (location.x == boundingBox.getMinX()) {
+				return new Point(location.x - 1, location.y);
+			}
+			else {
+				return new Point(location.x + 1, location.y);
+			}
+		}
+		else {
+			if (location.y == boundingBox.getMinY()) {
+				return new Point(location.x, location.y - 1);
+			}
+			else {
+				return new Point(location.x, location.y + 1);
+			}
+		}
+	}
 }

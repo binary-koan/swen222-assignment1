@@ -16,7 +16,7 @@ public class Dialogs extends GridPanel {
     public static void showHand(Component parent, Player player) {
         String html = "<html><p>You are holding</p><ul>";
         for (Card card : player.getHand()) {
-            html += "<li>" + card.getName() + "</li>";
+            html += "<li><b>" + card.getName() + "</b></li>";
         }
         html += "</ul></html>";
         JLabel label = new JLabel(html);

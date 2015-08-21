@@ -15,7 +15,7 @@ import cluedo.loader.Loader;
  * such as players and doors, and handles player movement.
  */
 public class Board {
-	/**
+    /**
 	 * Exception thrown when a player is unable to move to a point (because it's
 	 * not a corridor, it's outside the board, etc.)
 	 */
@@ -88,14 +88,36 @@ public class Board {
 		return corridors.get(point.x + width * point.y);
 	}
 
+    /**
+     * Returns true if the given point is a door, false otherwise
+     * @param point
+     *            point to check (in tiles)
+     */
+    public boolean isDoor(Point point) {
+        return doorLocations.containsKey(point);
+    }
+
 	/**
-	 * Returns true if the given point is a door, false otherwise
+	 * Returns true if the given point is a door and can be entered from `beside`, false otherwise
 	 *
-	 * @param point
-	 *            point to check (in tiles)
-	 */
-	public boolean isDoor(Point point) {
-		return doorLocations.containsKey(point);
+     * @param doorLocation
+     *            point to check (in tiles)
+     * @param beside
+     *            point checking from (ensures that this returns false if trying
+     *            to go through a vertical door horizontally etc.)
+     */
+	public boolean canEnterDoor(Point doorLocation, Point beside) {
+        Door door = doorLocations.get(doorLocation);
+        if (door == null) {
+            return false;
+        }
+        else if (doorLocation.getX() == beside.getX() && door.isVertical()) {
+            return false;
+        }
+        else if (doorLocation.getY() == beside.getY() && !door.isVertical()) {
+            return false;
+        }
+        return true;
 	}
 
 	/**
@@ -148,7 +170,7 @@ public class Board {
 		if (!playerLocations.containsKey(player)) {
 			throw new RuntimeException("Player " + player + " isn't on the board");
 		}
-		List<Direction> stepsCopy = new ArrayList<Direction>(steps);
+		List<Direction> stepsCopy = new ArrayList<>(steps);
 
 		// Simple case - player is just moving along a corridor
 		if (door == null) {
@@ -166,7 +188,7 @@ public class Board {
 		}
 		for (Map.Entry<Point, Door> entry : doorLocations.entrySet()) {
 			if (entry.getValue() == door) {
-				playerLocations.put(player, door.getLocation());
+				playerLocations.put(player, door.getPointBeside());
 				player.setRoom(null);
 				movePlayerAlongPath(player, stepsCopy);
 				return;

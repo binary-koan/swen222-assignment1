@@ -1,6 +1,7 @@
 package cluedo.game;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -120,14 +121,17 @@ public class Game {
 		List<Suspect> suspects = new ArrayList<>(data.getSuspects());
 		List<Room> rooms = new ArrayList<>(data.getRooms());
 
-		Suspect murderer = suspects.remove(random.nextInt(suspects.size()));
-		Room murderRoom = rooms.remove(random.nextInt(rooms.size()));
-		Weapon murderWeapon = weapons.remove(random.nextInt(weapons.size()));
-		solution = new Solution(murderer, murderRoom, murderWeapon);
+        Suspect murderer = suspects.remove(random.nextInt(suspects.size()));
+        Room murderRoom = rooms.remove(random.nextInt(rooms.size()));
+        Weapon murderWeapon = weapons.remove(random.nextInt(weapons.size()));
+        solution = new Solution(murderer, murderRoom, murderWeapon);
 
-		distributeToPlayers(weapons);
-		distributeToPlayers(suspects);
-		distributeToPlayers(rooms);
+        List<Card> allCards = new ArrayList<>();
+        allCards.addAll(weapons);
+        allCards.addAll(suspects);
+        allCards.addAll(rooms);
+        Collections.shuffle(allCards);
+        distributeToPlayers(allCards);
 	}
 
 	/**
@@ -198,7 +202,7 @@ public class Game {
 				if (cards.isEmpty())
 					return;
 
-				p.getHand().add(cards.remove(random.nextInt(cards.size())));
+				p.getHand().add(cards.remove(cards.size() - 1));
 			}
 		}
 	}

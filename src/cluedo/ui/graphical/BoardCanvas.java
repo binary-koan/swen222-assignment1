@@ -20,6 +20,8 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BoardCanvas extends JPanel implements MouseListener, MouseMotionListener {
     private static final Color CORRIDOR_COLOR = Color.LIGHT_GRAY;
@@ -40,7 +42,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 
     private Player currentPlayer;
     private int movesRemaining;
-    private Point moveLocation;
+    private Point mouseLocation;
     private PathFinder.MovePath movePath;
 
     Color[][] cellColors;
@@ -129,13 +131,15 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
     }
 
     private void drawMovePath(Graphics2D g2) {
-        if (moveLocation == null || board.getPlayerLocation(currentPlayer) == null) {
+        if (mouseLocation == null || board.getPlayerLocation(currentPlayer) == null) {
             return;
         }
 
-        movePath = PathFinder.calculate(board, board.getPlayerLocation(currentPlayer), moveLocation, movesRemaining);
+        movePath = PathFinder.calculate(
+                board, board.getPlayerLocation(currentPlayer), currentPlayer.getRoom(), mouseLocation, movesRemaining
+        );
         if (movePath == null) {
-            drawTile(g2, moveLocation.x, moveLocation.y, CANNOT_MOVE_COLOR);
+            drawTile(g2, mouseLocation.x, mouseLocation.y, CANNOT_MOVE_COLOR);
         }
         else {
             for (Point point : movePath.asPoints()) {
@@ -145,18 +149,18 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
     }
 
     private void drawPlayer(Player player, int tileSize, Graphics2D g2) {
-        Suspect token = player.getToken();
-        g2.setColor(token.getColor());
+        if (player.getRoom() == null) {
+            Point point = board.getPlayerLocation(player);
+            drawPlayerToken(player.getToken(), point.x * tileSize, point.y * tileSize, g2);
+        }
+    }
+
+    private void drawPlayerToken(Suspect token, int realX, int realY, Graphics2D g2) {
         int offset = tileSize / 8;
         int size = tileSize - offset * 2;
 
-        if (player.getRoom() == null) {
-            Point point = board.getPlayerLocation(player);
-            g2.fillOval(point.x * tileSize + offset, point.y * tileSize + offset, size, size);
-        }
-        else {
-            //TODO: Draw player in room
-        }
+        g2.setColor(token.getColor());
+        g2.fillOval(realX + offset, realY + offset, size, size);
     }
 
     private void drawDoor(Graphics2D g2, Room room, Door door) {
@@ -189,6 +193,24 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
     private void drawRoomInfo(Graphics2D g2, Room room) {
         drawRoomName(room, tileSize, g2);
         drawRoomWeapon(room, tileSize, g2);
+        drawRoomPlayers(room, tileSize, g2);
+    }
+
+    private void drawRoomPlayers(Room room, int tileSize, Graphics2D g2) {
+        List<Player> roomPlayers = new ArrayList<>();
+        for (Player player : game.getPlayers()) {
+            if (player.getRoom() != null && player.getRoom().equals(room)) {
+                roomPlayers.add(player);
+            }
+        }
+
+        Point2D.Float center = room.getCenterPoint();
+        int realX = (int)((center.x - (roomPlayers.size() / 2.0f)) * tileSize);
+        int realY = (int)((center.y * tileSize) - tileSize * 1.5);
+        for (Player player : roomPlayers) {
+            drawPlayerToken(player.getToken(), realX, realY, g2);
+            realX += tileSize;
+        }
     }
 
     private void drawRoomWeapon(Room room, int tileSize, Graphics2D g2) {
@@ -297,10 +319,8 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
     public void mouseClicked(MouseEvent e) {
         if (movePath != null) {
             try {
-                board.movePlayer(currentPlayer, movePath.asDirections(), null);
-                int newMovesRemaining = movesRemaining - movePath.size() + 1;
-                changes.firePropertyChange("movesRemaining", movesRemaining, newMovesRemaining);
-                movesRemaining = newMovesRemaining;
+                board.movePlayer(currentPlayer, movePath.asDirections(), movePath.getDoor());
+                updateMovesRemaining(movePath.asPoints().get(movePath.size() - 1));
                 repaint();
             } catch (Board.UnableToMoveException ex) {
                 JOptionPane.showMessageDialog(this, ex.getMessage(), "Can't move!", JOptionPane.WARNING_MESSAGE);
@@ -308,10 +328,22 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
         }
     }
 
+    private void updateMovesRemaining(Point endPoint) {
+        int newMovesRemaining;
+        if (board.isDoor(endPoint)) {
+            newMovesRemaining = 0;
+        }
+        else {
+            newMovesRemaining = movesRemaining - movePath.size() + 1;
+        }
+        changes.firePropertyChange("movesRemaining", movesRemaining, newMovesRemaining);
+        movesRemaining = newMovesRemaining;
+    }
+
     @Override
     public void mouseMoved(MouseEvent e) {
         if (currentPlayer != null) {
-            moveLocation = getTilePosition(e.getX(), e.getY());
+            mouseLocation = getTilePosition(e.getX(), e.getY());
             repaint();
         }
     }
