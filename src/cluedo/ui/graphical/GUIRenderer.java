@@ -167,11 +167,32 @@ public class GUIRenderer extends JFrame implements ActionListener {
     }
 
     private void accuse() {
-        Dialogs.getAccusation(this, getCurrentPlayer(), game.getData());
+        Game.Suggestion accusation = Dialogs.getAccusation(this, getCurrentPlayer(), game.getData());
+        if (game.getSolution().checkAgainst(accusation)) {
+            //TODO win!
+        }
+        else {
+            getCurrentPlayer().setInGame(false);
+            //TODO check if someone won by default
+        }
     }
 
     private void suggest() {
-        Dialogs.getSuggestion(this, getCurrentPlayer(), game.getData());
+        Player player = getCurrentPlayer();
+        Game.Suggestion suggestion = Dialogs.getSuggestion(this, player, game.getData());
+        Game.Disprover disprover = game.disproveSuggestion(player, suggestion);
+        if (disprover == null) {
+            JOptionPane.showMessageDialog(
+                    this, "Your suggestion could not be disproved.", "Suggestion", JOptionPane.INFORMATION_MESSAGE
+            );
+        }
+        else {
+            JOptionPane.showMessageDialog(
+                    this, "<html>Your suggestion was disproved by <b>" + disprover.getPlayer().getName() + "</b>." +
+                          "<br />They are holding <b>" + disprover.getCard().getName() + "</b></html>",
+                    "Suggestion disproved", JOptionPane.INFORMATION_MESSAGE
+            );
+        }
     }
 
     private Player getCurrentPlayer() {

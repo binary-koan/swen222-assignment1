@@ -1,5 +1,6 @@
 package cluedo.ui.graphical;
 
+import cluedo.game.Game;
 import cluedo.game.GameData;
 import cluedo.game.Player;
 import cluedo.game.objects.Card;
@@ -10,7 +11,8 @@ import cluedo.ui.graphical.controls.GridPanel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Vector;
+import java.util.Enumeration;
+import java.util.List;
 
 public class Dialogs extends GridPanel {
     public static void showHand(Component parent, Player player) {
@@ -24,10 +26,11 @@ public class Dialogs extends GridPanel {
         JOptionPane.showMessageDialog(parent, label, player.getName() + "'s hand", JOptionPane.PLAIN_MESSAGE);
     }
 
-    public static Card[] getSuggestion(Component parent, Player player, GameData data) {
+    public static Game.Suggestion getSuggestion(Component parent, Player player, GameData data) {
         if (player.getRoom() == null) {
             JOptionPane.showMessageDialog(parent, "You can only make a suggestion when in a room!", "Unable to suggest",
                     JOptionPane.WARNING_MESSAGE);
+            return null;
         }
 
         GridPanel contentPane = new GridPanel();
@@ -36,67 +39,78 @@ public class Dialogs extends GridPanel {
         )).spanH(2).pad(5).addToLayout();
         contentPane.finishRow();
 
-        JComboBox[] comboBoxes = addDataChoices(contentPane, data, false);
+        ButtonGroup[] buttonGroups = addDataChoices(contentPane, data, false);
 
         int result = JOptionPane.showOptionDialog(parent, contentPane, "Suggestion", JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.PLAIN_MESSAGE, null, new Object[] { "OK", "Cancel" }, "OK");
         if (result == JOptionPane.OK_OPTION) {
-            Suspect suspect = (Suspect)comboBoxes[0].getSelectedItem();
-            Weapon weapon = (Weapon)comboBoxes[1].getSelectedItem();
-            return new Card[] { suspect, weapon };
+            Suspect suspect = data.getSuspect(getSelectedButtonText(buttonGroups[0]));
+            Weapon weapon = data.getWeapon(getSelectedButtonText(buttonGroups[1]));
+            return new Game.Suggestion(suspect, weapon, player.getRoom());
         }
         else {
             return null;
         }
     }
 
-    public static Card[] getAccusation(Component parent, Player player, GameData data) {
+    public static Game.Suggestion getAccusation(Component parent, Player player, GameData data) {
         GridPanel contentPane = new GridPanel();
         contentPane.setup(new JLabel(
                 "You are about to make an accusation. Remember, if it's wrong you will be out of the game!"
         )).spanH(2).pad(5).addToLayout();
         contentPane.finishRow();
 
-        JComboBox[] comboBoxes = addDataChoices(contentPane, data, true);
+        ButtonGroup[] buttonGroups = addDataChoices(contentPane, data, true);
 
         int result = JOptionPane.showOptionDialog(parent, contentPane, "Accusation", JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.PLAIN_MESSAGE, null, new Object[] { "OK", "Cancel" }, "OK");
+                JOptionPane.PLAIN_MESSAGE, null, new Object[]{"OK", "Cancel"}, "OK");
         if (result == JOptionPane.OK_OPTION) {
-            Room room = (Room)comboBoxes[0].getSelectedItem();
-            Suspect suspect = (Suspect)comboBoxes[1].getSelectedItem();
-            Weapon weapon = (Weapon)comboBoxes[2].getSelectedItem();
-            return new Card[] { room, suspect, weapon };
+            Room room = data.getRoom(getSelectedButtonText(buttonGroups[0]));
+            Suspect suspect = data.getSuspect(getSelectedButtonText(buttonGroups[1]));
+            Weapon weapon = data.getWeapon(getSelectedButtonText(buttonGroups[2]));
+            return new Game.Suggestion(suspect, weapon, room);
         }
         else {
             return null;
         }
     }
 
-    private static JComboBox[] addDataChoices(GridPanel panel, GameData data, boolean includeRooms) {
-        panel.setup(new JLabel("Murderer:", SwingConstants.LEFT)).pad(5).addToLayout();
-        Suspect[] suspects = data.getSuspects().toArray(new Suspect[data.getSuspects().size()]);
-        JComboBox<Suspect> suspectBox = new JComboBox<>(suspects);
-        panel.setup(suspectBox).flexH().pad(5).addToLayout();
-
-        panel.finishRow();
-
-        panel.setup(new JLabel("Murder weapon:", SwingConstants.LEFT)).pad(5).addToLayout();
-        Weapon[] weapons = data.getWeapons().toArray(new Weapon[data.getWeapons().size()]);
-        JComboBox<Weapon> weaponBox = new JComboBox<>(weapons);
-        panel.setup(weaponBox).flexH().pad(5).addToLayout();
-
+    private static ButtonGroup[] addDataChoices(GridPanel panel, GameData data, boolean includeRooms) {
+        ButtonGroup suspectButtons = buildButtonGroup(panel, "Murderer", data.getSuspects());
+        ButtonGroup weaponButtons = buildButtonGroup(panel, "Murder weapon", data.getWeapons());
         if (includeRooms) {
-            panel.finishRow();
-
-            panel.setup(new JLabel("Murder location:", SwingConstants.LEFT)).pad(5).addToLayout();
-            Room[] rooms = data.getRooms().toArray(new Room[data.getWeapons().size()]);
-            JComboBox<Room> roomBox = new JComboBox<>(rooms);
-            panel.setup(roomBox).flexH().pad(5).addToLayout();
-
-            return new JComboBox[] { roomBox, suspectBox, weaponBox };
+            ButtonGroup roomButtons = buildButtonGroup(panel, "Murder location", data.getRooms());
+            return new ButtonGroup[] { suspectButtons, weaponButtons, roomButtons };
         }
         else {
-            return new JComboBox[] { suspectBox, weaponBox };
+            return new ButtonGroup[] { suspectButtons, weaponButtons };
         }
+    }
+
+    private static ButtonGroup buildButtonGroup(GridPanel panel, String title, List<? extends Card> cards) {
+        GridPanel optionsPanel = new GridPanel();
+        optionsPanel.setup(new JLabel(title, SwingConstants.LEFT)).pad(5).addToLayout();
+        optionsPanel.finishRow();
+
+        ButtonGroup buttonGroup = new ButtonGroup();
+        for (Card card : cards) {
+            JRadioButton radioButton = new JRadioButton(card.getName());
+            buttonGroup.add(radioButton);
+            optionsPanel.setup(radioButton).pad(5).addToLayout();
+            optionsPanel.finishRow();
+        }
+
+        panel.setup(optionsPanel).addToLayout();
+        return buttonGroup;
+    }
+
+    private static String getSelectedButtonText(ButtonGroup buttonGroup) {
+        for (Enumeration<AbstractButton> buttons = buttonGroup.getElements(); buttons.hasMoreElements();) {
+            AbstractButton button = buttons.nextElement();
+            if (button.isSelected()) {
+                return button.getText();
+            }
+        }
+        return null;
     }
 }
