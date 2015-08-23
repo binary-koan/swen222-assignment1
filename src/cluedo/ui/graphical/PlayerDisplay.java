@@ -66,7 +66,7 @@ public class PlayerDisplay extends GridPanel implements PropertyChangeListener {
         currentPlayer = player;
         tokenDisplay.setToolTipText(player.getToken().getName());
         nameLabel.setText(player.getName() + "'s turn");
-        setRemainingMoves(player.getDieRoll());
+        setRemainingMoves(player.getMovesRemaining());
         repaint();
     }
 

@@ -23,15 +23,17 @@ import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Renders a game board
+ */
 public class BoardCanvas extends JPanel implements MouseListener, MouseMotionListener {
+    // Colours used for board objects
     private static final Color CORRIDOR_COLOR = Color.LIGHT_GRAY;
     private static final Color WALL_COLOR = Color.BLACK;
     private static final Color ROOM_COLOR = Color.ORANGE;
     private static final Color DOOR_COLOR = Color.RED;
     private static final Color CAN_MOVE_COLOR = new Color(1, 1, 1, 0.5f);
     private static final Color CANNOT_MOVE_COLOR = new Color(1, 0, 0, 0.5f);
-
-    private PropertyChangeSupport changes = new PropertyChangeSupport(this);
 
     private Game game;
     private Board board;
@@ -47,6 +49,11 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 
     Color[][] cellColors;
 
+    /**
+     * Construct a new board canvas
+     *
+     * @param game game to render
+     */
     public BoardCanvas(Game game) {
         this.game = game;
         this.board = game.getBoard();
@@ -67,61 +74,59 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
         addMouseMotionListener(this);
     }
 
+    /**
+     * Starts a particular player's turn
+     *
+     * @param player current player
+     */
     public void startTurn(Player player) {
         currentPlayer = player;
-        movesRemaining = player.getDieRoll();
+        movesRemaining = player.getMovesRemaining();
     }
 
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        changes.addPropertyChangeListener(listener);
-    }
-
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        changes.removePropertyChangeListener(listener);
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void paintComponent(Graphics g) {
-        if (!(g instanceof Graphics2D)) {
-            throw new RuntimeException("Unsupported Java environment: paintComponent() must be called with Graphics2D");
+        if (g instanceof Graphics2D) {
+            Graphics2D g2 = (Graphics2D) g;
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         }
-
-        Graphics2D g2 = (Graphics2D) g;
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
         int xTileSize = getWidth() / board.getWidth();
         int yTileSize = getHeight() / board.getHeight();
         tileSize = Math.min(xTileSize, yTileSize);
 
-        g2.setColor(WALL_COLOR);
-        g2.fillRect(0, 0, getWidth(), getHeight());
+        g.setColor(WALL_COLOR);
+        g.fillRect(0, 0, getWidth(), getHeight());
 
         startX = (getWidth() - (tileSize * board.getWidth())) / 2;
         startY = (getHeight() - (tileSize * board.getHeight())) / 2;
-        g2.translate(startX, startY);
+        g.translate(startX, startY);
 
         for (int y = 0; y < board.getHeight(); y++) {
             for (int x = 0; x < board.getWidth(); x++) {
-                drawTile(g2, x, y);
+                drawTile(g, x, y);
             }
         }
 
         for (Room room : game.getData().getRooms()) {
-            drawRoomInfo(g2, room);
+            drawRoomInfo(g, room);
 
             for (Door door : room.getDoors()) {
-                drawDoor(g2, room, door);
+                drawDoor(g, room, door);
             }
         }
 
         if (isEnabled()) {
             for (Player player : game.getPlayers()) {
                 if (player.isInGame()) {
-                    drawPlayer(player, tileSize, g2);
+                    drawPlayer(player, tileSize, g);
                 }
             }
-            drawMovePath(g2);
+            drawMovePath(g);
         }
         else {
             g.translate(-startX, -startY);
@@ -130,7 +135,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
         }
     }
 
-    private void drawMovePath(Graphics2D g2) {
+    private void drawMovePath(Graphics g) {
         if (mouseLocation == null || board.getPlayerLocation(currentPlayer) == null) {
             return;
         }
@@ -139,32 +144,32 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
                 board, board.getPlayerLocation(currentPlayer), currentPlayer.getRoom(), mouseLocation, movesRemaining
         );
         if (movePath == null) {
-            drawTile(g2, mouseLocation.x, mouseLocation.y, CANNOT_MOVE_COLOR);
+            drawTile(g, mouseLocation.x, mouseLocation.y, CANNOT_MOVE_COLOR);
         }
         else {
             for (Point point : movePath.asPoints()) {
-                drawTile(g2, point.x, point.y, CAN_MOVE_COLOR);
+                drawTile(g, point.x, point.y, CAN_MOVE_COLOR);
             }
         }
     }
 
-    private void drawPlayer(Player player, int tileSize, Graphics2D g2) {
+    private void drawPlayer(Player player, int tileSize, Graphics g) {
         if (player.getRoom() == null) {
             Point point = board.getPlayerLocation(player);
-            drawPlayerToken(player.getToken(), point.x * tileSize, point.y * tileSize, g2);
+            drawPlayerToken(player.getToken(), point.x * tileSize, point.y * tileSize, g);
         }
     }
 
-    private void drawPlayerToken(Suspect token, int realX, int realY, Graphics2D g2) {
+    private void drawPlayerToken(Suspect token, int realX, int realY, Graphics g) {
         int offset = tileSize / 8;
         int size = tileSize - offset * 2;
 
-        g2.setColor(token.getColor());
-        g2.fillOval(realX + offset, realY + offset, size, size);
+        g.setColor(token.getColor());
+        g.fillOval(realX + offset, realY + offset, size, size);
     }
 
-    private void drawDoor(Graphics2D g2, Room room, Door door) {
-        g2.setColor(DOOR_COLOR);
+    private void drawDoor(Graphics g, Room room, Door door) {
+        g.setColor(DOOR_COLOR);
 
         Point point = door.getLocation();
         int realX = point.x * tileSize;
@@ -174,29 +179,29 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 
         if (door.isVertical()) {
             if (point.x == room.getBoundingBox().getMinX()) {
-                g2.fillRect(realX - offset, realY, thickness, tileSize); // Left side
+                g.fillRect(realX - offset, realY, thickness, tileSize); // Left side
             }
             else {
-                g2.fillRect((int) (realX + tileSize * (3.0 / 4)) + offset, realY, thickness, tileSize); // Right side
+                g.fillRect((int) (realX + tileSize * (3.0 / 4)) + offset, realY, thickness, tileSize); // Right side
             }
         }
         else {
             if (point.y == room.getBoundingBox().getMinY()) {
-                g2.fillRect(realX, realY - offset, tileSize, thickness); // Top
+                g.fillRect(realX, realY - offset, tileSize, thickness); // Top
             }
             else {
-                g2.fillRect(realX, (int) (realY + tileSize * (3.0 / 4)) + offset, tileSize, thickness); // Bottom
+                g.fillRect(realX, (int) (realY + tileSize * (3.0 / 4)) + offset, tileSize, thickness); // Bottom
             }
         }
     }
 
-    private void drawRoomInfo(Graphics2D g2, Room room) {
-        drawRoomName(room, tileSize, g2);
-        drawRoomWeapon(room, tileSize, g2);
-        drawRoomPlayers(room, tileSize, g2);
+    private void drawRoomInfo(Graphics g, Room room) {
+        drawRoomName(room, tileSize, g);
+        drawRoomWeapon(room, tileSize, g);
+        drawRoomPlayers(room, tileSize, g);
     }
 
-    private void drawRoomPlayers(Room room, int tileSize, Graphics2D g2) {
+    private void drawRoomPlayers(Room room, int tileSize, Graphics g) {
         List<Player> roomPlayers = new ArrayList<>();
         for (Player player : game.getPlayers()) {
             if (player.getRoom() != null && player.getRoom().equals(room)) {
@@ -208,14 +213,14 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
         int realX = (int)((center.x - (roomPlayers.size() / 2.0f)) * tileSize);
         int realY = (int)((center.y * tileSize) - tileSize * 1.5);
         for (Player player : roomPlayers) {
-            drawPlayerToken(player.getToken(), realX, realY, g2);
+            drawPlayerToken(player.getToken(), realX, realY, g);
             realX += tileSize;
         }
     }
 
-    private void drawRoomWeapon(Room room, int tileSize, Graphics2D g2) {
+    private void drawRoomWeapon(Room room, int tileSize, Graphics g) {
         Font font = new Font(Font.SANS_SERIF, Font.PLAIN, (int) (tileSize * 0.5));
-        g2.setFont(font);
+        g.setFont(font);
 
         Weapon weapon = room.getWeapon();
         if (weapon == null) {
@@ -223,8 +228,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
         }
 
         Point2D.Float center = room.getCenterPoint();
-        TextLayout txt = new TextLayout(weapon.getName(), g2.getFont(), g2.getFontRenderContext());
-        Rectangle2D bounds = txt.getBounds();
+        Rectangle2D bounds = getTextBounds(weapon.getName(), g);
 
         int x = (int) (center.x * tileSize - bounds.getWidth() / 2.0);
         int y = (int) (center.y * tileSize + bounds.getHeight() * 2.5);
@@ -233,24 +237,35 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
         int width = (int) (bounds.getWidth() + padding * 2);
         int height = (int) (bounds.getHeight() + padding * 2);
 
-        g2.setColor(WALL_COLOR);
-        g2.fillRoundRect((int) (x - padding), (int) (y - padding - height / 2), width, height, height / 4, height / 4);
-        g2.setColor(CORRIDOR_COLOR);
-        g2.drawString(weapon.getName(), x, y);
+        g.setColor(WALL_COLOR);
+        g.fillRoundRect((int) (x - padding), (int) (y - padding - height / 2), width, height, height / 4, height / 4);
+        g.setColor(CORRIDOR_COLOR);
+        g.drawString(weapon.getName(), x, y);
     }
 
-    private void drawRoomName(Room room, int tileSize, Graphics2D g2) {
+    private void drawRoomName(Room room, int tileSize, Graphics g) {
         Font font = new Font(Font.SANS_SERIF, Font.BOLD, (int) (tileSize * 0.6));
-        g2.setFont(font);
+        g.setFont(font);
 
         Point2D.Float center = room.getCenterPoint();
-        TextLayout txt = new TextLayout(room.getName(), g2.getFont(), g2.getFontRenderContext());
-        Rectangle2D bounds = txt.getBounds();
+        Rectangle2D bounds = getTextBounds(room.getName(), g);
         int x = (int) (center.x * tileSize - bounds.getWidth() / 2.0);
         int y = (int) (center.y * tileSize + bounds.getHeight() / 2.0);
 
-        g2.setColor(DOOR_COLOR);
-        g2.drawString(room.getName(), x, y);
+        g.setColor(DOOR_COLOR);
+        g.drawString(room.getName(), x, y);
+    }
+
+    private Rectangle2D getTextBounds(String text, Graphics g) {
+        Rectangle2D bounds;
+        if (g instanceof Graphics2D) {
+            TextLayout txt = new TextLayout(text, g.getFont(), ((Graphics2D)g).getFontRenderContext());
+            bounds = txt.getBounds();
+        }
+        else {
+            bounds = new Rectangle2D.Float();
+        }
+        return bounds;
     }
 
     private void drawTile(Graphics g, int x, int y) {
@@ -336,7 +351,6 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
         else {
             newMovesRemaining = movesRemaining - movePath.size() + 1;
         }
-        changes.firePropertyChange("movesRemaining", movesRemaining, newMovesRemaining);
         movesRemaining = newMovesRemaining;
     }
 

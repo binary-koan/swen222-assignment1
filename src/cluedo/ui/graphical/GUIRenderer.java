@@ -50,7 +50,7 @@ public class GUIRenderer extends JFrame implements ActionListener {
 
         Player player = getCurrentPlayer();
         int dieRoll = (int) (Math.random() * 6 + 1);
-        player.startTurn(dieRoll);
+        player.setMovesRemaining(dieRoll);
         boardCanvas.startTurn(player);
         playerDisplay.startTurn(player);
         turnButtons.startTurn(player);

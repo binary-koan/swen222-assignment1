@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="03894524-bd20-47a5-af03-752775269954" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cluedo/ui/graphical/util/Autotiler.java" afterPath="$PROJECT_DIR$/src/cluedo/ui/graphical/util/Autotiler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cluedo/ui/graphical/controls/GridPanel.java" afterPath="$PROJECT_DIR$/src/cluedo/ui/graphical/controls/GridPanel.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cluedo/ui/graphical/util/PathFinder.java" afterPath="$PROJECT_DIR$/src/cluedo/ui/graphical/util/PathFinder.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cluedo/ui/graphical/controls/PlaceholderTextField.java" afterPath="$PROJECT_DIR$/src/cluedo/ui/graphical/controls/PlaceholderTextField.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/dictionaries/reaso.xml" afterPath="$PROJECT_DIR$/.idea/dictionaries/reaso.xml" />
+    <list default="true" id="03894524-bd20-47a5-af03-752775269954" name="Default" comment="Clean up BoardCanvas">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cluedo/ui/graphical/BoardCanvas.java" afterPath="$PROJECT_DIR$/src/cluedo/ui/graphical/BoardCanvas.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cluedo/ui/graphical/GUIRenderer.java" afterPath="$PROJECT_DIR$/src/cluedo/ui/graphical/GUIRenderer.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cluedo/game/Player.java" afterPath="$PROJECT_DIR$/src/cluedo/game/Player.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cluedo/ui/graphical/PlayerDisplay.java" afterPath="$PROJECT_DIR$/src/cluedo/ui/graphical/PlayerDisplay.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cluedo/ui/console/TurnController.java" afterPath="$PROJECT_DIR$/src/cluedo/ui/console/TurnController.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="Assignment1.iws" />
@@ -33,10 +33,14 @@
       <file leaf-file-name="BoardCanvas.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/cluedo/ui/graphical/BoardCanvas.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="3.8624">
-              <caret line="335" column="14" selection-start-line="335" selection-start-column="14" selection-end-line="335" selection-end-column="14" />
+            <state vertical-scroll-proportion="0.24047878">
+              <caret line="154" column="0" selection-start-line="154" selection-start-column="0" selection-end-line="154" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="e#9091#9092#0" expanded="true" />
+                <element signature="e#9142#9143#0" expanded="true" />
+                <element signature="e#9832#9833#0" expanded="true" />
+                <element signature="e#9878#9879#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -90,7 +94,6 @@
         <option value="$PROJECT_DIR$/src/cluedo/game/objects/Room.java" />
         <option value="$PROJECT_DIR$/src/cluedo/game/Door.java" />
         <option value="$PROJECT_DIR$/src/cluedo/game/Board.java" />
-        <option value="$PROJECT_DIR$/src/cluedo/ui/graphical/BoardCanvas.java" />
         <option value="$PROJECT_DIR$/src/cluedo/ui/graphical/PlayerDisplay.java" />
         <option value="$PROJECT_DIR$/src/cluedo/ui/graphical/Dialogs.java" />
         <option value="$PROJECT_DIR$/src/cluedo/ui/graphical/GUIRenderer.java" />
@@ -100,6 +103,8 @@
         <option value="$PROJECT_DIR$/src/cluedo/ui/graphical/controls/PlaceholderTextField.java" />
         <option value="$PROJECT_DIR$/src/cluedo/ui/graphical/util/Autotiler.java" />
         <option value="$PROJECT_DIR$/src/cluedo/ui/graphical/util/PathFinder.java" />
+        <option value="$PROJECT_DIR$/src/cluedo/game/Player.java" />
+        <option value="$PROJECT_DIR$/src/cluedo/ui/graphical/BoardCanvas.java" />
       </list>
     </option>
   </component>
@@ -759,7 +764,7 @@
       <workItem from="1440069509277" duration="28000" />
       <workItem from="1440137187117" duration="12413000" />
       <workItem from="1440249091369" duration="1348000" />
-      <workItem from="1440287544237" duration="7164000" />
+      <workItem from="1440287544237" duration="8398000" />
     </task>
     <task id="LOCAL-00001" summary="Start on GUI renderer&#10;&#10;- Basic board layout (walls, corridors, rooms)&#10;- New game dialogs">
       <created>1439622332374</created>
@@ -821,11 +826,17 @@
       <option name="project" value="LOCAL" />
       <updated>1440322195425</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Code cleanup and commenting">
+      <created>1440324031982</created>
+      <option name="number" value="00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1440324031982</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="61542000" />
+    <option name="totallyTimeSpent" value="62776000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -839,11 +850,12 @@
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32996634" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.31045407" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.31045407" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.1796875" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32946146" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -854,7 +866,6 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32946146" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -879,7 +890,8 @@
     <MESSAGE value="Allow moving in and out of rooms" />
     <MESSAGE value="Implement suggestions, start on accusations" />
     <MESSAGE value="Split turn buttons into separate class" />
-    <option name="LAST_COMMIT_MESSAGE" value="Split turn buttons into separate class" />
+    <MESSAGE value="Code cleanup and commenting" />
+    <option name="LAST_COMMIT_MESSAGE" value="Code cleanup and commenting" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -892,14 +904,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/cluedo/ui/graphical/util/Autotiler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="54" column="0" selection-start-line="54" selection-start-column="0" selection-end-line="54" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/cluedo/ui/graphical/GUIRenderer.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -941,6 +945,10 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#9091#9092#0" expanded="true" />
+            <element signature="e#9142#9143#0" expanded="true" />
+            <element signature="e#9832#9833#0" expanded="true" />
+            <element signature="e#9878#9879#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1137,16 +1145,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/cluedo/ui/graphical/PlayerSetupPanel.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="83" column="0" selection-start-line="83" selection-start-column="0" selection-end-line="83" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/test/GameTests.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1230,24 +1228,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/cluedo/ui/graphical/GUIRenderer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.7552">
-          <caret line="57" column="0" selection-start-line="57" selection-start-column="0" selection-end-line="57" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/cluedo/game/Door.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-0.8496">
-          <caret line="9" column="13" selection-start-line="9" selection-start-column="13" selection-end-line="9" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/cluedo/game/Game.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.7136">
@@ -1322,12 +1302,59 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/cluedo/ui/graphical/BoardCanvas.java">
+    <entry file="file://$PROJECT_DIR$/src/cluedo/ui/graphical/GUIRenderer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="3.8624">
-          <caret line="335" column="14" selection-start-line="335" selection-start-column="14" selection-end-line="335" selection-end-column="14" />
+        <state vertical-scroll-proportion="0.7562568">
+          <caret line="57" column="0" selection-start-line="57" selection-start-column="0" selection-end-line="57" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/cluedo/game/Door.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.12948857">
+          <caret line="9" column="13" selection-start-line="9" selection-start-column="13" selection-end-line="9" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/cluedo/game/Player.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.8890098">
+          <caret line="125" column="0" selection-start-line="125" selection-start-column="0" selection-end-line="125" selection-end-column="0" />
+          <folding>
+            <element signature="e#951#952#0" expanded="true" />
+            <element signature="e#974#975#0" expanded="true" />
+            <element signature="e#1904#1905#0" expanded="true" />
+            <element signature="e#1946#1947#0" expanded="true" />
+            <element signature="e#2370#2371#0" expanded="true" />
+            <element signature="e#2400#2401#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/cluedo/ui/graphical/PlayerSetupPanel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="1.4983678">
+          <caret line="83" column="0" selection-start-line="83" selection-start-column="0" selection-end-line="83" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/cluedo/ui/graphical/BoardCanvas.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.24047878">
+          <caret line="154" column="0" selection-start-line="154" selection-start-column="0" selection-end-line="154" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#9091#9092#0" expanded="true" />
+            <element signature="e#9142#9143#0" expanded="true" />
+            <element signature="e#9832#9833#0" expanded="true" />
+            <element signature="e#9878#9879#0" expanded="true" />
           </folding>
         </state>
       </provider>
