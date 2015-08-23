@@ -8,6 +8,7 @@ import java.util.List;
 import cluedo.game.objects.Card;
 import cluedo.game.objects.Room;
 import cluedo.game.objects.Suspect;
+import cluedo.ui.graphical.components.PlayerDisplay;
 
 /**
  * Represents a player in the game - a human who takes turns and moves around
@@ -121,5 +122,13 @@ public class Player {
      */
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         changes.addPropertyChangeListener(listener);
+    }
+
+    /**
+     * Removes a property change listener
+     * @param listener listener to remove
+     */
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        changes.removePropertyChangeListener(listener);
     }
 }

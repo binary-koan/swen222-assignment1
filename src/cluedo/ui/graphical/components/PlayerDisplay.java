@@ -8,6 +8,9 @@ import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+/**
+ * Panel displaying information about the current player
+ */
 public class PlayerDisplay extends GridPanel implements PropertyChangeListener {
     @Override
     public void propertyChange(PropertyChangeEvent e) {
@@ -17,6 +20,8 @@ public class PlayerDisplay extends GridPanel implements PropertyChangeListener {
     }
 
     public void unsetPlayer(String message) {
+        currentPlayer.removePropertyChangeListener(this);
+
         currentPlayer = null;
         nameLabel.setText(message);
         movesRemainingLabel.setText("");
@@ -52,9 +57,7 @@ public class PlayerDisplay extends GridPanel implements PropertyChangeListener {
     private JLabel nameLabel = new JLabel("No players");
     private JLabel movesRemainingLabel = new JLabel();
 
-    public PlayerDisplay(BoardCanvas canvas) {
-        canvas.addPropertyChangeListener(this);
-
+    public PlayerDisplay() {
         nameLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, getFont().getSize()));
 
         setup(tokenDisplay).pad(5).center().addToLayout();
@@ -63,7 +66,12 @@ public class PlayerDisplay extends GridPanel implements PropertyChangeListener {
     }
 
     public void startTurn(Player player) {
+        if (currentPlayer != null) {
+            currentPlayer.removePropertyChangeListener(this);
+        }
         currentPlayer = player;
+        player.addPropertyChangeListener(this);
+
         tokenDisplay.setToolTipText(player.getToken().getName());
         nameLabel.setText(player.getName() + "'s turn");
         setRemainingMoves(player.getMovesRemaining());
