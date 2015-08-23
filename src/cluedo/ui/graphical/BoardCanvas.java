@@ -43,7 +43,6 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
     private int tileSize;
 
     private Player currentPlayer;
-    private int movesRemaining;
     private Point mouseLocation;
     private PathFinder.MovePath movePath;
 
@@ -81,7 +80,44 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
      */
     public void startTurn(Player player) {
         currentPlayer = player;
-        movesRemaining = player.getMovesRemaining();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(600, 600);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        if (movePath != null) {
+            try {
+                board.movePlayer(currentPlayer, movePath.asDirections(), movePath.getDoor());
+                updateMovesRemaining(movePath.asPoints().get(movePath.size() - 1));
+                repaint();
+            } catch (Board.UnableToMoveException ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "Can't move!", JOptionPane.WARNING_MESSAGE);
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        if (currentPlayer != null) {
+            mouseLocation = new Point(
+                    (e.getX() - startX) / tileSize,
+                    (e.getY() - startY) / tileSize
+            );
+            repaint();
+        }
     }
 
     /**
@@ -116,7 +152,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
             drawRoomInfo(g, room);
 
             for (Door door : room.getDoors()) {
-                drawDoor(g, room, door);
+                drawDoor(g, door);
             }
         }
 
@@ -135,13 +171,18 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
         }
     }
 
+    // Overlay drawing
+
+    /**
+     * Draws the current movement path
+     */
     private void drawMovePath(Graphics g) {
         if (mouseLocation == null || board.getPlayerLocation(currentPlayer) == null) {
             return;
         }
 
         movePath = PathFinder.calculate(
-                board, board.getPlayerLocation(currentPlayer), currentPlayer.getRoom(), mouseLocation, movesRemaining
+                board, currentPlayer, board.getPlayerLocation(currentPlayer), mouseLocation
         );
         if (movePath == null) {
             drawTile(g, mouseLocation.x, mouseLocation.y, CANNOT_MOVE_COLOR);
@@ -153,71 +194,36 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
         }
     }
 
-    private void drawPlayer(Player player, int tileSize, Graphics g) {
-        if (player.getRoom() == null) {
-            Point point = board.getPlayerLocation(player);
-            drawPlayerToken(player.getToken(), point.x * tileSize, point.y * tileSize, g);
-        }
-    }
+    // Room drawing
 
-    private void drawPlayerToken(Suspect token, int realX, int realY, Graphics g) {
-        int offset = tileSize / 8;
-        int size = tileSize - offset * 2;
-
-        g.setColor(token.getColor());
-        g.fillOval(realX + offset, realY + offset, size, size);
-    }
-
-    private void drawDoor(Graphics g, Room room, Door door) {
-        g.setColor(DOOR_COLOR);
-
-        Point point = door.getLocation();
-        int realX = point.x * tileSize;
-        int realY = point.y * tileSize;
-        int thickness = tileSize / 4;
-        int offset = tileSize / 8;
-
-        if (door.isVertical()) {
-            if (point.x == room.getBoundingBox().getMinX()) {
-                g.fillRect(realX - offset, realY, thickness, tileSize); // Left side
-            }
-            else {
-                g.fillRect((int) (realX + tileSize * (3.0 / 4)) + offset, realY, thickness, tileSize); // Right side
-            }
-        }
-        else {
-            if (point.y == room.getBoundingBox().getMinY()) {
-                g.fillRect(realX, realY - offset, tileSize, thickness); // Top
-            }
-            else {
-                g.fillRect(realX, (int) (realY + tileSize * (3.0 / 4)) + offset, tileSize, thickness); // Bottom
-            }
-        }
-    }
-
+    /**
+     * Draws information about the room and its contents (name, contained weapon, players)
+     */
     private void drawRoomInfo(Graphics g, Room room) {
         drawRoomName(room, tileSize, g);
         drawRoomWeapon(room, tileSize, g);
         drawRoomPlayers(room, tileSize, g);
     }
 
-    private void drawRoomPlayers(Room room, int tileSize, Graphics g) {
-        List<Player> roomPlayers = new ArrayList<>();
-        for (Player player : game.getPlayers()) {
-            if (player.getRoom() != null && player.getRoom().equals(room)) {
-                roomPlayers.add(player);
-            }
-        }
+    /**
+     * Draws the name of a room in the center of the room's bounding box
+     */
+    private void drawRoomName(Room room, int tileSize, Graphics g) {
+        Font font = new Font(Font.SANS_SERIF, Font.BOLD, (int) (tileSize * 0.6));
+        g.setFont(font);
 
         Point2D.Float center = room.getCenterPoint();
-        int realX = (int)((center.x - (roomPlayers.size() / 2.0f)) * tileSize);
-        int realY = (int)((center.y * tileSize) - tileSize * 1.5);
-        for (Player player : roomPlayers) {
-            drawPlayerToken(player.getToken(), realX, realY, g);
-            realX += tileSize;
-        }
+        Rectangle2D bounds = getTextBounds(room.getName(), g);
+        int x = (int) (center.x * tileSize - bounds.getWidth() / 2.0);
+        int y = (int) (center.y * tileSize + bounds.getHeight() / 2.0);
+
+        g.setColor(DOOR_COLOR);
+        g.drawString(room.getName(), x, y);
     }
 
+    /**
+     * Draws the weapon a room contains, positioned below the room name
+     */
     private void drawRoomWeapon(Room room, int tileSize, Graphics g) {
         Font font = new Font(Font.SANS_SERIF, Font.PLAIN, (int) (tileSize * 0.5));
         g.setFont(font);
@@ -243,19 +249,30 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
         g.drawString(weapon.getName(), x, y);
     }
 
-    private void drawRoomName(Room room, int tileSize, Graphics g) {
-        Font font = new Font(Font.SANS_SERIF, Font.BOLD, (int) (tileSize * 0.6));
-        g.setFont(font);
+    /**
+     * Draws all players inside a particular room, positioned above the room name
+     */
+    private void drawRoomPlayers(Room room, int tileSize, Graphics g) {
+        List<Player> roomPlayers = new ArrayList<>();
+        for (Player player : game.getPlayers()) {
+            if (player.getRoom() != null && player.getRoom().equals(room)) {
+                roomPlayers.add(player);
+            }
+        }
 
         Point2D.Float center = room.getCenterPoint();
-        Rectangle2D bounds = getTextBounds(room.getName(), g);
-        int x = (int) (center.x * tileSize - bounds.getWidth() / 2.0);
-        int y = (int) (center.y * tileSize + bounds.getHeight() / 2.0);
-
-        g.setColor(DOOR_COLOR);
-        g.drawString(room.getName(), x, y);
+        int realX = (int)((center.x - (roomPlayers.size() / 2.0f)) * tileSize);
+        int realY = (int)((center.y * tileSize) - tileSize * 1.5);
+        for (Player player : roomPlayers) {
+            drawPlayerToken(player.getToken(), realX, realY, g);
+            realX += tileSize;
+        }
     }
 
+    /**
+     * Returns a rectangle sized to the bounds of the given text in the current drawing context, or an empty rectangle
+     * if the bounds cannot be calculated
+     */
     private Rectangle2D getTextBounds(String text, Graphics g) {
         Rectangle2D bounds;
         if (g instanceof Graphics2D) {
@@ -268,33 +285,90 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
         return bounds;
     }
 
+    // Object drawing
+
+    /**
+     * Draws the specified player token (if the player is in a corridor)
+     */
+    private void drawPlayer(Player player, int tileSize, Graphics g) {
+        if (player.getRoom() == null) {
+            Point point = board.getPlayerLocation(player);
+            drawPlayerToken(player.getToken(), point.x * tileSize, point.y * tileSize, g);
+        }
+    }
+
+    /**
+     * Draws the suspect token of the specified player
+     */
+    private void drawPlayerToken(Suspect token, int realX, int realY, Graphics g) {
+        int offset = tileSize / 8;
+        int size = tileSize - offset * 2;
+
+        g.setColor(token.getColor());
+        g.fillOval(realX + offset, realY + offset, size, size);
+    }
+
+    /**
+     * Draws the specified door on the board
+     */
+    private void drawDoor(Graphics g, Door door) {
+        g.setColor(DOOR_COLOR);
+
+        Room room = door.getRoom();
+        Point point = door.getLocation();
+        int realX = point.x * tileSize;
+        int realY = point.y * tileSize;
+        int thickness = tileSize / 4;
+        int offset = tileSize / 8;
+
+        if (door.isVertical()) {
+            if (point.x == room.getBoundingBox().getMinX()) {
+                g.fillRect(realX - offset, realY, thickness, tileSize); // Left side
+            }
+            else {
+                g.fillRect((int) (realX + tileSize * (3.0 / 4)) + offset, realY, thickness, tileSize); // Right side
+            }
+        }
+        else {
+            if (point.y == room.getBoundingBox().getMinY()) {
+                g.fillRect(realX, realY - offset, tileSize, thickness); // Top
+            }
+            else {
+                g.fillRect(realX, (int) (realY + tileSize * (3.0 / 4)) + offset, tileSize, thickness); // Bottom
+            }
+        }
+    }
+
+    // Tile drawing
+
+    /**
+     * Colours in the tile at the specified position, using the colour stored in the board base array
+     */
     private void drawTile(Graphics g, int x, int y) {
         drawTile(g, x, y, cellColors[x][y]);
     }
 
+    /**
+     * Colours in the tile at the specified position in a particular colour. Calculates auto-tile if the tile is a wall
+     * or part of a room
+     */
     private void drawTile(Graphics g, int x, int y, Color color) {
         int realX = x * tileSize;
         int realY = y * tileSize;
 
-        if (color != null && (color.equals(CORRIDOR_COLOR) || color.equals(ROOM_COLOR))) {
+        if (CORRIDOR_COLOR.equals(color) || ROOM_COLOR.equals(color)) {
             Autotiler.Flags flags = Autotiler.getFlags(cellColors, x, y);
             autoTile(g, color, flags, tileSize, realX, realY);
         }
-        else if (color == null) {
-            g.setColor(WALL_COLOR);
-            g.fillRect(realX, realY, tileSize, tileSize);
-        }
-        else {
+        else if (color != null) {
             g.setColor(color);
             g.fillRect(realX, realY, tileSize, tileSize);
         }
     }
 
-    @Override
-    public Dimension getPreferredSize() {
-        return new Dimension(600, 600);
-    }
-
+    /**
+     * Draws the tile at the specified position, adding a partial border depending on whether similar tiles are nearby
+     */
     private void autoTile(Graphics g, Color color, Autotiler.Flags flags, int tileSize, int realX, int realY) {
         g.setColor(color);
         g.fillRect(realX, realY, tileSize, tileSize);
@@ -330,44 +404,23 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
         }
     }
 
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        if (movePath != null) {
-            try {
-                board.movePlayer(currentPlayer, movePath.asDirections(), movePath.getDoor());
-                updateMovesRemaining(movePath.asPoints().get(movePath.size() - 1));
-                repaint();
-            } catch (Board.UnableToMoveException ex) {
-                JOptionPane.showMessageDialog(this, ex.getMessage(), "Can't move!", JOptionPane.WARNING_MESSAGE);
-            }
-        }
-    }
+    // Utility methods
 
+    /**
+     * Sets the player's remaining moves, either taking away the number of steps moved (if still in a corridor) or
+     * setting it to zero (if entering a room)
+     */
     private void updateMovesRemaining(Point endPoint) {
-        int newMovesRemaining;
+        int movesRemaining = currentPlayer.getMovesRemaining();
         if (board.isDoor(endPoint)) {
-            newMovesRemaining = 0;
+            currentPlayer.resetMovesRemaining();
         }
         else {
-            newMovesRemaining = movesRemaining - movePath.size() + 1;
-        }
-        movesRemaining = newMovesRemaining;
-    }
-
-    @Override
-    public void mouseMoved(MouseEvent e) {
-        if (currentPlayer != null) {
-            mouseLocation = getTilePosition(e.getX(), e.getY());
-            repaint();
+            currentPlayer.setMovesRemaining(movesRemaining - movePath.size() + 1);
         }
     }
 
-    private Point getTilePosition(int x, int y) {
-        return new Point(
-                (x - startX) / tileSize,
-                (y - startY) / tileSize
-        );
-    }
+    // Useless stub events
 
     @Override
     public void mouseEntered(MouseEvent e) { }

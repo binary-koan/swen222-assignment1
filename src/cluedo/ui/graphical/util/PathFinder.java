@@ -3,6 +3,7 @@ package cluedo.ui.graphical.util;
 import cluedo.game.Board;
 import cluedo.game.Board.Direction;
 import cluedo.game.Door;
+import cluedo.game.Player;
 import cluedo.game.objects.Room;
 
 import java.awt.*;
@@ -161,27 +162,26 @@ public class PathFinder {
     }
 
     /**
-     * Calculates a movement path between two nodes on the board, ensuring it is at most maxSteps in length
+     * Calculates a movement path from a player's position to the specified goal, ensuring that it is not longer than
+     * the player's number of remaining moves
      *
      * @param board board to calculate path on
-     * @param start starting point
-     * @param room room to start from (the positions of the room's doors will override `start` unless this is null)
+     * @param player player to calculate from
+     * @param currentPosition player's current position (used as a starting point if the player is not in a room)
      * @param goal point to move to
-     * @param maxSteps maximum length of the path
-     * @return a path from `start` (or `room`) to goal, or null if no path is found or if the path length exceeds
-     *         maxSteps
      */
-    public static MovePath calculate(Board board, Point start, Room room, Point goal, int maxSteps) {
+    public static MovePath calculate(Board board, Player player, Point currentPosition, Point goal) {
+        int maxSteps = player.getMovesRemaining();
         Door exitDoor = null;
-        if (room != null) {
-            exitDoor = room.getClosestDoor(goal);
-            start = exitDoor.getPointBeside();
+        if (player.getRoom() != null) {
+            exitDoor = player.getRoom().getClosestDoor(goal);
+            currentPosition = exitDoor.getPointBeside();
             maxSteps--;
         }
 
         PriorityQueue<Node> nodes = new PriorityQueue<>();
         Set<Node> visited = new HashSet<>();
-        nodes.add(new Node(null, start, goal));
+        nodes.add(new Node(null, currentPosition, goal));
         while (!nodes.isEmpty()) {
             Node current = nodes.poll();
             if (visited.contains(current) || current.getDistanceSoFar() > maxSteps) {
