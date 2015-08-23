@@ -12,23 +12,15 @@ import java.beans.PropertyChangeListener;
  * Panel displaying information about the current player
  */
 public class PlayerDisplay extends GridPanel implements PropertyChangeListener {
-    @Override
-    public void propertyChange(PropertyChangeEvent e) {
-        if (e.getPropertyName().equals("movesRemaining")) {
-            setRemainingMoves((int) e.getNewValue());
-        }
-    }
-
-    public void unsetPlayer(String message) {
-        currentPlayer.removePropertyChangeListener(this);
-
-        currentPlayer = null;
-        nameLabel.setText(message);
-        movesRemainingLabel.setText("");
-        tokenDisplay.repaint();
-    }
-
+    /**
+     * Component displaying the current player's token (as a coloured circle)
+     */
     private class TokenDisplay extends JPanel {
+        @Override
+        public Dimension getPreferredSize() {
+            return new Dimension(32, 32);
+        }
+
         @Override
         protected void paintComponent(Graphics g) {
             if (PlayerDisplay.this.currentPlayer == null) {
@@ -44,11 +36,6 @@ public class PlayerDisplay extends GridPanel implements PropertyChangeListener {
             g.setColor(PlayerDisplay.this.currentPlayer.getToken().getColor());
             g.fillOval(2, 2, getWidth() - 4, getHeight() - 4);
         }
-
-        @Override
-        public Dimension getPreferredSize() {
-            return new Dimension(32, 32);
-        }
     }
 
     private Player currentPlayer;
@@ -57,6 +44,9 @@ public class PlayerDisplay extends GridPanel implements PropertyChangeListener {
     private JLabel nameLabel = new JLabel("No players");
     private JLabel movesRemainingLabel = new JLabel();
 
+    /**
+     * Create a new player display
+     */
     public PlayerDisplay() {
         nameLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, getFont().getSize()));
 
@@ -65,6 +55,11 @@ public class PlayerDisplay extends GridPanel implements PropertyChangeListener {
         setup(movesRemainingLabel).pad(5).addToLayout();
     }
 
+    /**
+     * Sets the player currently displayed on this component
+     *
+     * @param player new current player
+     */
     public void startTurn(Player player) {
         if (currentPlayer != null) {
             currentPlayer.removePropertyChangeListener(this);
@@ -78,6 +73,33 @@ public class PlayerDisplay extends GridPanel implements PropertyChangeListener {
         repaint();
     }
 
+    /**
+     * Stops this component from displaying the current player and starts showing the given message instead
+     *
+     * @param message message to display
+     */
+    public void unsetPlayer(String message) {
+        currentPlayer.removePropertyChangeListener(this);
+
+        currentPlayer = null;
+        nameLabel.setText(message);
+        movesRemainingLabel.setText("");
+        tokenDisplay.repaint();
+    }
+
+    /**
+     * Updates the remaining moves ticker with a "movesRemaining" property change
+     */
+    @Override
+    public void propertyChange(PropertyChangeEvent e) {
+        if (e.getPropertyName().equals("movesRemaining")) {
+            setRemainingMoves((int) e.getNewValue());
+        }
+    }
+
+    /**
+     * Sets the "moves remaining" label to display the given number of remaining moves
+     */
     private void setRemainingMoves(int moves) {
         movesRemainingLabel.setText("You have " + moves + " moves remaining. Click on the board to move.");
     }
