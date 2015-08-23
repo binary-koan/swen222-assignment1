@@ -16,6 +16,13 @@ public class PlayerDisplay extends GridPanel implements PropertyChangeListener {
         }
     }
 
+    public void unsetPlayer(String message) {
+        currentPlayer = null;
+        nameLabel.setText(message);
+        movesRemainingLabel.setText("");
+        tokenDisplay.repaint();
+    }
+
     private class TokenDisplay extends JPanel {
         @Override
         protected void paintComponent(Graphics g) {
@@ -43,7 +50,7 @@ public class PlayerDisplay extends GridPanel implements PropertyChangeListener {
 
     private TokenDisplay tokenDisplay = new TokenDisplay();
     private JLabel nameLabel = new JLabel("No players");
-    private JLabel dieRollLabel = new JLabel();
+    private JLabel movesRemainingLabel = new JLabel();
 
     public PlayerDisplay(BoardCanvas canvas) {
         canvas.addPropertyChangeListener(this);
@@ -52,10 +59,10 @@ public class PlayerDisplay extends GridPanel implements PropertyChangeListener {
 
         setup(tokenDisplay).pad(5).center().addToLayout();
         setup(nameLabel).pad(5).flexH().addToLayout();
-        setup(dieRollLabel).pad(5).addToLayout();
+        setup(movesRemainingLabel).pad(5).addToLayout();
     }
 
-    public void setPlayer(Player player) {
+    public void startTurn(Player player) {
         currentPlayer = player;
         tokenDisplay.setToolTipText(player.getToken().getName());
         nameLabel.setText(player.getName() + "'s turn");
@@ -64,6 +71,6 @@ public class PlayerDisplay extends GridPanel implements PropertyChangeListener {
     }
 
     private void setRemainingMoves(int moves) {
-        dieRollLabel.setText("You have " + moves + " moves remaining. Click on the board to move.");
+        movesRemainingLabel.setText("You have " + moves + " moves remaining. Click on the board to move.");
     }
 }

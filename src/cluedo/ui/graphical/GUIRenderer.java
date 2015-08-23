@@ -6,7 +6,6 @@ import cluedo.ui.graphical.controls.GridPanel;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -17,7 +16,7 @@ public class GUIRenderer extends JFrame implements ActionListener {
     private final Game game;
     private BoardCanvas boardCanvas;
     private PlayerDisplay playerDisplay;
-    private GridPanel actionsPanel;
+    private TurnButtons turnButtons;
 
     private int currentPlayerIndex;
 
@@ -39,17 +38,22 @@ public class GUIRenderer extends JFrame implements ActionListener {
         }
         game.distributeCards();
 
-        enableGameControls();
-        currentPlayerIndex = 0;
-        startTurn();
+        boardCanvas.setEnabled(true);
+        currentPlayerIndex = -1;
+        nextTurn();
     }
 
-    private void startTurn() {
+    private void nextTurn() {
+        do {
+            currentPlayerIndex = (currentPlayerIndex + 1) % game.getPlayers().size();
+        } while (!getCurrentPlayer().isInGame());
+
         Player player = getCurrentPlayer();
         int dieRoll = (int) (Math.random() * 6 + 1);
         player.startTurn(dieRoll);
-        boardCanvas.setPlayer(player);
-        playerDisplay.setPlayer(player);
+        boardCanvas.startTurn(player);
+        playerDisplay.startTurn(player);
+        turnButtons.startTurn(player);
     }
 
     private int queryPlayerCount() {
@@ -84,37 +88,18 @@ public class GUIRenderer extends JFrame implements ActionListener {
         panel.setup(playerDisplay).flexH().addToLayout();
         panel.finishRow();
 
-        actionsPanel = new GridPanel();
-        addButton("Suggest", "player.suggest", actionsPanel);
-        addButton("Accuse", "player.accuse", actionsPanel);
-        addButton("Show hand", "player.showHand", actionsPanel);
-        addButton("End turn", "player.endTurn", actionsPanel);
-        panel.setup(actionsPanel).center().addToLayout();
+        turnButtons = new TurnButtons(game);
+        turnButtons.addActionListener(this);
+        panel.setup(turnButtons).center().addToLayout();
         panel.finishRow();
 
         setContentPane(panel);
         stopGame();
     }
 
-    private void addButton(String text, String actionCommand, GridPanel layout) {
-        JButton button = new JButton(text);
-        button.setActionCommand(actionCommand);
-        button.addActionListener(this);
-        layout.setup(button).pad(5).addToLayout();
-    }
-
-    private void enableGameControls() {
-        boardCanvas.setEnabled(true);
-        for (Component component : actionsPanel.getComponents()) {
-            component.setEnabled(true);
-        }
-    }
-
     private void stopGame() {
         boardCanvas.setEnabled(false);
-        for (Component component : actionsPanel.getComponents()) {
-            component.setEnabled(false);
-        }
+        turnButtons.startTurn(null);
     }
 
     private void addMenuItem(JMenu menu, String title, String action, KeyStroke accelerator) {
@@ -148,50 +133,27 @@ public class GUIRenderer extends JFrame implements ActionListener {
                 throw new NotImplementedException();
             case "file.quit":
                 System.exit(0);
-            case "player.suggest":
-                suggest();
+            case "turn.next":
+                nextTurn();
                 break;
-            case "player.accuse":
-                accuse();
+            case "turn.lose":
+                boardCanvas.repaint();
                 break;
-            case "player.showHand":
-                Dialogs.showHand(this, getCurrentPlayer());
+            case "turn.win":
+                playerDisplay.unsetPlayer(getCurrentPlayer().getName() + " wins!");
+                stopGame();
                 break;
-            case "player.endTurn":
-                currentPlayerIndex = (currentPlayerIndex + 1) % game.getPlayers().size();
-                startTurn();
+            case "turn.winByDefault":
+                for (Player player : game.getPlayers()) {
+                    if (player.isInGame()) {
+                        playerDisplay.unsetPlayer(player.getName() + " wins by default.");
+                        stopGame();
+                        break;
+                    }
+                }
                 break;
             default:
                 throw new RuntimeException("Unknown action: " + e.getActionCommand());
-        }
-    }
-
-    private void accuse() {
-        Game.Suggestion accusation = Dialogs.getAccusation(this, getCurrentPlayer(), game.getData());
-        if (game.getSolution().checkAgainst(accusation)) {
-            //TODO win!
-        }
-        else {
-            getCurrentPlayer().setInGame(false);
-            //TODO check if someone won by default
-        }
-    }
-
-    private void suggest() {
-        Player player = getCurrentPlayer();
-        Game.Suggestion suggestion = Dialogs.getSuggestion(this, player, game.getData());
-        Game.Disprover disprover = game.disproveSuggestion(player, suggestion);
-        if (disprover == null) {
-            JOptionPane.showMessageDialog(
-                    this, "Your suggestion could not be disproved.", "Suggestion", JOptionPane.INFORMATION_MESSAGE
-            );
-        }
-        else {
-            JOptionPane.showMessageDialog(
-                    this, "<html>Your suggestion was disproved by <b>" + disprover.getPlayer().getName() + "</b>." +
-                          "<br />They are holding <b>" + disprover.getCard().getName() + "</b></html>",
-                    "Suggestion disproved", JOptionPane.INFORMATION_MESSAGE
-            );
         }
     }
 

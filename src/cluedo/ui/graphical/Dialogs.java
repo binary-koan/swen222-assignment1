@@ -57,7 +57,7 @@ public class Dialogs extends GridPanel {
         GridPanel contentPane = new GridPanel();
         contentPane.setup(new JLabel(
                 "You are about to make an accusation. Remember, if it's wrong you will be out of the game!"
-        )).spanH(2).pad(5).addToLayout();
+        )).spanH(3).pad(5).addToLayout();
         contentPane.finishRow();
 
         ButtonGroup[] buttonGroups = addDataChoices(contentPane, data, true);

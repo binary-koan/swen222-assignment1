@@ -170,11 +170,12 @@ public class Game {
 	public Disprover disproveSuggestion(Player player, Suggestion suggestion) {
 		int startingIndex = players.indexOf(player);
 
-		for (int i = startingIndex, j = 0; j < players.size(); i++, j++) {
-			for (Card card : players.get(i).getHand()) {
+		for (int i = 0; i < players.size(); i++) {
+            startingIndex = (startingIndex + 1) % players.size();
+			for (Card card : players.get(startingIndex).getHand()) {
 				if (card.equals(suggestion.getSuspect()) || card.equals(suggestion.getRoom())
 						|| card.equals(suggestion.getWeapon())) {
-					return new Disprover(players.get(i), card);
+					return new Disprover(players.get(startingIndex), card);
 				}
 			}
 		}

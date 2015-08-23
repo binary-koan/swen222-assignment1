@@ -67,7 +67,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
         addMouseMotionListener(this);
     }
 
-    public void setPlayer(Player player) {
+    public void startTurn(Player player) {
         currentPlayer = player;
         movesRemaining = player.getDieRoll();
     }
