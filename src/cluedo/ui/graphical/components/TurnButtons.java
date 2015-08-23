@@ -1,4 +1,4 @@
-package cluedo.ui.graphical;
+package cluedo.ui.graphical.components;
 
 import cluedo.game.Game;
 import cluedo.game.GameData;

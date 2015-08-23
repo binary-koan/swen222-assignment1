@@ -2,6 +2,10 @@ package cluedo.ui.graphical;
 
 import cluedo.game.Game;
 import cluedo.game.Player;
+import cluedo.ui.graphical.components.BoardCanvas;
+import cluedo.ui.graphical.components.PlayerDisplay;
+import cluedo.ui.graphical.components.PlayerSetupPanel;
+import cluedo.ui.graphical.components.TurnButtons;
 import cluedo.ui.graphical.controls.GridPanel;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 

@@ -1,4 +1,4 @@
-package cluedo.ui.graphical;
+package cluedo.ui.graphical.components;
 
 import cluedo.game.Player;
 import cluedo.ui.graphical.controls.GridPanel;
