@@ -41,7 +41,7 @@ public class PlayerDisplay extends GridPanel implements PropertyChangeListener {
     private Player currentPlayer;
 
     private TokenDisplay tokenDisplay = new TokenDisplay();
-    private JLabel nameLabel = new JLabel("No players");
+    private JLabel nameLabel = new JLabel("");
     private JLabel movesRemainingLabel = new JLabel();
 
     /**

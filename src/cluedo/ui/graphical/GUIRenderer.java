@@ -86,9 +86,11 @@ public class GUIRenderer extends JFrame implements ActionListener {
 
     /**
      * Stops the game, disabling player input
+     * @param message message to show on the status bar
      */
-    private void stopGame() {
+    private void stopGame(String message) {
         boardCanvas.setEnabled(false);
+        playerDisplay.unsetPlayer(message);
         actionButtons.startTurn(null);
     }
 
@@ -140,7 +142,7 @@ public class GUIRenderer extends JFrame implements ActionListener {
         panel.finishRow();
 
         setContentPane(panel);
-        stopGame();
+        stopGame("");
     }
 
     /**
@@ -199,14 +201,12 @@ public class GUIRenderer extends JFrame implements ActionListener {
                 boardCanvas.repaint();
                 break;
             case "turn.win":
-                playerDisplay.unsetPlayer(getCurrentPlayer().getName() + " wins!");
-                stopGame();
+                stopGame(getCurrentPlayer().getName() + " wins!");
                 break;
             case "turn.winByDefault":
                 for (Player player : game.getPlayers()) {
                     if (player.isInGame()) {
-                        playerDisplay.unsetPlayer(player.getName() + " wins by default.");
-                        stopGame();
+                        stopGame(getCurrentPlayer().getName() + " wins by default.");
                         break;
                     }
                 }
@@ -216,13 +216,16 @@ public class GUIRenderer extends JFrame implements ActionListener {
         }
     }
 
+    /**
+     * Shows a file chooser, allowing the user to select a different data file to use
+     */
     private void changeFile() {
         JFileChooser chooser = new JFileChooser();
         chooser.setFileFilter(new FileNameExtensionFilter("Text files", "txt"));
         int result = chooser.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             try {
-                stopGame();
+                stopGame("");
                 game = new Game(new Loader(chooser.getSelectedFile().getAbsolutePath()));
                 boardCanvas.setGame(game);
                 actionButtons.setGame(game);
