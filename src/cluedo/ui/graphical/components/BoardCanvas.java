@@ -255,7 +255,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
     private void drawRoomPlayers(Room room, int tileSize, Graphics g) {
         List<Player> roomPlayers = new ArrayList<>();
         for (Player player : game.getPlayers()) {
-            if (player.getRoom() != null && player.getRoom().equals(room)) {
+            if (player.isInGame() && player.getRoom() != null && player.getRoom().equals(room)) {
                 roomPlayers.add(player);
             }
         }
