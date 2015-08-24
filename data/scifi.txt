@@ -32,9 +32,9 @@ weapons:
        .sB  Ba.       |
  DDDDD..BBBBBB..OOOOO |
 DDDDDD..BBBBBB..OOOOOO|
-DDD/....BBBBBB.._OOOOO|
-DDDD....BBBBB/...OOOOO|
-c.....................|
+DDDDD/..BBBBBB..OOOOOO|
+DDDDDD..BBBBBB.._OOOOO|
+c.......BBBBB/........|
  ....................t|
 MMMMMM..      ..SSSSS |
 MMMMM/..      .SSSSSSS|

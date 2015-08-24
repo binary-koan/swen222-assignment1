@@ -25,6 +25,7 @@ import java.util.List;
 public class ActionButtons extends GridPanel implements ActionListener, PropertyChangeListener {
     private List<ActionListener> actionListeners = new ArrayList<>();
 
+    private JButton passageButton;
     private JButton suggestButton;
     private JButton accuseButton;
     private JButton showHandButton;
@@ -41,6 +42,7 @@ public class ActionButtons extends GridPanel implements ActionListener, Property
     public ActionButtons(Game game) {
         setGame(game);
 
+        passageButton = addButton("Take passage", "player.takePassage");
         suggestButton = addButton("Suggest", "player.suggest");
         accuseButton = addButton("Accuse", "player.accuse");
         showHandButton = addButton("Show hand", "player.showHand");
@@ -67,6 +69,7 @@ public class ActionButtons extends GridPanel implements ActionListener, Property
         }
 
         if (player == null) {
+            passageButton.setEnabled(false);
             suggestButton.setEnabled(false);
             accuseButton.setEnabled(false);
             showHandButton.setEnabled(false);
@@ -76,6 +79,7 @@ public class ActionButtons extends GridPanel implements ActionListener, Property
             currentPlayer = player;
             player.addPropertyChangeListener(this);
 
+            passageButton.setEnabled(player.getRoom() != null && player.getRoom().getPassageExit() != null);
             suggestButton.setEnabled(player.getRoom() != null);
             accuseButton.setEnabled(true);
             showHandButton.setEnabled(true);
@@ -103,6 +107,10 @@ public class ActionButtons extends GridPanel implements ActionListener, Property
     public void actionPerformed(ActionEvent e) {
         // Only respond to actions from the buttons on this panel
         switch (e.getActionCommand()) {
+            case "player.takePassage":
+                currentPlayer.setRoom(currentPlayer.getRoom().getPassageExit());
+                currentPlayer.setMovesRemaining(currentPlayer.getMovesRemaining()); // Make sure the board redraws
+                break;
             case "player.suggest":
                 suggest();
                 break;
@@ -361,8 +369,24 @@ public class ActionButtons extends GridPanel implements ActionListener, Property
 
     @Override
     public void propertyChange(PropertyChangeEvent e) {
-        if (e.getSource() == currentPlayer && ((Player)e.getSource()).getRoom() != null) {
-            suggestButton.setEnabled(true);
+        if (e.getSource() == currentPlayer) {
+            Player player = (Player)e.getSource();
+            if (player.getRoom() != null) {
+                suggestButton.setEnabled(true);
+                if (player.getRoom().getPassageExit() != null) {
+                    passageButton.setText("Take passage to " + player.getRoom().getPassageExit().getName());
+                    passageButton.setEnabled(true);
+                }
+                else {
+                    passageButton.setText("Take passage");
+                    passageButton.setEnabled(false);
+                }
+            }
+            else {
+                suggestButton.setEnabled(false);
+                passageButton.setText("Take passage");
+                passageButton.setEnabled(false);
+            }
         }
     }
 }
