@@ -18,8 +18,6 @@ import java.awt.event.MouseMotionListener;
 import java.awt.font.TextLayout;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,10 +26,10 @@ import java.util.List;
  */
 public class BoardCanvas extends JPanel implements MouseListener, MouseMotionListener {
     // Colours used for board objects
-    private static final Color CORRIDOR_COLOR = Color.LIGHT_GRAY;
-    private static final Color WALL_COLOR = Color.BLACK;
-    private static final Color ROOM_COLOR = Color.ORANGE;
-    private static final Color DOOR_COLOR = Color.RED;
+    private static final Color CORRIDOR_COLOR = Color.decode("#F7F3F7");
+    private static final Color WALL_COLOR = Color.decode("#1B181B");
+    private static final Color ROOM_COLOR = Color.decode("#D8CAD8");
+    private static final Color DOOR_COLOR = Color.decode("#A65926");
     private static final Color CAN_MOVE_COLOR = new Color(1, 1, 1, 0.5f);
     private static final Color CANNOT_MOVE_COLOR = new Color(1, 0, 0, 0.5f);
 

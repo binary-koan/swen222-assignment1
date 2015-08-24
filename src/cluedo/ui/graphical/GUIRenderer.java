@@ -222,6 +222,7 @@ public class GUIRenderer extends JFrame implements ActionListener {
         int result = chooser.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             try {
+                stopGame();
                 game = new Game(new Loader(chooser.getSelectedFile().getAbsolutePath()));
                 boardCanvas.setGame(game);
                 actionButtons.setGame(game);
