@@ -46,8 +46,6 @@ public class GUIRenderer extends JFrame implements ActionListener {
      * Start a new game - get a list of players from the user and start the first turn
      */
     private void newGame() {
-        game.reset();
-
         int playerCount = queryPlayerCount();
         if (playerCount < 0) {
             return;
@@ -58,6 +56,7 @@ public class GUIRenderer extends JFrame implements ActionListener {
             return;
         }
 
+        game.reset();
         for (Player player : players) {
             game.addPlayer(player);
         }
