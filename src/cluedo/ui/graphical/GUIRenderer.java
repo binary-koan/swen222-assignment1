@@ -88,7 +88,7 @@ public class GUIRenderer extends JFrame implements ActionListener {
         panel.setup(boardCanvas).flexH().flexV().addToLayout();
         panel.finishRow();
 
-        playerDisplay = new PlayerDisplay(boardCanvas);
+        playerDisplay = new PlayerDisplay();
         panel.setup(playerDisplay).flexH().addToLayout();
         panel.finishRow();
 
