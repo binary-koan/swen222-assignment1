@@ -40,6 +40,16 @@ public class GridPanel extends JPanel {
         }
 
         /**
+         * Anchor the component to the top left corner of its cell
+         *
+         * @return this
+         */
+        public GridItemBuilder anchorTopLeft() {
+            constraints.anchor = GridBagConstraints.NORTHWEST;
+            return this;
+        }
+
+        /**
          * Center the component horizontally and vertically
          *
          * @return this

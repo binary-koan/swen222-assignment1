@@ -321,7 +321,7 @@ public class ActionButtons extends GridPanel implements ActionListener, Property
         // Ensure that one element is always selected
         buttonGroup.getElements().nextElement().setSelected(true);
 
-        panel.setup(optionsPanel).addToLayout();
+        panel.setup(optionsPanel).anchorTopLeft().flexH().addToLayout();
         return buttonGroup;
     }
 
