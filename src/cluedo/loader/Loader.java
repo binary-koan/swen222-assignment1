@@ -39,7 +39,7 @@ public class Loader {
 	private static final Pattern GROUP_HEADER = Pattern.compile("([a-z]+):$");
 	// Matches suspect definitions of the form "  b: Mr. Black [black]"
 	private static final Pattern SUSPECT_ENTRY = Pattern
-			.compile("^\\s+(.)\\s*:\\s*([a-zA-Z\\.\\-\\s]+)(#[0-9a-fA-F]{6})$");
+			.compile("^\\s+(.)\\s*:\\s*([a-zA-Z0-9\\.\\-\\s]+)(#[0-9a-fA-F]{6})$");
 	// Matches room definitions of the form "  S: Sitting Room"
 	private static final Pattern ROOM_ENTRY = Pattern
 			.compile("^\\s+(.)\\s*:\\s*([a-zA-Z\\.\\-\\s]+)$");

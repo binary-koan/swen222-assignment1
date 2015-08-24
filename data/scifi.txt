@@ -1,0 +1,54 @@
+---
+suspects:
+  s: Red Leader #ff0000
+  a: Admiral Amber #ffff00
+  c: Captain Cerulean #0000ff
+  t: S4-3G #00ff00
+  p: Lieutenant Pink #ff7777
+  b: Civilian Black #000000
+  k: Token Alien Jim #ff00ff
+rooms:
+  B: Bridge
+  D: Docking Bay
+  S: Sleeping Pod
+  L: Living Space
+  M: Medical Bay
+  T: Trash Compactor
+  O: Observation Deck
+passages:
+  Docking Bay: Trash Compactor
+  Trash Compactor: Docking Bay
+  Observation Deck: Living Space
+  Living Space: Observation Deck
+weapons:
+  - Phaser
+  - Lightsaber
+  - Blaster
+  - Pot Plant
+  - Tricorder
+  - Vacuum Cleaner
+
+----------------------
+       .sBBBBa.       |
+DDDD....BBBBBB..OOOOOO|
+DDDD....BBBBBB..OOOOOO|
+DDD/....BBBBBB..O_OOOO|
+DDDD....BBBBBB/...OOOO|
+c.....................|
+ ....................t|
+MMMMMM..      ..SSSSS |
+MMMMM/..      .SSSSSSS|
+MMMMMM..      ./SSSSSS|
+MMMMMM..      ./SSSSSS|
+MMMMM_..      .SSSSSSS|
+ .......      ..SSSSS |
+p....................b|
+ .................... |
+LLLLLL_LLLL..TTTTTTTTT|
+LLLLLLLLLLL.../TTTTTTT|
+LLLLLLLLLL/...TTTTTTTT|
+LLLLLLLLLLL...TTTTTTTT|
+LLLLLLLLLLL...TTTTTTTT|
+LLLLLLLLLLL..TTTTTTTTT|
+LLLLLLLLLLL..k        |
+----------------------
