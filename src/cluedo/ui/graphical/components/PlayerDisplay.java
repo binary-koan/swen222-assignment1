@@ -79,7 +79,9 @@ public class PlayerDisplay extends GridPanel implements PropertyChangeListener {
      * @param message message to display
      */
     public void unsetPlayer(String message) {
-        currentPlayer.removePropertyChangeListener(this);
+        if (currentPlayer != null) {
+            currentPlayer.removePropertyChangeListener(this);
+        }
 
         currentPlayer = null;
         nameLabel.setText(message);
