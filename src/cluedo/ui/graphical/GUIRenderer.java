@@ -16,6 +16,9 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.List;
 
+/**
+ * A GUI renderer for the Cluedo game, which allows the game to be played using the mouse
+ */
 public class GUIRenderer extends JFrame implements ActionListener {
     private final Game game;
     private BoardCanvas boardCanvas;
@@ -24,11 +27,21 @@ public class GUIRenderer extends JFrame implements ActionListener {
 
     private int currentPlayerIndex;
 
+    /**
+     * Construct a new GUI renderer
+     *
+     * @param game game to render
+     */
     public GUIRenderer(Game game) {
         this.game = game;
         setupWindow();
     }
 
+    // Actions
+
+    /**
+     * Start a new game - get a list of players from the user and start the first turn
+     */
     private void newGame() {
         game.reset();
 
@@ -47,6 +60,9 @@ public class GUIRenderer extends JFrame implements ActionListener {
         nextTurn();
     }
 
+    /**
+     * Find the next player (who is still in the game) and start their turn
+     */
     private void nextTurn() {
         do {
             currentPlayerIndex = (currentPlayerIndex + 1) % game.getPlayers().size();
@@ -60,6 +76,19 @@ public class GUIRenderer extends JFrame implements ActionListener {
         turnButtons.startTurn(player);
     }
 
+    /**
+     * Stops the game, disabling player input
+     */
+    private void stopGame() {
+        boardCanvas.setEnabled(false);
+        turnButtons.startTurn(null);
+    }
+
+    /**
+     * Asks the user how many players they would like to set up (as part of the process of starting a new game)
+     *
+     * @return the number of players entered
+     */
     private int queryPlayerCount() {
         int maxPlayers = game.getData().getSuspects().size();
         Object[] options = new Object[maxPlayers - 2];
@@ -71,6 +100,11 @@ public class GUIRenderer extends JFrame implements ActionListener {
         return result + 3;
     }
 
+    // GUI setup
+
+    /**
+     * Sets up this frame with a menu bar, canvas and player-controlling buttons
+     */
     private void setupWindow() {
         setTitle("Cluedo");
         setSize(800, 600);
@@ -101,21 +135,11 @@ public class GUIRenderer extends JFrame implements ActionListener {
         stopGame();
     }
 
-    private void stopGame() {
-        boardCanvas.setEnabled(false);
-        turnButtons.startTurn(null);
-    }
-
-    private void addMenuItem(JMenu menu, String title, String action, KeyStroke accelerator) {
-        JMenuItem item = new JMenuItem(title);
-        item.setActionCommand(action);
-        if (accelerator != null) {
-            item.setAccelerator(accelerator);
-        }
-        item.addActionListener(this);
-        menu.add(item);
-    }
-
+    /**
+     * Creates the top-level "Game" menu
+     *
+     * @param menuBar menu bar to add the menu to
+     */
     private void setupGameMenu(JMenuBar menuBar) {
         JMenu gameMenu = new JMenu("Game");
         gameMenu.setMnemonic(KeyEvent.VK_G);
@@ -127,8 +151,30 @@ public class GUIRenderer extends JFrame implements ActionListener {
         addMenuItem(gameMenu, "Quit", "file.quit", KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_MASK));
     }
 
+    /**
+     * Adds a menu item to a menu
+     *
+     * @param menu menu to add the item to
+     * @param title title of the menu item
+     * @param action action command that should be emitted when the item is activated
+     * @param accelerator keyboard shortcut for the menu item
+     */
+    private void addMenuItem(JMenu menu, String title, String action, KeyStroke accelerator) {
+        JMenuItem item = new JMenuItem(title);
+        item.setActionCommand(action);
+        if (accelerator != null) {
+            item.setAccelerator(accelerator);
+        }
+        item.addActionListener(this);
+        menu.add(item);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
+        // Only accept actions from the menu bar and player turn buttons
         switch (e.getActionCommand()) {
             case "game.new":
                 newGame();
@@ -161,6 +207,9 @@ public class GUIRenderer extends JFrame implements ActionListener {
         }
     }
 
+    /**
+     * Returns the player whose turn it is currently
+     */
     private Player getCurrentPlayer() {
         return game.getPlayers().get(currentPlayerIndex);
     }
