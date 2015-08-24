@@ -5,7 +5,7 @@ import cluedo.game.Player;
 import cluedo.ui.graphical.components.BoardCanvas;
 import cluedo.ui.graphical.components.PlayerDisplay;
 import cluedo.ui.graphical.components.PlayerSetupPanel;
-import cluedo.ui.graphical.components.TurnButtons;
+import cluedo.ui.graphical.components.ActionButtons;
 import cluedo.ui.graphical.controls.GridPanel;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -23,7 +23,7 @@ public class GUIRenderer extends JFrame implements ActionListener {
     private final Game game;
     private BoardCanvas boardCanvas;
     private PlayerDisplay playerDisplay;
-    private TurnButtons turnButtons;
+    private ActionButtons actionButtons;
 
     private int currentPlayerIndex;
 
@@ -73,7 +73,7 @@ public class GUIRenderer extends JFrame implements ActionListener {
         player.setMovesRemaining(dieRoll);
         boardCanvas.startTurn(player);
         playerDisplay.startTurn(player);
-        turnButtons.startTurn(player);
+        actionButtons.startTurn(player);
     }
 
     /**
@@ -81,7 +81,7 @@ public class GUIRenderer extends JFrame implements ActionListener {
      */
     private void stopGame() {
         boardCanvas.setEnabled(false);
-        turnButtons.startTurn(null);
+        actionButtons.startTurn(null);
     }
 
     /**
@@ -126,9 +126,9 @@ public class GUIRenderer extends JFrame implements ActionListener {
         panel.setup(playerDisplay).flexH().addToLayout();
         panel.finishRow();
 
-        turnButtons = new TurnButtons(game);
-        turnButtons.addActionListener(this);
-        panel.setup(turnButtons).center().addToLayout();
+        actionButtons = new ActionButtons(game);
+        actionButtons.addActionListener(this);
+        panel.setup(actionButtons).center().addToLayout();
         panel.finishRow();
 
         setContentPane(panel);

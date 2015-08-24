@@ -11,7 +11,6 @@ import cluedo.game.objects.Weapon;
 import cluedo.ui.graphical.controls.GridPanel;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -23,7 +22,7 @@ import java.util.List;
 /**
  * A panel containing buttons the player can use to perform actions within their turn
  */
-public class TurnButtons extends GridPanel implements ActionListener, PropertyChangeListener {
+public class ActionButtons extends GridPanel implements ActionListener, PropertyChangeListener {
     private List<ActionListener> actionListeners = new ArrayList<>();
 
     private JButton suggestButton;
@@ -39,7 +38,7 @@ public class TurnButtons extends GridPanel implements ActionListener, PropertyCh
      *
      * @param game game that these buttons control
      */
-    public TurnButtons(Game game) {
+    public ActionButtons(Game game) {
         this.game = game;
 
         suggestButton = addButton("Suggest", "player.suggest");
@@ -132,15 +131,19 @@ public class TurnButtons extends GridPanel implements ActionListener, PropertyCh
      */
     private void accuse() {
         Game.Suggestion accusation = getAccusation();
+        if (accusation == null) {
+            return;
+        }
+
         Solution solution = game.getSolution();
         if (solution.checkAgainst(accusation)) {
             emitAction("turn.win");
-            JOptionPane.showMessageDialog(this, "Your accusation is correct. You win!");
+            JOptionPane.showMessageDialog(getParent(), "Your accusation is correct. You win!");
         }
         else {
             emitAction("turn.lose");
             currentPlayer.setInGame(false);
-            JOptionPane.showMessageDialog(this, "Your accusation was wrong - sorry, you're out of the game.");
+            JOptionPane.showMessageDialog(getParent(), "Your accusation was wrong - sorry, you're out of the game.");
 
             // Check whether someone won by default (because all except one player was knocked out)
             List<Player> playersLeft = new ArrayList<>();
@@ -152,7 +155,7 @@ public class TurnButtons extends GridPanel implements ActionListener, PropertyCh
             if (playersLeft.size() == 1) {
                 emitAction("turn.winByDefault");
                 JOptionPane.showMessageDialog(
-                        this, "<html><p><b>" + playersLeft.get(0).getName() + "</b> won by default - " +
+                        getParent(), "<html><p><b>" + playersLeft.get(0).getName() + "</b> won by default - " +
                                 "all other players have been eliminated.</p><p>The solution was:</p><p><b>" +
                                 solution.getSuspect() + "</b> in the <b>" + solution.getRoom() + "</b> with the <b>" +
                                 solution.getWeapon() + "</b>.</p>"
@@ -175,13 +178,13 @@ public class TurnButtons extends GridPanel implements ActionListener, PropertyCh
 
         Game.Disprover disprover = game.disproveSuggestion(currentPlayer, suggestion);
         if (disprover == null) {
-            JOptionPane.showMessageDialog(
-                    this, "Your suggestion could not be disproved.", "Suggestion", JOptionPane.INFORMATION_MESSAGE
+            JOptionPane.showMessageDialog(getParent(),
+                    "Your suggestion could not be disproved.", "Suggestion", JOptionPane.INFORMATION_MESSAGE
             );
         }
         else {
-            JOptionPane.showMessageDialog(
-                    this, "<html>Your suggestion was disproved by <b>" + disprover.getPlayer().getName() + "</b>." +
+            JOptionPane.showMessageDialog(getParent(),
+                    "<html>Your suggestion was disproved by <b>" + disprover.getPlayer().getName() + "</b>." +
                             "<br />They are holding <b>" + disprover.getCard().getName() + "</b></html>",
                     "Suggestion disproved", JOptionPane.INFORMATION_MESSAGE
             );
@@ -264,9 +267,9 @@ public class TurnButtons extends GridPanel implements ActionListener, PropertyCh
                 JOptionPane.PLAIN_MESSAGE, null, new Object[]{"OK", "Cancel"}, "OK"
         );
         if (result == JOptionPane.OK_OPTION) {
-            Room room = data.getRoom(getSelectedButtonText(buttonGroups[0]));
-            Suspect suspect = data.getSuspect(getSelectedButtonText(buttonGroups[1]));
-            Weapon weapon = data.getWeapon(getSelectedButtonText(buttonGroups[2]));
+            Suspect suspect = data.getSuspect(getSelectedButtonText(buttonGroups[0]));
+            Weapon weapon = data.getWeapon(getSelectedButtonText(buttonGroups[1]));
+            Room room = data.getRoom(getSelectedButtonText(buttonGroups[2]));
             return new Game.Suggestion(suspect, weapon, room);
         }
         else {

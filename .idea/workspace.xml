@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="03894524-bd20-47a5-af03-752775269954" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cluedo/ui/graphical/components/BoardCanvas.java" afterPath="$PROJECT_DIR$/src/cluedo/ui/graphical/components/BoardCanvas.java" />
+      <change type="MOVED" beforePath="C:\Users\reaso\OneDrive\Documents\School\SWEN222\Assignment1\src\cluedo\ui\graphical\components\TurnButtons.java" afterPath="$PROJECT_DIR$/src/cluedo/ui/graphical/components/ActionButtons.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cluedo/ui/graphical/GUIRenderer.java" afterPath="$PROJECT_DIR$/src/cluedo/ui/graphical/GUIRenderer.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="Assignment1.iws" />
@@ -26,22 +27,24 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="TurnButtons.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/cluedo/ui/graphical/components/TurnButtons.java">
+      <file leaf-file-name="ActionButtons.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/cluedo/ui/graphical/components/ActionButtons.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="59" column="0" selection-start-line="59" selection-start-column="0" selection-end-line="59" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.7984">
+              <caret line="168" column="0" selection-start-line="168" selection-start-column="0" selection-end-line="168" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="e#2760#2761#0" expanded="true" />
+                <element signature="e#2805#2806#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="BoardCanvas.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="BoardCanvas.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/cluedo/ui/graphical/components/BoardCanvas.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.6864">
+            <state vertical-scroll-proportion="0.0">
               <caret line="261" column="0" selection-start-line="261" selection-start-column="0" selection-end-line="261" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -99,7 +102,6 @@
         <option value="$PROJECT_DIR$/src/cluedo/ui/graphical/PlayerSetupPanel.java" />
         <option value="$PROJECT_DIR$/src/test/BoardTests.java" />
         <option value="$PROJECT_DIR$/src/cluedo/ui/console/BoardRenderer.java" />
-        <option value="$PROJECT_DIR$/src/cluedo/game/Solution.java" />
         <option value="$PROJECT_DIR$/src/test/GameTests.java" />
         <option value="$PROJECT_DIR$/src/cluedo/ui/console/TurnController.java" />
         <option value="$PROJECT_DIR$/data/standard.txt" />
@@ -120,9 +122,11 @@
         <option value="$PROJECT_DIR$/src/cluedo/ui/graphical/components/PlayerSetupPanel.java" />
         <option value="$PROJECT_DIR$/src/cluedo/ui/graphical/GUIRenderer.java" />
         <option value="$PROJECT_DIR$/src/cluedo/Main.java" />
-        <option value="$PROJECT_DIR$/src/cluedo/ui/graphical/components/TurnButtons.java" />
         <option value="$PROJECT_DIR$/src/cluedo/game/Player.java" />
         <option value="$PROJECT_DIR$/src/cluedo/ui/graphical/components/BoardCanvas.java" />
+        <option value="$PROJECT_DIR$/src/cluedo/ui/graphical/components/TurnButtons.java" />
+        <option value="$PROJECT_DIR$/src/cluedo/game/Solution.java" />
+        <option value="$PROJECT_DIR$/src/cluedo/ui/graphical/components/ActionButtons.java" />
       </list>
     </option>
   </component>
@@ -818,7 +822,7 @@
       <workItem from="1440249091369" duration="1348000" />
       <workItem from="1440287544237" duration="10947000" />
       <workItem from="1440374406226" duration="3690000" />
-      <workItem from="1440385074172" duration="2186000" />
+      <workItem from="1440385074172" duration="3305000" />
     </task>
     <task id="LOCAL-00001" summary="Start on GUI renderer&#10;&#10;- Basic board layout (walls, corridors, rooms)&#10;- New game dialogs">
       <created>1439622332374</created>
@@ -946,11 +950,17 @@
       <option name="project" value="LOCAL" />
       <updated>1440386386458</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="Don't show eliminated players in rooms">
+      <created>1440387493833</created>
+      <option name="number" value="00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1440387493833</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="71201000" />
+    <option name="totallyTimeSpent" value="72320000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -1015,7 +1025,8 @@
     <MESSAGE value="Clean up and comment TurnButtons" />
     <MESSAGE value="Clean up and comment GUIRenderer" />
     <MESSAGE value="Enable Suggest button when player moves into a room" />
-    <option name="LAST_COMMIT_MESSAGE" value="Enable Suggest button when player moves into a room" />
+    <MESSAGE value="Don't show eliminated players in rooms" />
+    <option name="LAST_COMMIT_MESSAGE" value="Don't show eliminated players in rooms" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1101,8 +1112,8 @@
           <caret line="20" column="28" selection-start-line="20" selection-start-column="28" selection-end-line="20" selection-end-column="28" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#6672#6673#0" expanded="true" />
-            <element signature="e#6736#6737#0" expanded="true" />
+            <element signature="e#6690#6691#0" expanded="true" />
+            <element signature="e#6754#6755#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1192,6 +1203,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.8224">
           <caret line="1196" column="50" selection-start-line="1196" selection-start-column="50" selection-end-line="1196" selection-end-column="50" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1266,13 +1278,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/cluedo/game/Solution.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.8890098">
-          <caret line="56" column="0" selection-start-line="56" selection-start-column="0" selection-end-line="56" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/data/standard.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.5168">
@@ -1284,6 +1289,12 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.9024">
           <caret line="166" column="0" selection-start-line="166" selection-start-column="0" selection-end-line="166" selection-end-column="0" />
+          <folding>
+            <element signature="e#2816#2817#0" expanded="false" />
+            <element signature="e#2867#2868#0" expanded="false" />
+            <element signature="e#3191#3192#0" expanded="false" />
+            <element signature="e#3221#3222#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1291,14 +1302,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.8368">
           <caret line="393" column="42" selection-start-line="393" selection-start-column="42" selection-end-line="393" selection-end-column="42" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/cluedo/game/Game.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.7136">
-          <caret line="181" column="0" selection-start-line="181" selection-start-column="0" selection-end-line="181" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1382,8 +1385,8 @@
           <caret line="170" column="0" selection-start-line="170" selection-start-column="0" selection-end-line="170" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#6672#6673#0" expanded="true" />
-            <element signature="e#6736#6737#0" expanded="true" />
+            <element signature="e#6690#6691#0" expanded="true" />
+            <element signature="e#6754#6755#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1404,22 +1407,40 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/cluedo/ui/graphical/components/TurnButtons.java">
+    <entry file="file://$PROJECT_DIR$/src/cluedo/game/Game.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.3328">
+          <caret line="27" column="30" selection-start-line="27" selection-start-column="30" selection-end-line="27" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/cluedo/ui/graphical/components/BoardCanvas.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="59" column="0" selection-start-line="59" selection-start-column="0" selection-end-line="59" selection-end-column="0" />
+          <caret line="261" column="0" selection-start-line="261" selection-start-column="0" selection-end-line="261" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/cluedo/ui/graphical/components/BoardCanvas.java">
+    <entry file="file://$PROJECT_DIR$/src/cluedo/game/Solution.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6864">
-          <caret line="261" column="0" selection-start-line="261" selection-start-column="0" selection-end-line="261" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.8368">
+          <caret line="56" column="0" selection-start-line="56" selection-start-column="0" selection-end-line="56" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/cluedo/ui/graphical/components/ActionButtons.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.7984">
+          <caret line="168" column="0" selection-start-line="168" selection-start-column="0" selection-end-line="168" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#2760#2761#0" expanded="true" />
+            <element signature="e#2805#2806#0" expanded="true" />
           </folding>
         </state>
       </provider>
