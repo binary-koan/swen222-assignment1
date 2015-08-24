@@ -54,6 +54,18 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
      * @param game game to render
      */
     public BoardCanvas(Game game) {
+        setGame(game);
+
+        addMouseListener(this);
+        addMouseMotionListener(this);
+    }
+
+    /**
+     * Sets the game that this canvas should display
+     *
+     * @param game game to render
+     */
+    public void setGame(Game game) {
         this.game = game;
         this.board = game.getBoard();
 
@@ -68,9 +80,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
                 cellColors[p.x][p.y] = ROOM_COLOR;
             }
         }
-
-        addMouseListener(this);
-        addMouseMotionListener(this);
+        repaint();
     }
 
     /**

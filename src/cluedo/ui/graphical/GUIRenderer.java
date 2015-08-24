@@ -2,6 +2,7 @@ package cluedo.ui.graphical;
 
 import cluedo.game.Game;
 import cluedo.game.Player;
+import cluedo.loader.Loader;
 import cluedo.ui.graphical.components.BoardCanvas;
 import cluedo.ui.graphical.components.PlayerDisplay;
 import cluedo.ui.graphical.components.PlayerSetupPanel;
@@ -10,17 +11,19 @@ import cluedo.ui.graphical.controls.GridPanel;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.util.List;
 
 /**
  * A GUI renderer for the Cluedo game, which allows the game to be played using the mouse
  */
 public class GUIRenderer extends JFrame implements ActionListener {
-    private final Game game;
+    private Game game;
     private BoardCanvas boardCanvas;
     private PlayerDisplay playerDisplay;
     private ActionButtons actionButtons;
@@ -45,7 +48,12 @@ public class GUIRenderer extends JFrame implements ActionListener {
     private void newGame() {
         game.reset();
 
-        List<Player> players = PlayerSetupPanel.queryPlayers(this, game.getData().getSuspects(), queryPlayerCount());
+        int playerCount = queryPlayerCount();
+        if (playerCount < 0) {
+            return;
+        }
+
+        List<Player> players = PlayerSetupPanel.queryPlayers(this, game.getData().getSuspects(), playerCount);
         if (players == null) {
             return;
         }
@@ -97,7 +105,7 @@ public class GUIRenderer extends JFrame implements ActionListener {
         }
         int result = JOptionPane.showOptionDialog(this, "How many players?", "Number of players",
                 JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-        return result + 3;
+        return result < 0 ? result : result + 3;
     }
 
     // GUI setup
@@ -180,7 +188,8 @@ public class GUIRenderer extends JFrame implements ActionListener {
                 newGame();
                 break;
             case "game.setFile":
-                throw new NotImplementedException();
+                changeFile();
+                break;
             case "file.quit":
                 System.exit(0);
             case "turn.next":
@@ -204,6 +213,23 @@ public class GUIRenderer extends JFrame implements ActionListener {
                 break;
             default:
                 throw new RuntimeException("Unknown action: " + e.getActionCommand());
+        }
+    }
+
+    private void changeFile() {
+        JFileChooser chooser = new JFileChooser();
+        chooser.setFileFilter(new FileNameExtensionFilter("Text files", "txt"));
+        int result = chooser.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            try {
+                game = new Game(new Loader(chooser.getSelectedFile().getAbsolutePath()));
+                boardCanvas.setGame(game);
+                actionButtons.setGame(game);
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this, "Failed to load file. Make sure it's readable.");
+            } catch (Loader.SyntaxException e) {
+                JOptionPane.showMessageDialog(this, "Syntax error in file:\n" + e.getMessage());
+            }
         }
     }
 

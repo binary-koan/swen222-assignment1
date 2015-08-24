@@ -2,9 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="03894524-bd20-47a5-af03-752775269954" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/data/scifi.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cluedo/ui/graphical/components/ActionButtons.java" afterPath="$PROJECT_DIR$/src/cluedo/ui/graphical/components/ActionButtons.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cluedo/ui/graphical/components/BoardCanvas.java" afterPath="$PROJECT_DIR$/src/cluedo/ui/graphical/components/BoardCanvas.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cluedo/ui/graphical/GUIRenderer.java" afterPath="$PROJECT_DIR$/src/cluedo/ui/graphical/GUIRenderer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cluedo/loader/Loader.java" afterPath="$PROJECT_DIR$/src/cluedo/loader/Loader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data/scifi.txt" afterPath="$PROJECT_DIR$/data/scifi.txt" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="Assignment1.iws" />
@@ -27,42 +28,7 @@
     <favorites_list name="Assignment1" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="GUIRenderer.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/cluedo/ui/graphical/GUIRenderer.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="5.712">
-              <caret line="225" column="37" selection-start-line="225" selection-start-column="37" selection-end-line="225" selection-end-column="37" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="scifi.txt" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/data/scifi.txt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="6" column="8" selection-start-line="6" selection-start-column="8" selection-end-line="6" selection-end-column="8" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Loader.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/cluedo/loader/Loader.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="41" column="50" selection-start-line="41" selection-start-column="50" selection-end-line="41" selection-end-column="50" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -119,13 +85,13 @@
         <option value="$PROJECT_DIR$/src/cluedo/ui/graphical/components/PlayerSetupPanel.java" />
         <option value="$PROJECT_DIR$/src/cluedo/Main.java" />
         <option value="$PROJECT_DIR$/src/cluedo/game/Player.java" />
-        <option value="$PROJECT_DIR$/src/cluedo/ui/graphical/components/BoardCanvas.java" />
         <option value="$PROJECT_DIR$/src/cluedo/ui/graphical/components/TurnButtons.java" />
         <option value="$PROJECT_DIR$/src/cluedo/game/Solution.java" />
         <option value="$PROJECT_DIR$/src/cluedo/ui/graphical/controls/GridPanel.java" />
-        <option value="$PROJECT_DIR$/src/cluedo/ui/graphical/components/ActionButtons.java" />
-        <option value="$PROJECT_DIR$/src/cluedo/ui/graphical/GUIRenderer.java" />
         <option value="$PROJECT_DIR$/src/cluedo/loader/Loader.java" />
+        <option value="$PROJECT_DIR$/src/cluedo/ui/graphical/GUIRenderer.java" />
+        <option value="$PROJECT_DIR$/src/cluedo/ui/graphical/components/ActionButtons.java" />
+        <option value="$PROJECT_DIR$/src/cluedo/ui/graphical/components/BoardCanvas.java" />
         <option value="$PROJECT_DIR$/data/scifi.txt" />
       </list>
     </option>
@@ -438,7 +404,7 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="recentsLimit" value="5" />
     <property name="dynamic.classpath" value="false" />
-    <property name="extract.method.default.visibility" value="private" />
+    <property name="extract.method.default.visibility" value="public" />
     <property name="OverrideImplement.combined" value="true" />
     <property name="OverrideImplement.overriding.sorted" value="false" />
     <property name="UI_DESIGNER_EDITOR_MODE.UIDesignerToolWindowManager.WIDTH" value="250" />
@@ -826,7 +792,7 @@
       <workItem from="1440287544237" duration="10947000" />
       <workItem from="1440374406226" duration="3690000" />
       <workItem from="1440385074172" duration="3321000" />
-      <workItem from="1440416500772" duration="3612000" />
+      <workItem from="1440416500772" duration="5092000" />
     </task>
     <task id="LOCAL-00001" summary="Start on GUI renderer&#10;&#10;- Basic board layout (walls, corridors, rooms)&#10;- New game dialogs">
       <created>1439622332374</created>
@@ -972,15 +938,21 @@
       <option name="project" value="LOCAL" />
       <updated>1440416874952</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="Add second example file">
+      <created>1440420138996</created>
+      <option name="number" value="00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1440420138996</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="75948000" />
+    <option name="totallyTimeSpent" value="77428000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -990,7 +962,7 @@
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32996634" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.31045407" sideWeight="0.49166667" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.31045407" sideWeight="0.49166667" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.1796875" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -1044,7 +1016,8 @@
     <MESSAGE value="Don't show eliminated players in rooms" />
     <MESSAGE value="Fix popup dialog positioning" />
     <MESSAGE value="Improve suggestion chooser layout" />
-    <option name="LAST_COMMIT_MESSAGE" value="Improve suggestion chooser layout" />
+    <MESSAGE value="Add second example file" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add second example file" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1392,31 +1365,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/cluedo/ui/graphical/components/ActionButtons.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.7344">
-          <caret line="323" column="57" selection-start-line="323" selection-start-column="57" selection-end-line="323" selection-end-column="57" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/cluedo/ui/graphical/controls/GridPanel.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.864">
           <caret line="50" column="0" selection-start-line="50" selection-start-column="0" selection-end-line="50" selection-end-column="0" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/cluedo/ui/graphical/components/BoardCanvas.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="261" column="0" selection-start-line="261" selection-start-column="0" selection-end-line="261" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1440,18 +1393,40 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/data/scifi.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="6" column="8" selection-start-line="6" selection-start-column="8" selection-end-line="6" selection-end-column="8" />
+        <state vertical-scroll-proportion="0.7888">
+          <caret line="29" column="0" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/cluedo/ui/graphical/components/BoardCanvas.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.7072">
+          <caret line="84" column="0" selection-start-line="84" selection-start-column="0" selection-end-line="84" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/cluedo/ui/graphical/GUIRenderer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="5.712">
-          <caret line="225" column="37" selection-start-line="225" selection-start-column="37" selection-end-line="225" selection-end-column="37" />
+        <state vertical-scroll-proportion="0.5648">
+          <caret line="227" column="37" selection-start-line="227" selection-start-column="37" selection-end-line="227" selection-end-column="37" />
           <folding>
             <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/cluedo/ui/graphical/components/ActionButtons.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.6528">
+          <caret line="57" column="0" selection-start-line="57" selection-start-column="0" selection-end-line="57" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1652#1653#0" expanded="true" />
+            <element signature="e#1684#1685#0" expanded="true" />
           </folding>
         </state>
       </provider>

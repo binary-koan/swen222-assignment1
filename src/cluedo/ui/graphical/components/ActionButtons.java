@@ -39,12 +39,21 @@ public class ActionButtons extends GridPanel implements ActionListener, Property
      * @param game game that these buttons control
      */
     public ActionButtons(Game game) {
-        this.game = game;
+        setGame(game);
 
         suggestButton = addButton("Suggest", "player.suggest");
         accuseButton = addButton("Accuse", "player.accuse");
         showHandButton = addButton("Show hand", "player.showHand");
         endTurnButton = addButton("End turn", "player.endTurn");
+    }
+
+    /**
+     * Sets the game that these buttons are connected to
+     *
+     * @param game game to connect to
+     */
+    public void setGame(Game game) {
+        this.game = game;
     }
 
     /**

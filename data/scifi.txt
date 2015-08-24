@@ -21,19 +21,19 @@ passages:
   Observation Deck: Living Space
   Living Space: Observation Deck
 weapons:
-  - Phaser
-  - Lightsaber
+  - Gravity Gun
+  - Chainsword
   - Blaster
   - Pot Plant
   - Tricorder
   - Vacuum Cleaner
 
 ----------------------
-       .sBBBBa.       |
-DDDD....BBBBBB..OOOOOO|
-DDDD....BBBBBB..OOOOOO|
-DDD/....BBBBBB..O_OOOO|
-DDDD....BBBBBB/...OOOO|
+       .sB  Ba.       |
+ DDDDD..BBBBBB..OOOOO |
+DDDDDD..BBBBBB..OOOOOO|
+DDD/....BBBBBB.._OOOOO|
+DDDD....BBBBB/...OOOOO|
 c.....................|
  ....................t|
 MMMMMM..      ..SSSSS |
@@ -44,11 +44,11 @@ MMMMM_..      .SSSSSSS|
  .......      ..SSSSS |
 p....................b|
  .................... |
-LLLLLL_LLLL..TTTTTTTTT|
+LLLLLL_LLLL...TTTTTTTT|
 LLLLLLLLLLL.../TTTTTTT|
 LLLLLLLLLL/...TTTTTTTT|
-LLLLLLLLLLL...TTTTTTTT|
-LLLLLLLLLLL...TTTTTTTT|
-LLLLLLLLLLL..TTTTTTTTT|
-LLLLLLLLLLL..k        |
+LLLLLLLLLLLL..TTTTTTTT|
+LLLLLLLLLLLL..TTTTTTTT|
+LLLLLLLLLLLL..TTTTTTT |
+LLLLLLLLLLLL..k       |
 ----------------------
