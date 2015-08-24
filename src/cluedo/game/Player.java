@@ -112,6 +112,7 @@ public class Player {
 	 * Resets the player's remaining move count to zero
 	 */
 	public void resetMovesRemaining() {
+		changes.firePropertyChange("movesRemaining", this.movesRemaining, 0);
 		this.movesRemaining = 0;
 	}
 

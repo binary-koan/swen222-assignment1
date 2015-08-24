@@ -13,7 +13,8 @@ import cluedo.ui.graphical.GUIRenderer;
 import javax.swing.*;
 
 /**
- * Main class - starts a game of Cluedo, rendering with a CLI
+ * Main class - starts a game of Cluedo, rendering with either a GUI or a CLI (depending on whether --cli is specified
+ * as a command line argument)
  */
 public class Main {
 

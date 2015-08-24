@@ -14,6 +14,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -21,7 +23,7 @@ import java.util.List;
 /**
  * A panel containing buttons the player can use to perform actions within their turn
  */
-public class TurnButtons extends GridPanel implements ActionListener {
+public class TurnButtons extends GridPanel implements ActionListener, PropertyChangeListener {
     private List<ActionListener> actionListeners = new ArrayList<>();
 
     private JButton suggestButton;
@@ -52,7 +54,10 @@ public class TurnButtons extends GridPanel implements ActionListener {
      * @param player current player, or null if no one is playing
      */
     public void startTurn(Player player) {
-        currentPlayer = player;
+        if (currentPlayer != null) {
+            currentPlayer.removePropertyChangeListener(this);
+        }
+
         if (player == null) {
             suggestButton.setEnabled(false);
             accuseButton.setEnabled(false);
@@ -60,6 +65,9 @@ public class TurnButtons extends GridPanel implements ActionListener {
             endTurnButton.setEnabled(false);
         }
         else {
+            currentPlayer = player;
+            player.addPropertyChangeListener(this);
+
             suggestButton.setEnabled(player.getRoom() != null);
             accuseButton.setEnabled(true);
             showHandButton.setEnabled(true);
@@ -178,6 +186,7 @@ public class TurnButtons extends GridPanel implements ActionListener {
                     "Suggestion disproved", JOptionPane.INFORMATION_MESSAGE
             );
         }
+        suggestButton.setEnabled(false);
     }
 
     /**
@@ -335,6 +344,13 @@ public class TurnButtons extends GridPanel implements ActionListener {
         ActionEvent e = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, command);
         for (ActionListener listener : actionListeners) {
             listener.actionPerformed(e);
+        }
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent e) {
+        if (e.getSource() == currentPlayer && ((Player)e.getSource()).getRoom() != null) {
+            suggestButton.setEnabled(true);
         }
     }
 }
