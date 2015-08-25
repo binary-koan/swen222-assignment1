@@ -71,6 +71,7 @@ public class Player {
 	 * Sets the player's current room
 	 */
 	public void setRoom(Room room) {
+		changes.firePropertyChange("room", this.room, room);
 		this.room = room;
 	}
 

@@ -18,13 +18,15 @@ import java.awt.event.MouseMotionListener;
 import java.awt.font.TextLayout;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Renders a game board
  */
-public class BoardCanvas extends JPanel implements MouseListener, MouseMotionListener {
+public class BoardCanvas extends JPanel implements MouseListener, MouseMotionListener, PropertyChangeListener {
     // Colours used for board objects
     private static final Color CORRIDOR_COLOR = Color.decode("#F7F3F7");
     private static final Color WALL_COLOR = Color.decode("#1B181B");
@@ -87,7 +89,11 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
      * @param player current player
      */
     public void startTurn(Player player) {
+        if (currentPlayer != null) {
+            currentPlayer.removePropertyChangeListener(this);
+        }
         currentPlayer = player;
+        player.addPropertyChangeListener(this);
     }
 
     /**
@@ -124,6 +130,17 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
                     (e.getX() - startX) / tileSize,
                     (e.getY() - startY) / tileSize
             );
+            repaint();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void propertyChange(PropertyChangeEvent e) {
+        // Room can be changed outside this class, so make sure this repaints
+        if (e.getSource().equals(currentPlayer) && e.getPropertyName().equals("room")) {
             repaint();
         }
     }
