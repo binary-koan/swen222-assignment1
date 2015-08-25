@@ -38,10 +38,13 @@ public class Main {
 	}
 
 	private static void startGUI() throws IOException, SyntaxException {
-        try {
+        // Nicer look and feel for UI
+		try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ignored) {
         }
+		ToolTipManager.sharedInstance().setInitialDelay(0);
+
 		// The user can change the setup later from the game menu
 		final Loader loader = new Loader("data/standard.txt");
 		EventQueue.invokeLater(new Runnable() {
