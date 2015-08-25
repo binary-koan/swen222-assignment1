@@ -33,6 +33,7 @@ public class ActionButtons extends GridPanel implements ActionListener, Property
 
     private Game game;
     private Player currentPlayer;
+    private boolean passageTaken = false;
 
     /**
      * Construct a new set of turn buttons
@@ -78,8 +79,9 @@ public class ActionButtons extends GridPanel implements ActionListener, Property
         else {
             currentPlayer = player;
             player.addPropertyChangeListener(this);
+            passageTaken = false;
 
-            passageButton.setEnabled(player.getRoom() != null && player.getRoom().getPassageExit() != null);
+            maybeEnableTakePassage(player.getRoom());
             suggestButton.setEnabled(player.getRoom() != null);
             accuseButton.setEnabled(true);
             showHandButton.setEnabled(true);
@@ -108,6 +110,7 @@ public class ActionButtons extends GridPanel implements ActionListener, Property
         // Only respond to actions from the buttons on this panel
         switch (e.getActionCommand()) {
             case "player.takePassage":
+                passageTaken = true;
                 currentPlayer.setRoom(currentPlayer.getRoom().getPassageExit());
                 break;
             case "player.suggest":
@@ -128,6 +131,18 @@ public class ActionButtons extends GridPanel implements ActionListener, Property
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void propertyChange(PropertyChangeEvent e) {
+        // Make sure Take Passage button stays in sync with the player's room
+        if (e.getSource().equals(currentPlayer) && e.getPropertyName().equals("room")) {
+            Room newRoom = (Room)e.getNewValue();
+            maybeEnableTakePassage(newRoom);
+        }
+    }
+
+    /**
      * Adds a button to the panel
      *
      * @param text button text
@@ -140,6 +155,31 @@ public class ActionButtons extends GridPanel implements ActionListener, Property
         button.addActionListener(this);
         setup(button).pad(5).addToLayout();
         return button;
+    }
+
+    /**
+     * Enables or disables the "Take Passage" button depending on whether the given room has a passage and whether a
+     * passage has already been taken
+     *
+     * @param room room to check
+     */
+    private void maybeEnableTakePassage(Room room) {
+        if (room != null) {
+            suggestButton.setEnabled(true);
+            if (room.getPassageExit() != null) {
+                passageButton.setText("Take passage to " + room.getPassageExit().getName());
+                passageButton.setEnabled(!passageTaken);
+            }
+            else {
+                passageButton.setText("Take passage");
+                passageButton.setEnabled(false);
+            }
+        }
+        else {
+            suggestButton.setEnabled(false);
+            passageButton.setText("Take passage");
+            passageButton.setEnabled(false);
+        }
     }
 
     /**
@@ -363,29 +403,6 @@ public class ActionButtons extends GridPanel implements ActionListener, Property
         ActionEvent e = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, command);
         for (ActionListener listener : actionListeners) {
             listener.actionPerformed(e);
-        }
-    }
-
-    @Override
-    public void propertyChange(PropertyChangeEvent e) {
-        if (e.getSource().equals(currentPlayer) && e.getPropertyName().equals("room")) {
-            Room newRoom = (Room)e.getNewValue();
-            if (newRoom != null) {
-                suggestButton.setEnabled(true);
-                if (newRoom.getPassageExit() != null) {
-                    passageButton.setText("Take passage to " + newRoom.getPassageExit().getName());
-                    passageButton.setEnabled(true);
-                }
-                else {
-                    passageButton.setText("Take passage");
-                    passageButton.setEnabled(false);
-                }
-            }
-            else {
-                suggestButton.setEnabled(false);
-                passageButton.setText("Take passage");
-                passageButton.setEnabled(false);
-            }
         }
     }
 }

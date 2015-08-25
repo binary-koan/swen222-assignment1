@@ -28,9 +28,9 @@ import java.util.List;
  */
 public class BoardCanvas extends JPanel implements MouseListener, MouseMotionListener, PropertyChangeListener {
     // Colours used for board objects
-    private static final Color CORRIDOR_COLOR = Color.decode("#F7F3F7");
-    private static final Color WALL_COLOR = Color.decode("#1B181B");
-    private static final Color ROOM_COLOR = Color.decode("#D8CAD8");
+    private static final Color CORRIDOR_COLOR = Color.decode("#D8CAD8");
+    private static final Color WALL_COLOR = Color.decode("#695D69");
+    private static final Color ROOM_COLOR = Color.decode("#292329");
     private static final Color DOOR_COLOR = Color.decode("#A65926");
     private static final Color CAN_MOVE_COLOR = new Color(1, 1, 1, 0.5f);
     private static final Color CANNOT_MOVE_COLOR = new Color(1, 0, 0, 0.5f);

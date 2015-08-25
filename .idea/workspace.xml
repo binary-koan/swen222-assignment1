@@ -4,7 +4,6 @@
     <list default="true" id="03894524-bd20-47a5-af03-752775269954" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cluedo/ui/graphical/components/ActionButtons.java" afterPath="$PROJECT_DIR$/src/cluedo/ui/graphical/components/ActionButtons.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cluedo/ui/graphical/components/BoardCanvas.java" afterPath="$PROJECT_DIR$/src/cluedo/ui/graphical/components/BoardCanvas.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cluedo/game/Player.java" afterPath="$PROJECT_DIR$/src/cluedo/game/Player.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="Assignment1.iws" />
@@ -31,10 +30,14 @@
       <file leaf-file-name="ActionButtons.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/cluedo/ui/graphical/components/ActionButtons.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.8368">
-              <caret line="391" column="0" selection-start-line="391" selection-start-column="0" selection-end-line="391" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.8096">
+              <caret line="183" column="0" selection-start-line="183" selection-start-column="0" selection-end-line="183" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="e#1802#1803#0" expanded="true" />
+                <element signature="e#1834#1835#0" expanded="true" />
+                <element signature="e#3228#3229#0" expanded="true" />
+                <element signature="e#3273#3274#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -44,7 +47,7 @@
         <entry file="file://$PROJECT_DIR$/src/cluedo/ui/graphical/components/BoardCanvas.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="146" column="0" selection-start-line="146" selection-start-column="0" selection-end-line="146" selection-end-column="0" />
+              <caret line="36" column="0" selection-start-line="36" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#2968#2969#0" expanded="true" />
@@ -821,7 +824,7 @@
       <workItem from="1440374406226" duration="3690000" />
       <workItem from="1440385074172" duration="3321000" />
       <workItem from="1440416500772" duration="6960000" />
-      <workItem from="1440464745467" duration="495000" />
+      <workItem from="1440464745467" duration="1147000" />
     </task>
     <task id="LOCAL-00001" summary="Start on GUI renderer&#10;&#10;- Basic board layout (walls, corridors, rooms)&#10;- New game dialogs">
       <created>1439622332374</created>
@@ -1009,11 +1012,17 @@
       <option name="project" value="LOCAL" />
       <updated>1440423239852</updated>
     </task>
-    <option name="localTasksCounter" value="32" />
+    <task id="LOCAL-00032" summary="Update take passage button when passage taken">
+      <created>1440465260749</created>
+      <option name="number" value="00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1440465260749</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="79791000" />
+    <option name="totallyTimeSpent" value="80443000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -1057,7 +1066,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Pathfind to doors" />
     <MESSAGE value="Allow moving in and out of rooms" />
     <MESSAGE value="Implement suggestions, start on accusations" />
     <MESSAGE value="Split turn buttons into separate class" />
@@ -1082,7 +1090,8 @@
     <MESSAGE value="Fix player display not updating when game stopped" />
     <MESSAGE value="Add not null check - fix crash on startup" />
     <MESSAGE value="Fix game resetting when New Game dialog cancelled" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix game resetting when New Game dialog cancelled" />
+    <MESSAGE value="Update take passage button when passage taken" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update take passage button when passage taken" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1475,7 +1484,7 @@
     <entry file="file://$PROJECT_DIR$/src/cluedo/ui/graphical/components/BoardCanvas.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="146" column="0" selection-start-line="146" selection-start-column="0" selection-end-line="146" selection-end-column="0" />
+          <caret line="36" column="0" selection-start-line="36" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#2968#2969#0" expanded="true" />
@@ -1488,10 +1497,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/cluedo/ui/graphical/components/ActionButtons.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.8368">
-          <caret line="391" column="0" selection-start-line="391" selection-start-column="0" selection-end-line="391" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.8096">
+          <caret line="183" column="0" selection-start-line="183" selection-start-column="0" selection-end-line="183" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#1802#1803#0" expanded="true" />
+            <element signature="e#1834#1835#0" expanded="true" />
+            <element signature="e#3228#3229#0" expanded="true" />
+            <element signature="e#3273#3274#0" expanded="true" />
           </folding>
         </state>
       </provider>
