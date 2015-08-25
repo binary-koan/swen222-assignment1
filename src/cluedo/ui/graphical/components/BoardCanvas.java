@@ -131,6 +131,9 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
                     (e.getX() - startX) / tileSize,
                     (e.getY() - startY) / tileSize
             );
+            movePath = PathFinder.calculate(
+                    board, currentPlayer, board.getPlayerLocation(currentPlayer), mouseLocation
+            );
             repaint();
         }
     }
@@ -221,9 +224,6 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
             return;
         }
 
-        movePath = PathFinder.calculate(
-                board, currentPlayer, board.getPlayerLocation(currentPlayer), mouseLocation
-        );
         if (movePath == null) {
             drawTile(g, mouseLocation.x, mouseLocation.y, CANNOT_MOVE_COLOR);
         }

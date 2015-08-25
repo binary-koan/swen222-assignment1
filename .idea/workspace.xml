@@ -26,11 +26,23 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
+      <file leaf-file-name="ActionButtons.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/cluedo/ui/graphical/components/ActionButtons.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="183" column="0" selection-start-line="183" selection-start-column="0" selection-end-line="183" selection-end-column="0" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="BoardCanvas.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/cluedo/ui/graphical/components/BoardCanvas.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.4688">
-              <caret line="222" column="0" selection-start-line="222" selection-start-column="0" selection-end-line="222" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.6864">
+              <caret line="139" column="0" selection-start-line="139" selection-start-column="0" selection-end-line="139" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#3003#3004#0" expanded="true" />
@@ -827,7 +839,7 @@
       <workItem from="1440374406226" duration="3690000" />
       <workItem from="1440385074172" duration="3321000" />
       <workItem from="1440416500772" duration="6960000" />
-      <workItem from="1440464745467" duration="3404000" />
+      <workItem from="1440464745467" duration="6735000" />
     </task>
     <task id="LOCAL-00001" summary="Start on GUI renderer&#10;&#10;- Basic board layout (walls, corridors, rooms)&#10;- New game dialogs">
       <created>1439622332374</created>
@@ -1033,11 +1045,17 @@
       <option name="project" value="LOCAL" />
       <updated>1440466048735</updated>
     </task>
-    <option name="localTasksCounter" value="35" />
+    <task id="LOCAL-00035" summary="Add tooltips for players and rooms on board">
+      <created>1440468171011</created>
+      <option name="number" value="00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1440468171011</updated>
+    </task>
+    <option name="localTasksCounter" value="36" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="82700000" />
+    <option name="totallyTimeSpent" value="86031000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -1081,7 +1099,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Split turn buttons into separate class" />
     <MESSAGE value="Code cleanup and commenting" />
     <MESSAGE value="Clean up BoardCanvas" />
     <MESSAGE value="Improve code quality and performance of BoardCanvas" />
@@ -1106,7 +1123,8 @@
     <MESSAGE value="Update take passage button when passage taken" />
     <MESSAGE value="Improve when Take Passage button is enabled/disabled" />
     <MESSAGE value="Remove tooltip delay" />
-    <option name="LAST_COMMIT_MESSAGE" value="Remove tooltip delay" />
+    <MESSAGE value="Add tooltips for players and rooms on board" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add tooltips for players and rooms on board" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1476,20 +1494,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/cluedo/ui/graphical/components/ActionButtons.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.8096">
-          <caret line="183" column="0" selection-start-line="183" selection-start-column="0" selection-end-line="183" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#1802#1803#0" expanded="true" />
-            <element signature="e#1834#1835#0" expanded="true" />
-            <element signature="e#3228#3229#0" expanded="true" />
-            <element signature="e#3273#3274#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/cluedo/ui/graphical/GUIRenderer.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1508,10 +1512,20 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/cluedo/ui/graphical/components/ActionButtons.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="183" column="0" selection-start-line="183" selection-start-column="0" selection-end-line="183" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/cluedo/ui/graphical/components/BoardCanvas.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.4688">
-          <caret line="222" column="0" selection-start-line="222" selection-start-column="0" selection-end-line="222" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.6864">
+          <caret line="139" column="0" selection-start-line="139" selection-start-column="0" selection-end-line="139" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#3003#3004#0" expanded="true" />
