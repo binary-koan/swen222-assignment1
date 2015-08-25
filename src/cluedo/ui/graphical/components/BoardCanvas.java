@@ -45,6 +45,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
     private Player currentPlayer;
     private Point mouseLocation;
     private PathFinder.MovePath movePath;
+    private String currentToolTip;
 
     Color[][] cellColors;
 
@@ -149,7 +150,18 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
      * {@inheritDoc}
      */
     @Override
+    public Point getToolTipLocation(MouseEvent event) {
+        // Ensure tooltip follows the mouse instead of staying in one place
+        return getToolTipText() == null ? null : new Point(event.getX() + 15, event.getY() + 15);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     protected void paintComponent(Graphics g) {
+        currentToolTip = null;
+
         if (g instanceof Graphics2D) {
             Graphics2D g2 = (Graphics2D) g;
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -194,6 +206,8 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
             g.setColor(new Color(1f, 1f, 1f, 0.5f));
             g.fillRect(0, 0, getWidth(), getHeight());
         }
+
+        setToolTipText(currentToolTip);
     }
 
     // Overlay drawing
@@ -202,7 +216,8 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
      * Draws the current movement path
      */
     private void drawMovePath(Graphics g) {
-        if (mouseLocation == null || board.getPlayerLocation(currentPlayer) == null) {
+        if (mouseLocation == null || board.getPlayerLocation(currentPlayer) == null
+                || !(board.isCorridor(mouseLocation) || board.isDoor(mouseLocation))) {
             return;
         }
 
@@ -228,6 +243,15 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
         drawRoomName(room, tileSize, g);
         drawRoomWeapon(room, tileSize, g);
         drawRoomPlayers(room, tileSize, g);
+
+        if (mouseLocation != null && currentToolTip == null && room.getPassageExit() != null) {
+            Room.BoundingBox boundingBox = room.getBoundingBox();
+
+            if (mouseLocation.x >= boundingBox.getMinX() && mouseLocation.y >= boundingBox.getMinY()
+                    && mouseLocation.x <= boundingBox.getMaxX() && mouseLocation.y <= boundingBox.getMaxY()) {
+                currentToolTip = "Contains passage to " + room.getPassageExit().getName();
+            }
+        }
     }
 
     /**
@@ -237,13 +261,14 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
         Font font = new Font(Font.SANS_SERIF, Font.BOLD, (int) (tileSize * 0.6));
         g.setFont(font);
 
+        String displayName = room.getName() + (room.getPassageExit() == null ? "" : "*");
         Point2D.Float center = room.getCenterPoint();
-        Rectangle2D bounds = getTextBounds(room.getName(), g);
+        Rectangle2D bounds = getTextBounds(displayName, g);
         int x = (int) (center.x * tileSize - bounds.getWidth() / 2.0);
         int y = (int) (center.y * tileSize + bounds.getHeight() / 2.0);
 
         g.setColor(DOOR_COLOR);
-        g.drawString(room.getName(), x, y);
+        g.drawString(displayName, x, y);
     }
 
     /**
@@ -288,9 +313,20 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
         Point2D.Float center = room.getCenterPoint();
         int realX = (int)((center.x - (roomPlayers.size() / 2.0f)) * tileSize);
         int realY = (int)((center.y * tileSize) - tileSize * 1.5);
+
         for (Player player : roomPlayers) {
             drawPlayerToken(player.getToken(), realX, realY, g);
             realX += tileSize;
+        }
+
+        if (mouseLocation != null) {
+            int mouseX = mouseLocation.x * tileSize;
+            int mouseY = mouseLocation.y * tileSize;
+            for (Player player : roomPlayers) {
+                if (mouseX >= realX && mouseY >= realY && (mouseX + tileSize) <= realX && (mouseY + tileSize) <= realY) {
+                    currentToolTip = player.getName() + " (" + player.getToken().getName() + ")";
+                }
+            }
         }
     }
 
@@ -318,6 +354,9 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
     private void drawPlayer(Player player, int tileSize, Graphics g) {
         if (player.getRoom() == null) {
             Point point = board.getPlayerLocation(player);
+            if (point.equals(mouseLocation)) {
+                currentToolTip = player.getName() + " (" + player.getToken().getName() + ")";
+            }
             drawPlayerToken(player.getToken(), point.x * tileSize, point.y * tileSize, g);
         }
     }
