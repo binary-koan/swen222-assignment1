@@ -239,10 +239,12 @@ public class Board {
 		}
 		else {
 			checkInCorridor(newLocation);
+			if (playerLocations.values().contains(newLocation)) {
+				throw new UnableToMoveException("You can't move onto the same square as another player!");
+			}
 			player.setRoom(null);
 		}
 		playerLocations.put(player, newLocation);
-
 	}
 
 	/**

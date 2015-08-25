@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="03894524-bd20-47a5-af03-752775269954" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cluedo/ui/graphical/components/BoardCanvas.java" afterPath="$PROJECT_DIR$/src/cluedo/ui/graphical/components/BoardCanvas.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cluedo/ui/graphical/GUIRenderer.java" afterPath="$PROJECT_DIR$/src/cluedo/ui/graphical/GUIRenderer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/dictionaries/reaso.xml" afterPath="$PROJECT_DIR$/.idea/dictionaries/reaso.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cluedo/game/Board.java" afterPath="$PROJECT_DIR$/src/cluedo/game/Board.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="Assignment1.iws" />
@@ -28,15 +26,34 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="BoardCanvas.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="BoardCanvas.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/cluedo/ui/graphical/components/BoardCanvas.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="12.008026">
+            <state vertical-scroll-proportion="0.0">
               <caret line="538" column="90" selection-start-line="538" selection-start-column="90" selection-end-line="538" selection-end-column="90" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#3190#3191#0" expanded="true" />
                 <element signature="e#3236#3237#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Board.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/cluedo/game/Board.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.823435">
+              <caret line="248" column="0" selection-start-line="248" selection-start-column="0" selection-end-line="248" selection-end-column="0" />
+              <folding>
+                <element signature="e#1849#1850#0" expanded="true" />
+                <element signature="e#1869#1870#0" expanded="true" />
+                <element signature="e#2406#2407#0" expanded="true" />
+                <element signature="e#2461#2462#0" expanded="true" />
+                <element signature="e#3478#3479#0" expanded="true" />
+                <element signature="e#3519#3520#0" expanded="true" />
+                <element signature="e#4006#4007#0" expanded="true" />
+                <element signature="e#4036#4037#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -95,7 +112,6 @@
         <option value="$PROJECT_DIR$/src/cluedo/game/BoardPoint.java" />
         <option value="$PROJECT_DIR$/src/cluedo/game/objects/Room.java" />
         <option value="$PROJECT_DIR$/src/cluedo/game/Door.java" />
-        <option value="$PROJECT_DIR$/src/cluedo/game/Board.java" />
         <option value="$PROJECT_DIR$/src/cluedo/game/Game.java" />
         <option value="$PROJECT_DIR$/src/cluedo/ui/graphical/controls/PlaceholderTextField.java" />
         <option value="$PROJECT_DIR$/src/cluedo/ui/graphical/util/Autotiler.java" />
@@ -117,6 +133,7 @@
         <option value="$PROJECT_DIR$/src/cluedo/Main.java" />
         <option value="$PROJECT_DIR$/src/cluedo/ui/graphical/GUIRenderer.java" />
         <option value="$PROJECT_DIR$/src/cluedo/ui/graphical/components/BoardCanvas.java" />
+        <option value="$PROJECT_DIR$/src/cluedo/game/Board.java" />
       </list>
     </option>
   </component>
@@ -817,7 +834,7 @@
       <workItem from="1440374406226" duration="3690000" />
       <workItem from="1440385074172" duration="3321000" />
       <workItem from="1440416500772" duration="6960000" />
-      <workItem from="1440464745467" duration="12253000" />
+      <workItem from="1440464745467" duration="12403000" />
     </task>
     <task id="LOCAL-00001" summary="Start on GUI renderer&#10;&#10;- Basic board layout (walls, corridors, rooms)&#10;- New game dialogs">
       <created>1439622332374</created>
@@ -1035,11 +1052,17 @@
       <option name="project" value="LOCAL" />
       <updated>1440475691635</updated>
     </task>
-    <option name="localTasksCounter" value="37" />
+    <task id="LOCAL-00037" summary="Animate player movement">
+      <created>1440483536540</created>
+      <option name="number" value="00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1440483536540</updated>
+    </task>
+    <option name="localTasksCounter" value="38" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="91549000" />
+    <option name="totallyTimeSpent" value="91699000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -1083,7 +1106,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Clean up BoardCanvas" />
     <MESSAGE value="Improve code quality and performance of BoardCanvas" />
     <MESSAGE value="Merge Dialogs class into TurnButtons" />
     <MESSAGE value="Move GUI components into separate package" />
@@ -1108,7 +1130,8 @@
     <MESSAGE value="Remove tooltip delay" />
     <MESSAGE value="Add tooltips for players and rooms on board" />
     <MESSAGE value="Calculate move path in mouseMoved" />
-    <option name="LAST_COMMIT_MESSAGE" value="Calculate move path in mouseMoved" />
+    <MESSAGE value="Animate player movement" />
+    <option name="LAST_COMMIT_MESSAGE" value="Animate player movement" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1362,14 +1385,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/cluedo/game/Board.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.3328">
-          <caret line="108" column="19" selection-start-line="108" selection-start-column="19" selection-end-line="108" selection-end-column="19" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/cluedo/game/Door.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.12948857">
@@ -1510,12 +1525,29 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/cluedo/ui/graphical/components/BoardCanvas.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="12.008026">
+        <state vertical-scroll-proportion="0.0">
           <caret line="538" column="90" selection-start-line="538" selection-start-column="90" selection-end-line="538" selection-end-column="90" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#3190#3191#0" expanded="true" />
             <element signature="e#3236#3237#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/cluedo/game/Board.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.823435">
+          <caret line="248" column="0" selection-start-line="248" selection-start-column="0" selection-end-line="248" selection-end-column="0" />
+          <folding>
+            <element signature="e#1849#1850#0" expanded="true" />
+            <element signature="e#1869#1870#0" expanded="true" />
+            <element signature="e#2406#2407#0" expanded="true" />
+            <element signature="e#2461#2462#0" expanded="true" />
+            <element signature="e#3478#3479#0" expanded="true" />
+            <element signature="e#3519#3520#0" expanded="true" />
+            <element signature="e#4006#4007#0" expanded="true" />
+            <element signature="e#4036#4037#0" expanded="true" />
           </folding>
         </state>
       </provider>
