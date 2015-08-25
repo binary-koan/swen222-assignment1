@@ -8,7 +8,6 @@ import cluedo.ui.graphical.components.PlayerDisplay;
 import cluedo.ui.graphical.components.PlayerSetupPanel;
 import cluedo.ui.graphical.components.ActionButtons;
 import cluedo.ui.graphical.controls.GridPanel;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;

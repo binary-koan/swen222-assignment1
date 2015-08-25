@@ -12,9 +12,7 @@ import cluedo.ui.graphical.util.PathFinder;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.*;
 import java.awt.font.TextLayout;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -26,7 +24,7 @@ import java.util.List;
 /**
  * Renders a game board
  */
-public class BoardCanvas extends JPanel implements MouseListener, MouseMotionListener, PropertyChangeListener {
+public class BoardCanvas extends JPanel implements MouseListener, MouseMotionListener, PropertyChangeListener, ActionListener {
     // Colours used for board objects
     private static final Color CORRIDOR_COLOR = Color.decode("#D8CAD8");
     private static final Color WALL_COLOR = Color.decode("#695D69");
@@ -34,6 +32,12 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
     private static final Color DOOR_COLOR = Color.decode("#A65926");
     private static final Color CAN_MOVE_COLOR = new Color(1, 1, 1, 0.5f);
     private static final Color CANNOT_MOVE_COLOR = new Color(1, 0, 0, 0.5f);
+
+    private Timer animationTimer = new Timer(33, this);
+    private boolean isAnimating = false;
+    private Point moveAnimationPoint = null;
+    private int moveAnimationStep = 0;
+    private float teleportAnimationScale = 1;
 
     private Game game;
     private Board board;
@@ -55,6 +59,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
      * @param game game to render
      */
     public BoardCanvas(Game game) {
+        animationTimer.start();
         setGame(game);
 
         addMouseListener(this);
@@ -114,7 +119,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
             try {
                 board.movePlayer(currentPlayer, movePath.asDirections(), movePath.getDoor());
                 updateMovesRemaining(movePath.asPoints().get(movePath.size() - 1));
-                repaint();
+                startMoveAnimation();
             } catch (Board.UnableToMoveException ex) {
                 JOptionPane.showMessageDialog(this, ex.getMessage(), "Can't move!", JOptionPane.WARNING_MESSAGE);
             }
@@ -126,7 +131,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
      */
     @Override
     public void mouseMoved(MouseEvent e) {
-        if (currentPlayer != null) {
+        if (!(isAnimating || currentPlayer == null)) {
             mouseLocation = new Point(
                     (e.getX() - startX) / tileSize,
                     (e.getY() - startY) / tileSize
@@ -354,10 +359,16 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
     private void drawPlayer(Player player, int tileSize, Graphics g) {
         if (player.getRoom() == null) {
             Point point = board.getPlayerLocation(player);
-            if (point.equals(mouseLocation)) {
-                currentToolTip = player.getName() + " (" + player.getToken().getName() + ")";
+            if (player == currentPlayer && moveAnimationPoint != null) {
+                point = moveAnimationPoint;
+                drawPlayerToken(player.getToken(), point.x, point.y, g);
             }
-            drawPlayerToken(player.getToken(), point.x * tileSize, point.y * tileSize, g);
+            else {
+                if (point.equals(mouseLocation)) {
+                    currentToolTip = player.getName() + " (" + player.getToken().getName() + ")";
+                }
+                drawPlayerToken(player.getToken(), point.x * tileSize, point.y * tileSize, g);
+            }
         }
     }
 
@@ -500,4 +511,58 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 
     @Override
     public void mouseDragged(MouseEvent e) { }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == animationTimer && isAnimating) {
+            if (moveAnimationPoint != null) {
+                continueMoveAnimation();
+            }
+            else {
+//                continueScaleAnimation();
+            }
+            repaint();
+        }
+    }
+
+    private void startMoveAnimation() {
+        Point from = movePath.asPoints().get(0);
+        moveAnimationPoint = new Point(from.x * tileSize, from.y * tileSize);
+        moveAnimationStep = 0;
+        isAnimating = true;
+    }
+
+    private void continueMoveAnimation() {
+        float speed = 0.15f;
+
+        Point currentTarget = movePath.asPoints().get(moveAnimationStep + 1);
+        currentTarget = new Point(currentTarget.x * tileSize, currentTarget.y * tileSize);
+        if (moveAnimationPoint.x == currentTarget.x && moveAnimationPoint.y == currentTarget.y) {
+            moveAnimationStep++;
+            if (moveAnimationStep == movePath.size() - 1) {
+                isAnimating = false;
+                moveAnimationPoint = null;
+            }
+            else {
+                continueMoveAnimation();
+            }
+        }
+        else {
+            Board.Direction direction = movePath.asDirections().get(moveAnimationStep);
+            switch (direction) {
+                case LEFT:
+                    moveAnimationPoint.x = Math.max((int) (moveAnimationPoint.x - (tileSize * speed)), currentTarget.x);
+                    break;
+                case UP:
+                    moveAnimationPoint.y = Math.max((int) (moveAnimationPoint.y - (tileSize * speed)), currentTarget.y);
+                    break;
+                case RIGHT:
+                    moveAnimationPoint.x = Math.min((int) (moveAnimationPoint.x + (tileSize * speed)), currentTarget.x);
+                    break;
+                case DOWN:
+                    moveAnimationPoint.y = Math.min((int) (moveAnimationPoint.y + (tileSize * speed)), currentTarget.y);
+                    break;
+            }
+        }
+    }
 }
