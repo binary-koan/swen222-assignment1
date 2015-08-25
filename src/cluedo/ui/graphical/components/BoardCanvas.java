@@ -493,37 +493,33 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
         }
     }
 
-    // Useless stub events
+    // Animation support
 
-    @Override
-    public void mouseEntered(MouseEvent e) { }
-
-    @Override
-    public void mouseExited(MouseEvent e) { }
-
-    @Override
-    public void mousePressed(MouseEvent e) { }
-
-    @Override
-    public void mouseReleased(MouseEvent e) { }
-
-    @Override
-    public void mouseDragged(MouseEvent e) { }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
+        // Don't repaint unless an animation is being shown
         if (e.getSource() == animationTimer && moveAnimationPoint != null) {
             continueMoveAnimation();
             repaint();
         }
     }
 
+    /**
+     * Starts animating the current player along the most recent movePath
+     */
     private void startMoveAnimation() {
         Point from = movePath.asPoints().get(0);
         moveAnimationPoint = new Point(from.x * tileSize, from.y * tileSize);
         moveAnimationStep = 0;
     }
 
+    /**
+     * Called whenever a player is animating along a path. If the animation is complete, it stops the animation.
+     * Otherwise, it moves the player one step further along the movement path
+     */
     private void continueMoveAnimation() {
         float speed = 0.2f;
 
@@ -556,4 +552,21 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
             }
         }
     }
+
+    // Useless stub events
+
+    @Override
+    public void mouseEntered(MouseEvent e) { }
+
+    @Override
+    public void mouseExited(MouseEvent e) { }
+
+    @Override
+    public void mousePressed(MouseEvent e) { }
+
+    @Override
+    public void mouseReleased(MouseEvent e) { }
+
+    @Override
+    public void mouseDragged(MouseEvent e) { }
 }
