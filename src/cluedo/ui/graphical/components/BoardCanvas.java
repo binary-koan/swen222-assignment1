@@ -34,10 +34,8 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
     private static final Color CANNOT_MOVE_COLOR = new Color(1, 0, 0, 0.5f);
 
     private Timer animationTimer = new Timer(33, this);
-    private boolean isAnimating = false;
     private Point moveAnimationPoint = null;
     private int moveAnimationStep = 0;
-    private float teleportAnimationScale = 1;
 
     private Game game;
     private Board board;
@@ -115,7 +113,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
      */
     @Override
     public void mouseClicked(MouseEvent e) {
-        if (movePath != null) {
+        if (moveAnimationPoint == null && movePath != null) {
             try {
                 board.movePlayer(currentPlayer, movePath.asDirections(), movePath.getDoor());
                 updateMovesRemaining(movePath.asPoints().get(movePath.size() - 1));
@@ -131,7 +129,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
      */
     @Override
     public void mouseMoved(MouseEvent e) {
-        if (!(isAnimating || currentPlayer == null)) {
+        if (moveAnimationPoint == null && currentPlayer != null) {
             mouseLocation = new Point(
                     (e.getX() - startX) / tileSize,
                     (e.getY() - startY) / tileSize
@@ -514,13 +512,8 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == animationTimer && isAnimating) {
-            if (moveAnimationPoint != null) {
-                continueMoveAnimation();
-            }
-            else {
-//                continueScaleAnimation();
-            }
+        if (e.getSource() == animationTimer && moveAnimationPoint != null) {
+            continueMoveAnimation();
             repaint();
         }
     }
@@ -529,18 +522,16 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
         Point from = movePath.asPoints().get(0);
         moveAnimationPoint = new Point(from.x * tileSize, from.y * tileSize);
         moveAnimationStep = 0;
-        isAnimating = true;
     }
 
     private void continueMoveAnimation() {
-        float speed = 0.15f;
+        float speed = 0.2f;
 
         Point currentTarget = movePath.asPoints().get(moveAnimationStep + 1);
         currentTarget = new Point(currentTarget.x * tileSize, currentTarget.y * tileSize);
         if (moveAnimationPoint.x == currentTarget.x && moveAnimationPoint.y == currentTarget.y) {
             moveAnimationStep++;
             if (moveAnimationStep == movePath.size() - 1) {
-                isAnimating = false;
                 moveAnimationPoint = null;
             }
             else {
