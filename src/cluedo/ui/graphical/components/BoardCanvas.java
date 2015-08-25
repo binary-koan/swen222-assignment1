@@ -317,19 +317,17 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
         int realX = (int)((center.x - (roomPlayers.size() / 2.0f)) * tileSize);
         int realY = (int)((center.y * tileSize) - tileSize * 1.5);
 
+        Point realMousePosition = MouseInfo.getPointerInfo().getLocation();
+        int mouseX = realMousePosition.x - getLocationOnScreen().x - startX;
+        int mouseY = realMousePosition.y - getLocationOnScreen().y - startY;
+
         for (Player player : roomPlayers) {
+            if (mouseX >= realX && mouseY >= realY && mouseX <= (realX + tileSize) && mouseY <= (realY + tileSize)) {
+                currentToolTip = player.getName() + " (" + player.getToken().getName() + ")";
+            }
+
             drawPlayerToken(player.getToken(), realX, realY, g);
             realX += tileSize;
-        }
-
-        if (mouseLocation != null) {
-            int mouseX = mouseLocation.x * tileSize;
-            int mouseY = mouseLocation.y * tileSize;
-            for (Player player : roomPlayers) {
-                if (mouseX >= realX && mouseY >= realY && (mouseX + tileSize) <= realX && (mouseY + tileSize) <= realY) {
-                    currentToolTip = player.getName() + " (" + player.getToken().getName() + ")";
-                }
-            }
         }
     }
 
@@ -529,6 +527,7 @@ public class BoardCanvas extends JPanel implements MouseListener, MouseMotionLis
             moveAnimationStep++;
             if (moveAnimationStep == movePath.size() - 1) {
                 moveAnimationPoint = null;
+                movePath = null;
             }
             else {
                 continueMoveAnimation();
